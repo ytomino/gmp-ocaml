@@ -224,9 +224,9 @@ CAMLprim value mlmpc_c_real(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	mpfr_ptr real = mpc_realref(C_val(x));
 	result = alloc_custom(&mlmpfr_fr_ops, sizeof(mpfr_t), 0, 1);
 	mpfr_ptr result_value = FR_val(result);
+	mpfr_ptr real = mpc_realref(C_val(x));
 	mpfr_init2(result_value, mpfr_get_prec(real));
 	mpfr_set(result_value, real, GMP_RNDN);
 	CAMLreturn(result);
@@ -236,9 +236,9 @@ CAMLprim value mlmpc_c_imag(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	mpfr_ptr imag = mpc_imagref(C_val(x));
 	result = alloc_custom(&mlmpfr_fr_ops, sizeof(mpfr_t), 0, 1);
 	mpfr_ptr result_value = FR_val(result);
+	mpfr_ptr imag = mpc_imagref(C_val(x));
 	mpfr_init2(result_value, mpfr_get_prec(imag));
 	mpfr_set(result_value, imag, GMP_RNDN);
 	CAMLreturn(result);

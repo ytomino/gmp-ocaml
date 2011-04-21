@@ -242,6 +242,7 @@ CAMLprim value mlmpfr_fr_frexp(value prec, value mode, value x)
 		result_fraction = alloc_custom(&mlmpfr_fr_ops, sizeof(mpfr_t), 0, 1);
 		mpfr_ptr rf_value = FR_val(result_fraction);
 		mpfr_init2(rf_value, p);
+		x_value = FR_val(x); /* if gc was invoked by alloc_custom */
 		if(exponent > 0){
 			mpfr_div_2exp(rf_value, x_value, exponent, m);
 		}else{

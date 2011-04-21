@@ -962,6 +962,7 @@ CAMLprim value mlgmp_f_frexp(value prec, value x)
 		result_fraction = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
 		mpf_ptr rf_value = F_val(result_fraction);
 		mpf_init2(rf_value, p);
+		x_value = F_val(x); /* if gc was invoked by alloc_custom */
 		if(exponent > 0){
 			mpf_div_2exp(rf_value, x_value, exponent);
 		}else{
