@@ -60,28 +60,37 @@ static inline long fr_hash(mpfr_ptr x)
 
 static inline void fr_serialize(mpfr_ptr x)
 {
-	serialize_int_4(mpfr_get_prec(x));
+	mp_prec_t prec = mpfr_get_prec(x);
 	mp_exp_t exponent;
 	char *image = mpfr_get_str (NULL, &exponent, 16, 0, x, GMP_RNDN);
-	size_t length = strlen(image);
-	serialize_int_4(length + 11);
-	serialize_block_1("0.", 2);
-	serialize_block_1(image, length);
-	serialize_block_1("@", 1);
+	size_t i_length = strlen(image);
 	char exponent_buf[sizeof(mp_exp_t) * 2 + 1];
 	size_t e_length = gmp_sprintf(exponent_buf, "%lx", (long)exponent);
+	size_t length = e_length + i_length + 3;
+	serialize_int_4(prec);
+	serialize_int_4(length);
+	if(image[0] == '-'){
+		serialize_block_1("-0.", 3);
+		serialize_block_1(image + 1, i_length - 1);
+	}else{
+		serialize_block_1("0.", 2);
+		serialize_block_1(image, i_length);
+	}
+	serialize_block_1("@", 1);
 	serialize_block_1(exponent_buf, e_length);
 	free(image);
 }
 
 static inline void fr_deserialize(mpfr_ptr x)
 {
-	mpfr_init2(x, deserialize_uint_4());
+	mp_prec_t prec = deserialize_uint_4();
 	size_t length = deserialize_uint_4();
 	char image[length + 1];
 	deserialize_block_1(image, length);
 	image[length] = '\0';
-	mpfr_set_str(x, image, 16, GMP_RNDN);
+	mpfr_init2(x, prec);
+	int err = mpfr_set_str(x, image, 16, GMP_RNDN);
+	if(err < 0) caml_failwith(__FUNCTION__);
 }
 
 /* custom-operations */

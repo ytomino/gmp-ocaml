@@ -48,7 +48,7 @@ static unsigned long mlmpc_c_deserialize(void *dst)
 {
 	CAMLparam0();
 	c_deserialize((mpc_ptr)dst);
-	CAMLreturnT(unsigned long, sizeof(mpfr_t));
+	CAMLreturnT(unsigned long, sizeof(mpc_t));
 }
 
 struct custom_operations mlmpc_c_ops = {

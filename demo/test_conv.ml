@@ -2,6 +2,8 @@ open Gmp;;
 open Mpfr;;
 open Mpc;;
 
+let log = false;;
+
 assert (123 = int_of_z (z_of_int 123));;
 assert (123l = int32_of_z (z_of_int32 123l));;
 assert (123n = nativeint_of_z (z_of_nativeint 123n));;
@@ -50,9 +52,9 @@ let bit_eq (x: float) (y: float): bool = (
 
 let single_check (x: float) (y: int32) = (
 	let x1 = bits_of_single (fr_of_float ~prec:24 ~mode:`N x) in
-	if true then Printf.eprintf "%.8lx" x1;
+	if log then Printf.eprintf "%.8lx" x1;
 	let y1 = float_of_fr ~mode:`N (single_of_bits y) in
-	if true then Printf.eprintf " %f\n" y1;
+	if log then Printf.eprintf " %f\n" y1;
 	x1 = y && bit_eq y1 x
 );;
 
@@ -70,9 +72,9 @@ assert (single_check ~-.infinity 0xff800000l);;
 
 let double_check (x: float) (y: int64) = (
 	let x1 = bits_of_double (fr_of_float ~prec:53 ~mode:`N x) in
-	if true then Printf.eprintf "%.16Lx" x1;
+	if log then Printf.eprintf "%.16Lx" x1;
 	let y1 = float_of_fr ~mode:`N (double_of_bits y) in
-	if true then Printf.eprintf " %f\n" y1;
+	if log then Printf.eprintf " %f\n" y1;
 	x1 = y && bit_eq y1 x
 );;
 
@@ -90,9 +92,9 @@ assert (double_check ~-.infinity 0xfff0000000000000L);;
 
 let extended_check (x: float) (y: int64 * int) = (
 	let (m, e) as x1 = bits_of_extended (fr_of_float ~prec:64 ~mode:`N x) in
-	if true then Printf.eprintf "%.4x:%.16Lx" e m;
+	if log then Printf.eprintf "%.4x:%.16Lx" e m;
 	let y1 = float_of_fr ~mode:`N (extended_of_bits y) in
-	if true then Printf.eprintf " %f\n" y1;
+	if log then Printf.eprintf " %f\n" y1;
 	x1 = y && bit_eq y1 x
 );;
 
@@ -116,7 +118,4 @@ assert (Mpfr.default_rounding_mode () = `N);;
 assert (Mpc.default_prec () = (53, 53));;
 assert (Mpc.default_rounding_mode () = (`N, `N));;
 
-module Cdef = C (struct let prec = Mpc.default_prec () end);;
-module Cdef = Cdef.F (struct let rounding_mode = Mpc.default_rounding_mode () end);;
-
-assert (Marshal.from_string (Marshal.to_string (Cdef.real Cdef.one) []) 0 = Cdef.imag Cdef.i);;
+Printf.eprintf "ok\n";;

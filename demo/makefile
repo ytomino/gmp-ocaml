@@ -6,23 +6,33 @@ endif
 
 export CAML_LD_LIBRARY_PATH=$(BUILDDIR)/stublibs
 
-.PHONY: all test_sig test_conv interactive clean
+.PHONY: all test_conv test_marshal test_sig interactive clean
 
-all: test_sig test_conv
+all: test_conv test_marshal test_sig
 
-test_sig: $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
+test_conv: test_conv.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
+	@echo "**** test for conversions ****"
+	ocaml -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma $<
+
+test_marshal: test_marshal.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
+	@echo "**** test for marshaling ****"
+	ocaml -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma $<
+	ocamlc -c -o $(BUILDDIR)/test_marshal.cmo -I $(BUILDDIR) $<
+	ocamlc -o $(BUILDDIR)/test_marshal.byte.exe -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma test_marshal.cmo
+	$(BUILDDIR)/test_marshal.byte.exe
+	ocamlopt -c -o $(BUILDDIR)/test_marshal.cmx -I $(BUILDDIR) $<
+	ocamlopt -o $(BUILDDIR)/test_marshal.opt.exe -I $(BUILDDIR) gmp.cmxa mpfr.cmxa mpc.cmxa test_marshal.cmx
+	$(BUILDDIR)/test_marshal.opt.exe
+
+test_sig: test_sig.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
 	@echo "**** test for signature ****"
-	ocaml -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma test_sig.ml
-	ocamlc -c -o $(BUILDDIR)/test_sig.cmo -I $(BUILDDIR) test_sig.ml
+	ocaml -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma $<
+	ocamlc -c -o $(BUILDDIR)/test_sig.cmo -I $(BUILDDIR) $<
 	ocamlc -o $(BUILDDIR)/test_sig.byte.exe -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma test_sig.cmo
 	$(BUILDDIR)/test_sig.byte.exe
-	ocamlopt -c -o $(BUILDDIR)/test_sig.cmx -I $(BUILDDIR) test_sig.ml
+	ocamlopt -c -o $(BUILDDIR)/test_sig.cmx -I $(BUILDDIR) $<
 	ocamlopt -o $(BUILDDIR)/test_sig.opt.exe -I $(BUILDDIR) gmp.cmxa mpfr.cmxa mpc.cmxa test_sig.cmx
 	$(BUILDDIR)/test_sig.opt.exe
-
-test_conv: $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
-	@echo "**** test for conversions ****"
-	ocaml -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma test_conv.ml
 
 interactive: $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
 	$(RLWRAP) ocaml -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma

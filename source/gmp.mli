@@ -88,6 +88,8 @@ module Q: sig
 	external of_float: float -> t = "mlgmp_q_of_float";;
 	external to_float: t -> float = "mlgmp_float_of_q";;
 	external of_z: z -> t = "mlgmp_q_of_z";;
+	external make_int: int -> int -> t = "mlgmp_q_make_int";;
+	external make_z: z -> z -> t = "mlgmp_q_make_z";;
 end;;
 
 type f;;

@@ -1,4 +1,4 @@
-module type S = sig
+module type N = sig (* numeric *)
 	type t;;
 	val zero: t;;
 	val one: t;;
@@ -18,19 +18,38 @@ module type S = sig
 	val of_int: int -> t;;
 end;;
 
+module type S = sig (* scalar *)
+	include N;;
+	val to_float: t -> float;;
+end;;
+
+module type R = sig (* real *)
+	include S;;
+	val of_float: float -> t;;
+end;;
+
+module type F = sig (* float *)
+	include R;;
+	val log: t -> t;;
+	val based_log: base:int -> t -> t;;
+	val frexp: t -> t * int;;
+end;;
+
 let (_: unit) = let module Check: S = Gmp.Z in ();;
-let (_: unit) = let module Check: S = Gmp.Q in ();;
+let (_: unit) = let module Check: R = Gmp.Q in ();;
 
 module F10 = Gmp.F (struct let prec = 10 end);;
 
-let (_: unit) = let module Check: S = F10 in ();;
+let (_: unit) = let module Check: F = F10 in ();;
 
 module FR10 = Mpfr.FR (struct let prec = 10 end);;
 module FR10D = FR10.F (struct let rounding_mode = `D end);;
 
-let (_: unit) = let module Check: S = FR10D in ();;
+let (_: unit) = let module Check: F = FR10D in ();;
 
 module C10 = Mpc.C (struct let prec = 10, 10 end);;
 module C10DD = C10.F (struct let rounding_mode = `D, `D end);;
 
-let (_: unit) = let module Check: S = C10DD in ();;
+let (_: unit) = let module Check: N = C10DD in ();;
+
+Printf.eprintf "ok\n";;
