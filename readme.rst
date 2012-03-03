@@ -17,6 +17,33 @@ MPFR
 MPC
  http://www.multiprecision.org/
 
+How to make
+-----------
+
+Install
++++++++
+
+::
+
+ make install DESTDIR=`ocamlc -where`
+
+Or use your preferred directory for DESTDIR.
+In this case, set DESTDIR/stublibs to CAML_LD_LIBRARY_PATH.
+
+Uninstall
++++++++++
+
+::
+
+ make uninstall DESTDIR=`ocamlc -where`
+
+Build examples
+++++++++++++++
+
+::
+
+ make -C examples
+
 License
 -------
 
