@@ -1,3 +1,4 @@
+open Gmp2mlgmp;;
 open Gmp;;
 
 assert ((Z.from_int 578) = (Z.from_string_base ~base: 10 "578"));

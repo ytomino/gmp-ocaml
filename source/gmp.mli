@@ -1,4 +1,6 @@
 type z;;
+type q;;
+type f;;
 
 external z_of_based_string: base:int -> string -> z = "mlgmp_z_of_based_string";;
 val z_of_string: string -> z;;
@@ -12,6 +14,7 @@ external z_of_nativeint: nativeint -> z = "mlgmp_z_of_nativeint";;
 external nativeint_of_z: z -> nativeint = "mlgmp_nativeint_of_z";;
 external z_of_int64: int64 -> z = "mlgmp_z_of_int64";;
 external int64_of_z: z -> int64 = "mlgmp_int64_of_z";;
+external z_of_truncated_float: float -> z = "mlgmp_z_of_truncated_float";;
 external float_of_z: z -> float = "mlgmp_float_of_z";;
 
 module Z: sig
@@ -19,15 +22,30 @@ module Z: sig
 	val zero: t;;
 	val one: t;;
 	external compare: t -> t -> int = "mlgmp_z_compare";;
+	external compare_int: t -> int -> int = "mlgmp_z_compare_int";;
 	external neg: t -> t = "mlgmp_z_neg";;
+	external abs: t -> t = "mlgmp_z_abs";;
 	external add: t -> t -> t = "mlgmp_z_add";;
 	external add_int: t -> int -> t = "mlgmp_z_add_int";;
 	external sub: t -> t -> t = "mlgmp_z_sub";;
 	external mul: t -> t -> t = "mlgmp_z_mul";;
-	external div: t -> t -> t = "mlgmp_z_div";;
-	external rem: t -> t -> t = "mlgmp_z_rem";;
+	external div: t -> t -> t = "mlgmp_z_div";; (* div x y = fst (tdiv x y) *)
+	external pow_int: base:t -> exponent:int -> t = "mlgmp_z_pow_int";;
+	external pow_q: base:t -> exponent:q -> t = "mlgmp_z_pow_q";;
 	external int_pow_int: base:int -> exponent:int -> t = "mlgmp_z_int_pow_int";;
 	external scale: t -> base:int -> exponent:int -> t = "mlgmp_z_scale";;
+	external sqrt: t -> t = "mlgmp_z_sqrt";; (* sqrt x y = fst (tsqrt x y) *)
+	(* integer operations *)
+	external rem: t -> t -> t = "mlgmp_z_rem";; (* rem x y = snd (tdiv x y) *)
+	external modulo: t -> t -> t = "mlgmp_z_modulo";;
+	external tdiv: t -> t -> t * t = "mlgmp_z_tdiv";;
+	external cdiv: t -> t -> t * t = "mlgmp_z_cdiv";;
+	external fdiv: t -> t -> t * t = "mlgmp_z_fdiv";;
+	external tsqrt: t -> t * t = "mlgmp_z_tsqrt";;
+	external gcdext: t -> t -> t * t * t = "mlgmp_z_gcdext";;
+	external invert: t -> t -> t option = "mlgmp_z_invert";;
+	external is_perfect_power: t -> bool = "mlgmp_z_is_perfect_power";;
+	external is_perfect_square: t -> bool = "mlgmp_z_is_perfect_square";;
 	(* bit operations *)
 	external logand: t -> t -> t = "mlgmp_z_logand";;
 	external logor: t -> t -> t = "mlgmp_z_logor";;
@@ -51,8 +69,6 @@ module Z: sig
 	external to_float: t -> float = "mlgmp_float_of_z";;
 end;;
 
-type q;;
-
 external q_of_based_string: base:int -> string -> q = "mlgmp_q_of_based_string";;
 val q_of_string: string -> q;;
 external based_string_of_q: base:int -> q -> string = "mlgmp_based_string_of_q";;
@@ -68,12 +84,15 @@ module Q: sig
 	val zero: t;;
 	val one: t;;
 	external compare: t -> t -> int = "mlgmp_q_compare";;
+	external compare_int: t -> int -> int = "mlgmp_q_compare_int";;
 	external neg: t -> t = "mlgmp_q_neg";;
+	external abs: t -> t = "mlgmp_q_abs";;
 	external add: t -> t -> t = "mlgmp_q_add";;
 	external add_int: t -> int -> t = "mlgmp_q_add_int";;
 	external sub: t -> t -> t = "mlgmp_q_sub";;
 	external mul: t -> t -> t = "mlgmp_q_mul";;
 	external div: t -> t -> t = "mlgmp_q_div";;
+	external pow_int: base:t -> exponent:int -> t = "mlgmp_q_pow_int";;
 	external int_pow_int: base:int -> exponent:int -> t = "mlgmp_q_int_pow_int";;
 	external scale: t -> base:int -> exponent:int -> t = "mlgmp_q_scale";;
 	(* partial acccess *)
@@ -91,8 +110,6 @@ module Q: sig
 	external make_int: int -> int -> t = "mlgmp_q_make_int";;
 	external make_z: z -> z -> t = "mlgmp_q_make_z";;
 end;;
-
-type f;;
 
 external f_of_based_string: prec:int -> base:int -> string -> f = "mlgmp_f_of_based_string";;
 val f_of_string: prec:int -> string -> f;;
@@ -112,12 +129,15 @@ module F (Prec: sig val prec: int end): sig
 	val zero: t;;
 	val one: t;;
 	external compare: t -> t -> int = "mlgmp_f_compare";;
+	external compare_int: t -> int -> int = "mlgmp_f_compare_int";;
 	val neg: t -> t;;
+	val abs: t -> t;;
 	val add: t -> t -> t;;
 	val add_int: t -> int -> t;;
 	val sub: t -> t -> t;;
 	val mul: t -> t -> t;;
 	val div: t -> t -> t;;
+	val pow_int: base:t -> exponent:int -> t;;
 	val int_pow_int: base:int -> exponent:int -> t;;
 	val scale: t -> base:int -> exponent:int -> t;;
 	(* floating-point operations *)

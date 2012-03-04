@@ -1,3 +1,4 @@
+open Gmp2mlgmp;;
 (*
  * Exact real arithmetic (Constructive reals).
  * Copyright (C) 2000 Jean-Christophe FILLIATRE

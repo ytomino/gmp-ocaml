@@ -3,14 +3,19 @@ module type N = sig (* numeric *)
 	val zero: t;;
 	val one: t;;
 	val compare: t -> t -> int;;
+	val compare_int: t -> int -> int;;
 	val neg: t -> t;;
+	(* val abs: t -> real;; *)
 	val add: t -> t -> t;;
 	val add_int: t -> int -> t;;
 	val sub: t -> t -> t;;
 	val mul: t -> t -> t;;
 	val div: t -> t -> t;;
+	val pow_int: base:t -> exponent:int -> t;;
+	(* val pow_q: base:t -> exponent:Gmp.Q -> t;; *)
 	val int_pow_int: base:int -> exponent:int -> t;;
 	val scale: t -> base:int -> exponent:int -> t;;
+	(* val sqrt: t -> t;; *)
 	val of_based_string: base:int -> string -> t;;
 	val of_string: string -> t;;
 	val to_based_string: base:int -> t -> string;;

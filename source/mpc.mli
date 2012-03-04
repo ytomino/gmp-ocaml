@@ -24,12 +24,15 @@ module C (Prec: sig val prec: int * int end): sig
 	val one: t;;
 	val i: t;;
 	external compare: t -> t -> int = "mlmpc_c_compare";;
+	external compare_int: t -> int -> int = "mlmpc_c_compare_int";;
 	val neg: mode:rounding_mode -> t -> t;;
+	val abs: mode:Mpfr.rounding_mode -> t -> fr;;
 	val add: mode:rounding_mode -> t -> t -> t;;
 	val add_int: mode:rounding_mode -> t -> int -> t;;
 	val sub: mode:rounding_mode -> t -> t -> t;;
 	val mul: mode:rounding_mode -> t -> t -> t;;
 	val div: mode:rounding_mode -> t -> t -> t;;
+	val pow_int: mode:rounding_mode -> base:t -> exponent:int -> t;;
 	val int_pow_int: mode:rounding_mode -> base:int -> exponent:int -> t;;
 	val scale: mode:rounding_mode -> t -> base:int -> exponent:int -> t;;
 	(* floating-point operations *)
@@ -62,12 +65,15 @@ module C (Prec: sig val prec: int * int end): sig
 		val one: t;;
 		val i: t;;
 		external compare: t -> t -> int = "mlmpc_c_compare";;
+		external compare_int: t -> int -> int = "mlmpc_c_compare_int";;
 		val neg: t -> t;;
+		val abs: t -> fr;;
 		val add: t -> t -> t;;
 		val add_int: t -> int -> t;;
 		val sub: t -> t -> t;;
 		val mul: t -> t -> t;;
 		val div: t -> t -> t;;
+		val pow_int: base:t -> exponent:int -> t;;
 		val int_pow_int: base:int -> exponent:int -> t;;
 		val scale: t -> base:int -> exponent:int -> t;;
 		(* floating-point operations *)

@@ -69,6 +69,13 @@ CAMLprim value mlmpfr_fr_compare(value left, value right)
 	CAMLreturn(Val_int(result));
 }
 
+CAMLprim value mlmpfr_fr_compare_int(value left, value right)
+{
+	CAMLparam2(left, right);
+	int result = mpfr_cmp_si(FR_val(left), Long_val(right));
+	CAMLreturn(Val_int(result));
+}
+
 CAMLprim value mlmpfr_fr_neg(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
@@ -77,6 +84,17 @@ CAMLprim value mlmpfr_fr_neg(value prec, value mode, value x)
 	mpfr_ptr result_value = FR_val(result);
 	mpfr_init2(result_value, Long_val(prec));
 	mpfr_neg(result_value, FR_val(x), Rnd_val(mode));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlmpfr_fr_abs(value prec, value mode, value x)
+{
+	CAMLparam3(prec, mode, x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlmpfr_fr_ops, sizeof(mpfr_t), 0, 1);
+	mpfr_ptr result_value = FR_val(result);
+	mpfr_init2(result_value, Long_val(prec));
+	mpfr_abs(result_value, FR_val(x), Rnd_val(mode));
 	CAMLreturn(result);
 }
 
@@ -132,6 +150,17 @@ CAMLprim value mlmpfr_fr_div(value prec, value mode, value left, value right)
 	mpfr_ptr result_value = FR_val(result);
 	mpfr_init2(result_value, Long_val(prec));
 	mpfr_div(result_value, FR_val(left), FR_val(right), Rnd_val(mode));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlmpfr_fr_pow_int(value prec, value mode, value base, value exponent)
+{
+	CAMLparam4(prec, mode, base, exponent);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlmpfr_fr_ops, sizeof(mpfr_t), 0, 1);
+	mpfr_ptr result_value = FR_val(result);
+	mpfr_init2(result_value, Long_val(prec));
+	mpfr_pow_ui(result_value, FR_val(base), Long_val(exponent), Rnd_val(mode));
 	CAMLreturn(result);
 }
 

@@ -2,6 +2,8 @@ external setup: unit -> unit = "mlgmp_setup";;
 setup ();;
 
 type z;;
+type q;;
+type f;;
 
 external z_of_based_string: base:int -> string -> z = "mlgmp_z_of_based_string";;
 let z_of_string = z_of_based_string ~base:10;;
@@ -14,6 +16,7 @@ external int32_of_z: z -> int32 = "mlgmp_int32_of_z";;
 external z_of_nativeint: nativeint -> z = "mlgmp_z_of_nativeint";;
 external nativeint_of_z: z -> nativeint = "mlgmp_nativeint_of_z";;
 external z_of_int64: int64 -> z = "mlgmp_z_of_int64";;
+external z_of_truncated_float: float -> z = "mlgmp_z_of_truncated_float";;
 external int64_of_z: z -> int64 = "mlgmp_int64_of_z";;
 external float_of_z: z -> float = "mlgmp_float_of_z";;
 
@@ -22,15 +25,29 @@ module Z = struct
 	let zero = z_of_int 0;;
 	let one = z_of_int 1;;
 	external compare: t -> t -> int = "mlgmp_z_compare";;
+	external compare_int: t -> int -> int = "mlgmp_z_compare_int";;
 	external neg: t -> t = "mlgmp_z_neg";;
+	external abs: t -> t = "mlgmp_z_abs";;
 	external add: t -> t -> t = "mlgmp_z_add";;
 	external add_int: t -> int -> t = "mlgmp_z_add_int";;
 	external sub: t -> t -> t = "mlgmp_z_sub";;
 	external mul: t -> t -> t = "mlgmp_z_mul";;
 	external div: t -> t -> t = "mlgmp_z_div";;
-	external rem: t -> t -> t = "mlgmp_z_rem";;
+	external pow_int: base:t -> exponent:int -> t = "mlgmp_z_pow_int";;
+	external pow_q: base:t -> exponent:q -> t = "mlgmp_z_pow_q";;
 	external int_pow_int: base:int -> exponent:int -> t = "mlgmp_z_int_pow_int";;
 	external scale: t -> base:int -> exponent:int -> t = "mlgmp_z_scale";;
+	external sqrt: t -> t = "mlgmp_z_sqrt";;
+	external rem: t -> t -> t = "mlgmp_z_rem";;
+	external modulo: t -> t -> t = "mlgmp_z_modulo";;
+	external tdiv: t -> t -> t * t = "mlgmp_z_tdiv";;
+	external cdiv: t -> t -> t * t = "mlgmp_z_cdiv";;
+	external fdiv: t -> t -> t * t = "mlgmp_z_fdiv";;
+	external tsqrt: t -> t * t = "mlgmp_z_tsqrt";;
+	external gcdext: t -> t -> t * t * t = "mlgmp_z_gcdext";;
+	external invert: t -> t -> t option = "mlgmp_z_invert";;
+	external is_perfect_power: t -> bool = "mlgmp_z_is_perfect_power";;
+	external is_perfect_square: t -> bool = "mlgmp_z_is_perfect_square";;
 	external logand: t -> t -> t = "mlgmp_z_logand";;
 	external logor: t -> t -> t = "mlgmp_z_logor";;
 	external logxor: t -> t -> t = "mlgmp_z_logxor";;
@@ -52,8 +69,6 @@ module Z = struct
 	external to_float: t -> float = "mlgmp_float_of_z";;
 end;;
 
-type q;;
-
 external q_of_based_string: base:int -> string -> q = "mlgmp_q_of_based_string";;
 let q_of_string = q_of_based_string ~base:10;;
 external based_string_of_q: base:int -> q -> string = "mlgmp_based_string_of_q";;
@@ -69,12 +84,15 @@ module Q = struct
 	let zero = q_of_int 0;;
 	let one = q_of_int 1;;
 	external compare: t -> t -> int = "mlgmp_q_compare";;
+	external compare_int: t -> int -> int = "mlgmp_q_compare_int";;
 	external neg: t -> t = "mlgmp_q_neg";;
+	external abs: t -> t = "mlgmp_q_abs";;
 	external add: t -> t -> t = "mlgmp_q_add";;
 	external add_int: t -> int -> t = "mlgmp_q_add_int";;
 	external sub: t -> t -> t = "mlgmp_q_sub";;
 	external mul: t -> t -> t = "mlgmp_q_mul";;
 	external div: t -> t -> t = "mlgmp_q_div";;
+	external pow_int: base:t -> exponent:int -> t = "mlgmp_q_pow_int";;
 	external int_pow_int: base:int -> exponent:int -> t = "mlgmp_q_int_pow_int";;
 	external scale: t -> base:int -> exponent:int -> t = "mlgmp_q_scale";;
 	external num: t -> z = "mlgmp_q_num";;
@@ -91,14 +109,14 @@ module Q = struct
 	external make_z: z -> z -> t = "mlgmp_q_make_z";;
 end;;
 
-type f;;
-
 external neg: prec:int -> f -> f = "mlgmp_f_neg";;
+external abs: prec:int -> f -> f = "mlgmp_f_abs";;
 external add: prec:int -> f -> f -> f = "mlgmp_f_add";;
 external add_int: prec:int -> f -> int -> f = "mlgmp_f_add_int";;
 external sub: prec:int -> f -> f -> f = "mlgmp_f_sub";;
 external mul: prec:int -> f -> f -> f = "mlgmp_f_mul";;
 external div: prec:int -> f -> f -> f = "mlgmp_f_div";;
+external pow_int: prec:int -> base:f -> exponent:int -> f = "mlgmp_f_pow_int";;
 external int_pow_int: prec:int -> base:int -> exponent:int -> f = "mlgmp_f_int_pow_int";;
 external scale: prec:int -> f -> base:int -> exponent:int -> f = "mlgmp_f_scale";;
 external log: prec:int -> f -> f = "mlgmp_f_log";;
@@ -123,12 +141,15 @@ module F (Prec: sig val prec: int end) = struct
 	let zero = f_of_int ~prec 0;;
 	let one = f_of_int ~prec 1;;
 	external compare: t -> t -> int = "mlgmp_f_compare";;
+	external compare_int: t -> int -> int = "mlgmp_f_compare_int";;
 	let neg = neg ~prec;;
+	let abs = abs ~prec;;
 	let add = add ~prec;;
 	let add_int = add_int ~prec;;
 	let sub = sub ~prec;;
 	let mul = mul ~prec;;
 	let div = div ~prec;;
+	let pow_int = pow_int ~prec;;
 	let int_pow_int = int_pow_int ~prec;;
 	let scale = scale ~prec;;
 	let log = log ~prec;;

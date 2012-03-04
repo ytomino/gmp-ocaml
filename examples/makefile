@@ -6,33 +6,48 @@ endif
 
 export CAML_LD_LIBRARY_PATH=$(BUILDDIR)/stublibs
 
-.PHONY: all test_conv test_marshal test_sig interactive clean
+.PHONY: all interactive clean
 
-all: test_conv test_marshal test_sig
+all: \
+	$(BUILDDIR)/test_conv.opt.exe \
+	$(BUILDDIR)/test_marshal.opt.exe \
+	$(BUILDDIR)/test_sig.opt.exe \
+	$(BUILDDIR)/essai.byte.exe $(BUILDDIR)/essai.opt.exe \
+	$(BUILDDIR)/test_creal.byte.exe $(BUILDDIR)/test_creal.opt.exe \
+	$(BUILDDIR)/test_mlgmp.byte.exe $(BUILDDIR)/test_mlgmp.opt.exe \
+	$(BUILDDIR)/test_suite.byte.exe $(BUILDDIR)/test_suite.opt.exe
 
-test_conv: test_conv.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
-	@echo "**** test for conversions ****"
+$(BUILDDIR)/%.opt.exe: %.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
+	@echo "**** $< ****"
 	ocaml -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma $<
+	ocamlc -c -o $(@:.opt.exe=.cmo) -I $(BUILDDIR) $<
+	ocamlc -o $(@:.opt.exe=.byte.exe) -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma $(@:.opt.exe=.cmo)
+	$(@:.opt.exe=.byte.exe)
+	ocamlopt -c -o $(@:.opt.exe=.cmx) -I $(BUILDDIR) $<
+	ocamlopt -o $@ -I $(BUILDDIR) gmp.cmxa mpfr.cmxa mpc.cmxa $(@:.opt.exe=.cmx)
+	$@
 
-test_marshal: test_marshal.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
-	@echo "**** test for marshaling ****"
-	ocaml -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma $<
-	ocamlc -c -o $(BUILDDIR)/test_marshal.cmo -I $(BUILDDIR) $<
-	ocamlc -o $(BUILDDIR)/test_marshal.byte.exe -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma test_marshal.cmo
-	$(BUILDDIR)/test_marshal.byte.exe
-	ocamlopt -c -o $(BUILDDIR)/test_marshal.cmx -I $(BUILDDIR) $<
-	ocamlopt -o $(BUILDDIR)/test_marshal.opt.exe -I $(BUILDDIR) gmp.cmxa mpfr.cmxa mpc.cmxa test_marshal.cmx
-	$(BUILDDIR)/test_marshal.opt.exe
+$(BUILDDIR)/gmp2mlgmp.cmo: mlgmp/gmp2mlgmp.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma
+	ocamlc -c -o $@ -I $(BUILDDIR) $<
 
-test_sig: test_sig.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
-	@echo "**** test for signature ****"
-	ocaml -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma $<
-	ocamlc -c -o $(BUILDDIR)/test_sig.cmo -I $(BUILDDIR) $<
-	ocamlc -o $(BUILDDIR)/test_sig.byte.exe -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma test_sig.cmo
-	$(BUILDDIR)/test_sig.byte.exe
-	ocamlopt -c -o $(BUILDDIR)/test_sig.cmx -I $(BUILDDIR) $<
-	ocamlopt -o $(BUILDDIR)/test_sig.opt.exe -I $(BUILDDIR) gmp.cmxa mpfr.cmxa mpc.cmxa test_sig.cmx
-	$(BUILDDIR)/test_sig.opt.exe
+$(BUILDDIR)/gmp2mlgmp.cmx: mlgmp/gmp2mlgmp.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma
+	ocamlopt -c -o $@ -I $(BUILDDIR) $<
+
+$(BUILDDIR)/creal.cmo: mlgmp/creal.ml $(BUILDDIR)/gmp2mlgmp.cmo
+	ocamlc -c -o $(@:.cmo=.cmi) -I $(BUILDDIR) $(<:.ml=.mli)
+	ocamlc -c -o $@ -I $(BUILDDIR) $<
+
+$(BUILDDIR)/creal.cmx: mlgmp/creal.ml $(BUILDDIR)/gmp2mlgmp.cmx
+	ocamlopt -c -o $(@:.cmo=.cmi) -I $(BUILDDIR) $(<:.ml=.mli)
+	ocamlopt -c -o $@ -I $(BUILDDIR) $<
+
+$(BUILDDIR)/%.byte.exe: mlgmp/%.ml $(BUILDDIR)/creal.cmo
+	ocamlc -c -o $(@:.byte.exe=.cmo) -I $(BUILDDIR) $<
+	ocamlc -o $@ -I $(BUILDDIR) gmp.cma mpfr.cma $(BUILDDIR)/gmp2mlgmp.cmo $(BUILDDIR)/creal.cmo $(@:.byte.exe=.cmo)
+
+$(BUILDDIR)/%.opt.exe: mlgmp/%.ml $(BUILDDIR)/creal.cmx
+	ocamlopt -c -o $(@:.opt.exe=.cmx) -I $(BUILDDIR) $<
+	ocamlopt -o $@ -I $(BUILDDIR) gmp.cmxa mpfr.cmxa $(BUILDDIR)/gmp2mlgmp.cmx $(BUILDDIR)/creal.cmx $(@:.opt.exe=.cmx)
 
 interactive: $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
 	$(RLWRAP) ocaml -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma

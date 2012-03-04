@@ -1,3 +1,4 @@
+open Gmp2mlgmp;;
 
 (*s Test program for [Creal]. *)
 

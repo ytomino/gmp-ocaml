@@ -72,6 +72,13 @@ CAMLprim value mlgmp_z_compare(value left, value right)
 	CAMLreturn(Val_int(result));
 }
 
+CAMLprim value mlgmp_z_compare_int(value left, value right)
+{
+	CAMLparam2(left, right);
+	int result = mpz_cmp_si(Z_val(left), Long_val(right));
+	CAMLreturn(Val_int(result));
+}
+
 CAMLprim value mlgmp_z_neg(value x)
 {
 	CAMLparam1(x);
@@ -80,6 +87,17 @@ CAMLprim value mlgmp_z_neg(value x)
 	mpz_ptr result_value = Z_val(result);
 	mpz_init(result_value);
 	mpz_neg(result_value, Z_val(x));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_abs(value x)
+{
+	CAMLparam1(x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_ptr result_value = Z_val(result);
+	mpz_init(result_value);
+	mpz_abs(result_value, Z_val(x));
 	CAMLreturn(result);
 }
 
@@ -155,6 +173,55 @@ CAMLprim value mlgmp_z_rem(value left, value right)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlgmp_z_pow_int(value base, value exponent)
+{
+	CAMLparam2(base, exponent);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_ptr result_value = Z_val(result);
+	mpz_init(result_value);
+	long e = Long_val(exponent);
+	if(e >= 0){
+		mpz_pow_ui(result_value, Z_val(base), e);
+	}else{
+		mpz_set_si(result_value, 0);
+	}
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_pow_q(value base, value exponent)
+{
+	CAMLparam2(base, exponent);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_ptr result_value = Z_val(result);
+	mpz_init(result_value);
+	mpz_ptr b = Z_val(base);
+	mpq_ptr e = Q_val(exponent);
+	mpz_ptr e_num = mpq_numref(e);
+	mpz_ptr e_den = mpq_denref(e);
+	mpz_t a;
+	mpz_init(a);
+	if(mpq_cmp_ui(e, 0, 0) >= 0){
+		mpz_pow_ui(a, b, mpz_get_ui(e_num));
+		mpz_root(result_value, a, mpz_get_ui(e_den));
+	}else{
+		/* b^-e = 1/b^e */
+		int c = mpz_cmp_ui(b, 1);
+		if(c > 0){
+			/* if b > 1 then b^e > 1 therefore 1/b^e < 1, truncate(1/b^e) = 0 */
+			mpz_set_si(result_value, 0);
+		}else if(c < 0){
+			/* if b < 1 then b = 0 therefore b^e = 0 */
+			caml_raise_zero_divide();
+		}else{
+			/* if b = 1 then b^e = 1 therefore 1/b^e = 1 */
+			mpz_set_si(result_value, 1);
+		}
+	}
+	CAMLreturn(result);
+}
+
 CAMLprim value mlgmp_z_int_pow_int(value base, value exponent)
 {
 	CAMLparam2(base, exponent);
@@ -199,6 +266,149 @@ CAMLprim value mlgmp_z_scale(value fraction, value base, value exponent)
 		}
 		mpz_clear(a);
 	}
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_sqrt(value x)
+{
+	CAMLparam1(x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_ptr result_value = Z_val(result);
+	mpz_init(result_value);
+	mpz_sqrt(result_value, Z_val(x));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_tdiv(value left, value right)
+{
+	CAMLparam2(left, right);
+	CAMLlocal3(result, q, r);
+	q = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	r = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_ptr q_value = Z_val(q);
+	mpz_init(q_value);
+	mpz_ptr r_value = Z_val(r);
+	mpz_init(r_value);
+	mpz_tdiv_qr(q_value, r_value, Z_val(left), Z_val(right));
+	result = caml_alloc_tuple(2);
+	Field(result, 0) = q;
+	Field(result, 1) = r;
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_cdiv(value left, value right)
+{
+	CAMLparam2(left, right);
+	CAMLlocal3(result, q, r);
+	q = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	r = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_ptr q_value = Z_val(q);
+	mpz_init(q_value);
+	mpz_ptr r_value = Z_val(r);
+	mpz_init(r_value);
+	mpz_cdiv_qr(q_value, r_value, Z_val(left), Z_val(right));
+	result = caml_alloc_tuple(2);
+	Field(result, 0) = q;
+	Field(result, 1) = r;
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_fdiv(value left, value right)
+{
+	CAMLparam2(left, right);
+	CAMLlocal3(result, q, r);
+	q = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	r = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_ptr q_value = Z_val(q);
+	mpz_init(q_value);
+	mpz_ptr r_value = Z_val(r);
+	mpz_init(r_value);
+	mpz_fdiv_qr(q_value, r_value, Z_val(left), Z_val(right));
+	result = caml_alloc_tuple(2);
+	Field(result, 0) = q;
+	Field(result, 1) = r;
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_modulo(value left, value right)
+{
+	CAMLparam2(left, right);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_ptr result_value = Z_val(result);
+	mpz_init(result_value);
+	mpz_mod(result_value, Z_val(left), Z_val(right));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_tsqrt(value x)
+{
+	CAMLparam1(x);
+	CAMLlocal3(result, s, r);
+	s = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	r = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_ptr s_value = Z_val(s);
+	mpz_init(s_value);
+	mpz_ptr r_value = Z_val(r);
+	mpz_init(r_value);
+	mpz_sqrtrem(s_value, r_value, Z_val(x));
+	result = caml_alloc_tuple(2);
+	Field(result, 0) = s;
+	Field(result, 1) = r;
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_gcdext(value x, value y)
+{
+	CAMLparam2(x, y);
+	CAMLlocal4(result, g, s, t);
+	g = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	s = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	t = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_ptr g_value = Z_val(g);
+	mpz_init(g_value);
+	mpz_ptr s_value = Z_val(s);
+	mpz_init(s_value);
+	mpz_ptr t_value = Z_val(t);
+	mpz_init(t_value);
+	mpz_gcdext(g_value, s_value, t_value, Z_val(x), Z_val(y));
+	result = caml_alloc_tuple(3);
+	Field(result, 0) = g;
+	Field(result, 1) = s;
+	Field(result, 2) = t;
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_invert(value x, value y)
+{
+	CAMLparam2(x, y);
+	CAMLlocal2(result, i);
+	i = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_ptr i_value = Z_val(i);
+	mpz_init(i_value);
+	if(mpz_invert(i_value, Z_val(x), Z_val(y))){
+		result = caml_alloc(1, Int_val(Val_true)); /* Some i */
+		Field(result, 0) = i;
+	}else{
+		result = Val_false; /* None */
+	}
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_is_perfect_power(value x)
+{
+	CAMLparam1(x);
+	CAMLlocal1(result);
+	result = Val_bool(mpz_perfect_power_p(Z_val(x)));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_is_perfect_square(value x)
+{
+	CAMLparam1(x);
+	CAMLlocal1(result);
+	result = Val_bool(mpz_perfect_square_p(Z_val(x)));
 	CAMLreturn(result);
 }
 
@@ -392,6 +602,15 @@ CAMLprim value mlgmp_int64_of_z(value x)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlgmp_z_of_truncated_float(value x)
+{
+	CAMLparam1(x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_init_set_d(Z_val(result), Double_val(x));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlgmp_float_of_z(value x)
 {
 	CAMLparam1(x);
@@ -457,6 +676,13 @@ CAMLprim value mlgmp_q_compare(value left, value right)
 	CAMLreturn(Val_int(result));
 }
 
+CAMLprim value mlgmp_q_compare_int(value left, value right)
+{
+	CAMLparam2(left, right);
+	int result = mpq_cmp_si(Q_val(left), Long_val(right), 1);
+	CAMLreturn(Val_int(result));
+}
+
 CAMLprim value mlgmp_q_neg(value x)
 {
 	CAMLparam1(x);
@@ -465,6 +691,17 @@ CAMLprim value mlgmp_q_neg(value x)
 	mpq_ptr result_value = Q_val(result);
 	mpq_init(result_value);
 	mpq_neg(result_value, Q_val(x));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_q_abs(value x)
+{
+	CAMLparam1(x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
+	mpq_ptr result_value = Q_val(result);
+	mpq_init(result_value);
+	mpq_abs(result_value, Q_val(x));
 	CAMLreturn(result);
 }
 
@@ -525,6 +762,26 @@ CAMLprim value mlgmp_q_div(value left, value right)
 	mpq_ptr result_value = Q_val(result);
 	mpq_init(result_value);
 	mpq_div(result_value, Q_val(left), Q_val(right));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_q_pow_int(value base, value exponent)
+{
+	CAMLparam2(base, exponent);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
+	mpq_ptr result_value = Q_val(result);
+	mpq_init(result_value);
+	mpq_ptr b = Q_val(base);
+	long e = Long_val(exponent);
+	if(e >= 0){
+		mpz_pow_ui(mpq_numref(result_value), mpq_numref(b), e);
+		mpz_pow_ui(mpq_denref(result_value), mpq_denref(b), e);
+	}else{
+		mpz_pow_ui(mpq_numref(result_value), mpq_denref(b), -e);
+		mpz_pow_ui(mpq_denref(result_value), mpq_numref(b), -e);
+	}
+	mpq_canonicalize(result_value);
 	CAMLreturn(result);
 }
 
@@ -785,6 +1042,13 @@ CAMLprim value mlgmp_f_compare(value left, value right)
 	CAMLreturn(Val_int(result));
 }
 
+CAMLprim value mlgmp_f_compare_int(value left, value right)
+{
+	CAMLparam2(left, right);
+	int result = mpf_cmp_si(F_val(left), Long_val(right));
+	CAMLreturn(Val_int(result));
+}
+
 CAMLprim value mlgmp_f_neg(value prec, value x)
 {
 	CAMLparam2(prec, x);
@@ -793,6 +1057,17 @@ CAMLprim value mlgmp_f_neg(value prec, value x)
 	mpf_ptr result_value = F_val(result);
 	mpf_init2(result_value, Long_val(prec));
 	mpf_neg(result_value, F_val(x));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_f_abs(value prec, value x)
+{
+	CAMLparam2(prec, x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
+	mpf_ptr result_value = F_val(result);
+	mpf_init2(result_value, Long_val(prec));
+	mpf_abs(result_value, F_val(x));
 	CAMLreturn(result);
 }
 
@@ -854,6 +1129,28 @@ CAMLprim value mlgmp_f_sub(value prec, value left, value right)
 	mpf_ptr result_value = F_val(result);
 	mpf_init2(result_value, Long_val(prec));
 	mpf_sub(result_value, F_val(left), F_val(right));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_f_pow_int(value prec, value base, value exponent)
+{
+	CAMLparam3(prec, base, exponent);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
+	mpf_ptr result_value = F_val(result);
+	mp_bitcnt_t p = Long_val(prec);
+	mpf_init2(result_value, p);
+	mpf_ptr b = F_val(base);
+	long e = Long_val(exponent);
+	if(e >= 0){
+		mpf_pow_ui(result_value, b, Long_val(exponent));
+	}else{
+		mpf_t a;
+		mpf_init2(a, p);
+		mpf_pow_ui(a, b, -e);
+		mpf_ui_div(result_value, 1, a);
+		mpf_clear(a);
+	}
 	CAMLreturn(result);
 }
 
