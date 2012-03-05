@@ -448,6 +448,53 @@ CAMLprim value mlgmp_z_legendre(value a, value p)
 	CAMLreturn(Val_int(result));
 }
 
+CAMLprim value mlgmp_z_remove(value x, value f)
+{
+	CAMLparam2(x, f);
+	CAMLlocal2(result, rop);
+	rop = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_ptr rop_value = Z_val(rop);
+	mpz_init(rop_value);
+	mp_bitcnt_t removed = mpz_remove(rop_value, Z_val(x), Z_val(f));
+	result = alloc_tuple(2);
+	Field(result, 0) = rop;
+	Field(result, 1) = Val_long(removed);
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_fac_int(value x)
+{
+	CAMLparam1(x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_ptr result_value = Z_val(result);
+	mpz_init(result_value);
+	mpz_fac_ui(result_value, Long_val(x));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_bin_int(value n, value k)
+{
+	CAMLparam2(n, k);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_ptr result_value = Z_val(result);
+	mpz_init(result_value);
+	mpz_bin_ui(result_value, Z_val(n), Long_val(k));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_fib_int(value x)
+{
+	CAMLparam1(x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_ptr result_value = Z_val(result);
+	mpz_init(result_value);
+	mpz_fib_ui(result_value, Long_val(x));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlgmp_z_logand(value left, value right)
 {
 	CAMLparam2(left, right);
@@ -512,6 +559,20 @@ CAMLprim value mlgmp_z_shift_right(value left, value right)
 	mpz_init(result_value);
 	mpz_fdiv_q_2exp(result_value, Z_val(left), Long_val(right));
 	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_scan0(value x, value starting_bit)
+{
+	CAMLparam2(x, starting_bit);
+	mp_bitcnt_t result = mpz_scan0(Z_val(x), Long_val(starting_bit));
+	CAMLreturn(Val_long(result));
+}
+
+CAMLprim value mlgmp_z_scan1(value x, value starting_bit)
+{
+	CAMLparam2(x, starting_bit);
+	mp_bitcnt_t result = mpz_scan1(Z_val(x), Long_val(starting_bit));
+	CAMLreturn(Val_long(result));
 }
 
 CAMLprim value mlgmp_z_of_based_string(value base, value x)

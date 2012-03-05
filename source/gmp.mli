@@ -51,6 +51,10 @@ module Z: sig
 	external gcdext: t -> t -> t * t * t = "mlgmp_z_gcdext";;
 	external invert: t -> t -> t option = "mlgmp_z_invert";;
 	external legendre: t -> t -> int = "mlgmp_z_legendre";;
+	external remove: t -> t -> t * int = "mlgmp_z_remove";;
+	external fac_int: int -> t = "mlgmp_z_fac_int";;
+	external bin_int: t -> int -> t = "mlgmp_z_bin_int";;
+	external fib_int: int -> t = "mlgmp_z_fib_int";;
 	(* bit operations *)
 	external logand: t -> t -> t = "mlgmp_z_logand";;
 	external logor: t -> t -> t = "mlgmp_z_logor";;
@@ -58,6 +62,8 @@ module Z: sig
 	external lognot: t -> t = "mlgmp_z_lognot";;
 	external shift_left: t -> int -> t = "mlgmp_z_shift_left";;
 	external shift_right: t -> int -> t = "mlgmp_z_shift_right";;
+	external scan0: t -> int -> int = "mlgmp_z_scan0";;
+	external scan1: t -> int -> int = "mlgmp_z_scan1";;
 	(* conversions *)
 	external of_based_string: base:int -> string -> t = "mlgmp_z_of_based_string";;
 	val of_string: string -> t;;
