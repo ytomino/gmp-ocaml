@@ -200,11 +200,12 @@ CAMLprim value mlgmp_z_pow_q(value base, value exponent)
 	mpq_ptr e = Q_val(exponent);
 	mpz_ptr e_num = mpq_numref(e);
 	mpz_ptr e_den = mpq_denref(e);
-	mpz_t a;
-	mpz_init(a);
 	if(mpq_cmp_ui(e, 0, 0) >= 0){
+		mpz_t a;
+		mpz_init(a);
 		mpz_pow_ui(a, b, mpz_get_ui(e_num));
 		mpz_root(result_value, a, mpz_get_ui(e_den));
+		mpz_clear(a);
 	}else{
 		/* b^-e = 1/b^e */
 		int c = mpz_cmp_ui(b, 1);
@@ -532,23 +533,6 @@ CAMLprim value mlgmp_int32_of_z(value x)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlgmp_z_of_nativeint(value x)
-{
-	CAMLparam1(x);
-	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_init_set_si(Z_val(result), Nativeint_val(x));
-	CAMLreturn(result);
-}
-
-CAMLprim value mlgmp_nativeint_of_z(value x)
-{
-	CAMLparam1(x);
-	CAMLlocal1(result);
-	result = caml_copy_nativeint(mpz_get_si(Z_val(x)));
-	CAMLreturn(result);
-}
-
 CAMLprim value mlgmp_z_of_int64(value x)
 {
 	CAMLparam1(x);
@@ -599,6 +583,23 @@ CAMLprim value mlgmp_int64_of_z(value x)
 #else
 #error "sizeof(long) < 4"
 #endif
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_of_nativeint(value x)
+{
+	CAMLparam1(x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_init_set_si(Z_val(result), Nativeint_val(x));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_nativeint_of_z(value x)
+{
+	CAMLparam1(x);
+	CAMLlocal1(result);
+	result = caml_copy_nativeint(mpz_get_si(Z_val(x)));
 	CAMLreturn(result);
 }
 
@@ -835,6 +836,24 @@ CAMLprim value mlgmp_q_scale(value fraction, value base, value exponent)
 		mpq_mul(result_value, f, a);
 		mpq_clear(a);
 	}
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_q_sqrt(value x)
+{
+	CAMLparam1(x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
+	mpq_ptr result_value = Q_val(result);
+	mpq_init(result_value);
+	mpq_ptr x_value = Q_val(x);
+	mpz_t a;
+	mpz_init(a);
+	mpz_pow_ui(a, mpq_numref(x_value), 2);
+	mpz_sqrt(mpq_numref(result_value), a);
+	mpz_set(mpq_denref(result_value), mpq_denref(x_value));
+	mpq_canonicalize(result_value);
+	mpz_clear(a);
 	CAMLreturn(result);
 }
 
@@ -1218,6 +1237,17 @@ CAMLprim value mlgmp_f_scale(value prec, value fraction, value base, value expon
 	CAMLreturn(result);
 }
 
+CAMLprim value mlgmp_f_sqrt(value prec, value x)
+{
+	CAMLparam2(prec, x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
+	mpf_ptr result_value = F_val(result);
+	mpf_init2(result_value, Long_val(prec));
+	mpf_sqrt(result_value, F_val(x));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlgmp_f_log(value prec, value x)
 {
 	/* log x = log (m * 2^e)
@@ -1443,26 +1473,58 @@ static struct custom_operations random_ops = {
 
 /* functions */
 
-CAMLprim value mlgmp_random_make_z(value seed)
+CAMLprim value mlgmp_random_create(value unit)
 {
-	CAMLparam1(seed);
+	CAMLparam1(unit);
 	CAMLlocal1(result);
 	result = alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
 	__gmp_randstate_struct *result_value = Random_val(result);
 	gmp_randinit_default(result_value);
-	gmp_randseed(result_value, Z_val(seed));
 	CAMLreturn(result);
 }
 
-CAMLprim value mlgmp_random_make_int(value seed)
+CAMLprim value mlgmp_random_create_lc_2exp(value a, value c, value m2exp)
 {
-	CAMLparam1(seed);
+	CAMLparam3(a, c, m2exp);
 	CAMLlocal1(result);
 	result = alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
 	__gmp_randstate_struct *result_value = Random_val(result);
-	gmp_randinit_default(result_value);
-	gmp_randseed_ui(result_value, Long_val(seed));
+	gmp_randinit_lc_2exp(result_value, Z_val(a), Long_val(c), Long_val(m2exp));
 	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_random_create_lc_2exp_size(value size)
+{
+	CAMLparam1(size);
+	CAMLlocal1(result);
+	result = alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
+	__gmp_randstate_struct *result_value = Random_val(result);
+	gmp_randinit_lc_2exp_size(result_value, Long_val(size));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_random_create_mt(value unit)
+{
+	CAMLparam1(unit);
+	CAMLlocal1(result);
+	result = alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
+	__gmp_randstate_struct *result_value = Random_val(result);
+	gmp_randinit_mt(result_value);
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_random_seed_int(value state, value seed)
+{
+	CAMLparam2(state, seed);
+	gmp_randseed_ui(Random_val(state), Long_val(seed));
+	CAMLreturn(Val_unit);
+}
+
+CAMLprim value mlgmp_random_seed_z(value state, value seed)
+{
+	CAMLparam2(state, seed);
+	gmp_randseed(Random_val(state), Z_val(seed));
+	CAMLreturn(Val_unit);
 }
 
 CAMLprim value mlgmp_random_copy(value source)
@@ -1499,6 +1561,23 @@ CAMLprim value mlgmp_random_int32(value state, value n)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlgmp_random_int64(value state, value n)
+{
+	CAMLparam2(state, n);
+#if LONG_BIT >= 64
+	CAMLlocal1(result);
+	result = caml_copy_int64(gmp_urandomm_ui(Random_val(state), Int64_val(n)));
+#elif LONG_BIT >= 32
+	CAMLlocal3(result, nz, rz);
+	nz = mlgmp_z_of_int64(n);
+	rz = mlgmp_random_z(state, nz);
+	result = mlgmp_int64_of_z(rz);
+#else
+#error "sizeof(long) < 4"
+#endif
+	CAMLreturn(result);
+}
+
 CAMLprim value mlgmp_random_nativeint(value state, value n)
 {
 	CAMLparam2(state, n);
@@ -1523,23 +1602,6 @@ CAMLprim value mlgmp_random_z(value state, value n)
 	mpz_ptr result_value = Z_val(result);
 	mpz_init(result_value);
 	mpz_urandomm(result_value, Random_val(state), Z_val(n));
-	CAMLreturn(result);
-}
-
-CAMLprim value mlgmp_random_int64(value state, value n)
-{
-	CAMLparam2(state, n);
-#if LONG_BIT >= 64
-	CAMLlocal1(result);
-	result = caml_copy_int64(gmp_urandomm_ui(Random_val(state), Int64_val(n)));
-#elif LONG_BIT >= 32
-	CAMLlocal3(result, nz, rz);
-	nz = mlgmp_z_of_int64(n);
-	rz = mlgmp_random_z(state, nz);
-	result = mlgmp_int64_of_z(rz);
-#else
-#error "sizeof(long) < 4"
-#endif
 	CAMLreturn(result);
 }
 

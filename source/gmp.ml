@@ -13,10 +13,10 @@ external z_of_int: int -> z = "mlgmp_z_of_int";;
 external int_of_z: z -> int = "mlgmp_int_of_z";;
 external z_of_int32: int32 -> z = "mlgmp_z_of_int32";;
 external int32_of_z: z -> int32 = "mlgmp_int32_of_z";;
-external z_of_nativeint: nativeint -> z = "mlgmp_z_of_nativeint";;
-external nativeint_of_z: z -> nativeint = "mlgmp_nativeint_of_z";;
 external z_of_int64: int64 -> z = "mlgmp_z_of_int64";;
 external z_of_truncated_float: float -> z = "mlgmp_z_of_truncated_float";;
+external z_of_nativeint: nativeint -> z = "mlgmp_z_of_nativeint";;
+external nativeint_of_z: z -> nativeint = "mlgmp_nativeint_of_z";;
 external int64_of_z: z -> int64 = "mlgmp_int64_of_z";;
 external float_of_z: z -> float = "mlgmp_float_of_z";;
 
@@ -62,10 +62,10 @@ module Z = struct
 	external to_int: t -> int = "mlgmp_int_of_z";;
 	external of_int32: int32 -> t = "mlgmp_z_of_int32";;
 	external to_int32: int32 -> t = "mlgmp_int32_of_z";;
-	external of_nativeint: nativeint -> t = "mlgmp_z_of_nativeint";;
-	external to_nativeint: nativeint -> t = "mlgmp_nativeint_of_z";;
 	external of_int64: int64 -> t = "mlgmp_z_of_int64";;
 	external to_int64: t -> int64 = "mlgmp_int64_of_z";;
+	external of_nativeint: nativeint -> t = "mlgmp_z_of_nativeint";;
+	external to_nativeint: nativeint -> t = "mlgmp_nativeint_of_z";;
 	external to_float: t -> float = "mlgmp_float_of_z";;
 end;;
 
@@ -95,6 +95,7 @@ module Q = struct
 	external pow_int: base:t -> exponent:int -> t = "mlgmp_q_pow_int";;
 	external int_pow_int: base:int -> exponent:int -> t = "mlgmp_q_int_pow_int";;
 	external scale: t -> base:int -> exponent:int -> t = "mlgmp_q_scale";;
+	external sqrt: t -> t = "mlgmp_q_sqrt";;
 	external num: t -> z = "mlgmp_q_num";;
 	external den: t -> z = "mlgmp_q_den";;
 	external of_based_string: base:int -> string -> t = "mlgmp_q_of_based_string";;
@@ -119,6 +120,7 @@ external div: prec:int -> f -> f -> f = "mlgmp_f_div";;
 external pow_int: prec:int -> base:f -> exponent:int -> f = "mlgmp_f_pow_int";;
 external int_pow_int: prec:int -> base:int -> exponent:int -> f = "mlgmp_f_int_pow_int";;
 external scale: prec:int -> f -> base:int -> exponent:int -> f = "mlgmp_f_scale";;
+external sqrt: prec:int -> f -> f = "mlgmp_f_sqrt";;
 external log: prec:int -> f -> f = "mlgmp_f_log";;
 external based_log: prec:int -> base:int -> f -> f = "mlgmp_f_based_log";;
 external frexp: prec:int -> f -> f * int = "mlgmp_f_frexp";;
@@ -152,6 +154,7 @@ module F (Prec: sig val prec: int end) = struct
 	let pow_int = pow_int ~prec;;
 	let int_pow_int = int_pow_int ~prec;;
 	let scale = scale ~prec;;
+	let sqrt = sqrt ~prec;;
 	let log = log ~prec;;
 	let based_log = based_log ~prec;;
 	let frexp = frexp ~prec;;
@@ -169,25 +172,31 @@ external random_seed: unit -> int = "caml_sys_random_seed";;
 
 module Random = struct
 	type t;;
-	external make_int: int -> t = "mlgmp_random_make_int";;
-	let make_self_init () = make_int (random_seed ());
-	external make_z: z -> t = "mlgmp_random_make_z";;
+	external create: unit -> t = "mlgmp_random_create";;
+	external create_lc_2exp: z -> int -> int -> t = "mlgmp_random_create_lc_2exp";;
+	external create_lc_2exp_size: int -> t = "mlgmp_random_create_lc_2exp_size";;
+	external create_mt: unit -> t = "mlgmp_random_create_mt";;
+	external seed_int: t -> int -> unit = "mlgmp_random_seed_int";;
+	external seed_z: t -> z -> unit = "mlgmp_random_seed_z";;
+	let make_int x = let r = create () in seed_int r x; r;;
+	let make_self_init () = make_int (random_seed ());;
+	let make_z x = let r = create () in seed_z r x; r;;
 	let make a =
 		let rec loop a i seed =
 			if i >= Array.length a then make_z seed else
 			let n = Z.add_int (Z.shift_left seed 30) a.(i) in
 			loop a (i + 1) n
 		in
-		loop a 0 Z.zero
+		loop a 0 Z.zero;;
 	external copy: t -> t = "mlgmp_random_copy";;
 	external bits: t -> int = "mlgmp_random_bits";;
-	external f_bits: t -> int -> f = "mlgmp_random_f_bits";;
 	external int: t -> int -> int = "mlgmp_random_int";;
 	external int32: t -> int32 -> int32 = "mlgmp_random_int32";;
-	external nativeint: t -> nativeint -> nativeint = "mlgmp_random_nativeint";;
 	external int64: t -> int64 -> int64 = "mlgmp_random_int64";;
+	external nativeint: t -> nativeint -> nativeint = "mlgmp_random_nativeint";;
 	external bool: t -> bool = "mlgmp_random_bool";;
-	let float state n = n *. float_of_f (f_bits state 52);;
 	external z: t -> z -> z = "mlgmp_random_z";;
+	external f_bits: t -> int -> f = "mlgmp_random_f_bits";;
 	external f: t -> prec:int -> f -> f = "mlgmp_random_f";;
+	let float state n = n *. float_of_f (f_bits state 52);;
 end;;

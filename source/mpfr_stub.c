@@ -207,6 +207,17 @@ CAMLprim value mlmpfr_fr_scale(value prec, value mode, value fraction, value bas
 	CAMLreturn(result);
 }
 
+CAMLprim value mlmpfr_fr_sqrt(value prec, value mode, value x)
+{
+	CAMLparam3(prec, mode, x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlmpfr_fr_ops, sizeof(mpfr_t), 0, 1);
+	mpfr_ptr result_value = FR_val(result);
+	mpfr_init2(result_value, Long_val(prec));
+	mpfr_sqrt(result_value, FR_val(x), Rnd_val(mode));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlmpfr_fr_based_log(value prec, value mode, value base, value x)
 {
 	CAMLparam4(prec, mode, base, x);

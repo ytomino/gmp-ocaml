@@ -15,7 +15,7 @@ module type N = sig (* numeric *)
 	(* val pow_q: base:t -> exponent:Gmp.Q -> t;; *)
 	val int_pow_int: base:int -> exponent:int -> t;;
 	val scale: t -> base:int -> exponent:int -> t;;
-	(* val sqrt: t -> t;; *)
+	val sqrt: t -> t;;
 	val of_based_string: base:int -> string -> t;;
 	val of_string: string -> t;;
 	val to_based_string: base:int -> t -> string;;

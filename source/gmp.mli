@@ -10,10 +10,10 @@ external z_of_int: int -> z = "mlgmp_z_of_int";;
 external int_of_z: z -> int = "mlgmp_int_of_z";;
 external z_of_int32: int32 -> z = "mlgmp_z_of_int32";;
 external int32_of_z: z -> int32 = "mlgmp_int32_of_z";;
-external z_of_nativeint: nativeint -> z = "mlgmp_z_of_nativeint";;
-external nativeint_of_z: z -> nativeint = "mlgmp_nativeint_of_z";;
 external z_of_int64: int64 -> z = "mlgmp_z_of_int64";;
 external int64_of_z: z -> int64 = "mlgmp_int64_of_z";;
+external z_of_nativeint: nativeint -> z = "mlgmp_z_of_nativeint";;
+external nativeint_of_z: z -> nativeint = "mlgmp_nativeint_of_z";;
 external z_of_truncated_float: float -> z = "mlgmp_z_of_truncated_float";;
 external float_of_z: z -> float = "mlgmp_float_of_z";;
 
@@ -62,10 +62,10 @@ module Z: sig
 	external to_int: t -> int = "mlgmp_int_of_z";;
 	external of_int32: int32 -> t = "mlgmp_z_of_int32";;
 	external to_int32: int32 -> t = "mlgmp_int32_of_z";;
-	external of_nativeint: nativeint -> t = "mlgmp_z_of_nativeint";;
-	external to_nativeint: nativeint -> t = "mlgmp_nativeint_of_z";;
 	external of_int64: int64 -> t = "mlgmp_z_of_int64";;
 	external to_int64: t -> int64 = "mlgmp_int64_of_z";;
+	external of_nativeint: nativeint -> t = "mlgmp_z_of_nativeint";;
+	external to_nativeint: nativeint -> t = "mlgmp_nativeint_of_z";;
 	external to_float: t -> float = "mlgmp_float_of_z";;
 end;;
 
@@ -95,6 +95,7 @@ module Q: sig
 	external pow_int: base:t -> exponent:int -> t = "mlgmp_q_pow_int";;
 	external int_pow_int: base:int -> exponent:int -> t = "mlgmp_q_int_pow_int";;
 	external scale: t -> base:int -> exponent:int -> t = "mlgmp_q_scale";;
+	external sqrt: t -> t = "mlgmp_q_sqrt";;
 	(* partial acccess *)
 	external num: t -> z = "mlgmp_q_num";;
 	external den: t -> z = "mlgmp_q_den";;
@@ -140,6 +141,7 @@ module F (Prec: sig val prec: int end): sig
 	val pow_int: base:t -> exponent:int -> t;;
 	val int_pow_int: base:int -> exponent:int -> t;;
 	val scale: t -> base:int -> exponent:int -> t;;
+	val sqrt: t -> t;;
 	(* floating-point operations *)
 	val log: t -> t;;
 	val based_log: base:int -> t -> t;;
@@ -157,19 +159,26 @@ end;;
 
 module Random: sig
 	type t;;
+	external create: unit -> t = "mlgmp_random_create";;
+	external create_lc_2exp: z -> int -> int -> t = "mlgmp_random_create_lc_2exp";;
+	external create_lc_2exp_size: int -> t = "mlgmp_random_create_lc_2exp_size";;
+	external create_mt: unit -> t = "mlgmp_random_create_mt";;
+	external seed_int: t -> int -> unit = "mlgmp_random_seed_int";;
+	external seed_z: t -> z -> unit = "mlgmp_random_seed_z";;
+	val make_int: int -> t;; (* create and seed_int *)
+	val make_self_init: unit -> t;; (* make_int with a seed of O'Caml runtime *)
+	val make_z: z -> t;; (* create and seed_z *)
 	val make: int array -> t;;
-	val make_self_init: unit -> t;;
-	external make_int: int -> t = "mlgmp_random_make_int";;
-	external make_z: z -> t = "mlgmp_random_make_z";;
 	external copy: t -> t = "mlgmp_random_copy";;
+	(* generating *)
 	external bits: t -> int = "mlgmp_random_bits";;
-	external f_bits: t -> int -> f = "mlgmp_random_f_bits";;
 	external int: t -> int -> int = "mlgmp_random_int";;
 	external int32: t -> int32 -> int32 = "mlgmp_random_int32";;
-	external nativeint: t -> nativeint -> nativeint = "mlgmp_random_nativeint";;
 	external int64: t -> int64 -> int64 = "mlgmp_random_int64";;
+	external nativeint: t -> nativeint -> nativeint = "mlgmp_random_nativeint";;
 	external bool: t -> bool = "mlgmp_random_bool";;
 	val float: t -> float -> float;;
 	external z: t -> z -> z = "mlgmp_random_z";;
+	external f_bits: t -> int -> f = "mlgmp_random_f_bits";;
 	external f: t -> prec:int -> f -> f = "mlgmp_random_f";;
 end;;

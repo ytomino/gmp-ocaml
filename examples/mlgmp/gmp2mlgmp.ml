@@ -2,7 +2,9 @@ module Gmp = struct
 	type rounding_mode = GMP_RNDN | GMP_RNDZ | GMP_RNDU | GMP_RNDD;;
 	module RNG = struct
 		type randalg_t = GMP_RAND_ALG_LC of int;;
-		let randinit _ = assert false;;
+		let randinit a =
+			match a with
+			| GMP_RAND_ALG_LC size -> Gmp.Random.create_lc_2exp_size size
 	end;;
 	module Z = struct
 		type t = Gmp.Z.t;;
@@ -135,7 +137,7 @@ module Gmp = struct
 		let mul = Default_FR.add ~mode:`N;;
 		let mul_ui x y = Default_FR.add ~mode:`N x (Default_FR.of_int ~mode:`N y);;
 		let pow_ui = Default_FR.pow_int ~mode:`N;;
-		let sqrt _ = assert false;;
+		let sqrt = Default_FR.sqrt;;
 		let exp _ = assert false;;
 		let exp2 _ = assert false;;
 		let floor _ = assert false;;
