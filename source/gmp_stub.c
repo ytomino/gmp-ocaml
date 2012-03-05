@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <limits.h>
 #include <math.h>
+#include <stdbool.h>
 #include <string.h>
 #include <gmp.h>
 #include "gmp_stub.h"
@@ -343,6 +344,17 @@ CAMLprim value mlgmp_z_modulo(value left, value right)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlgmp_z_pow_mod(value base, value exponent, value mod)
+{
+	CAMLparam3(base, exponent, mod);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_ptr result_value = Z_val(result);
+	mpz_init(result_value);
+	mpz_powm(result_value, Z_val(base), Z_val(exponent), Z_val(mod));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlgmp_z_tsqrt(value x)
 {
 	CAMLparam1(x);
@@ -360,9 +372,41 @@ CAMLprim value mlgmp_z_tsqrt(value x)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlgmp_z_gcdext(value x, value y)
+CAMLprim value mlgmp_z_is_perfect_power(value x)
 {
-	CAMLparam2(x, y);
+	CAMLparam1(x);
+	bool result = mpz_perfect_power_p(Z_val(x));
+	CAMLreturn(Val_bool(result));
+}
+
+CAMLprim value mlgmp_z_is_perfect_square(value x)
+{
+	CAMLparam1(x);
+	bool result = mpz_perfect_square_p(Z_val(x));
+	CAMLreturn(Val_bool(result));
+}
+
+CAMLprim value mlgmp_z_is_probably_prime(value n, value reps)
+{
+	CAMLparam2(n, reps);
+	int result = mpz_probab_prime_p(Z_val(n), Int_val(reps));
+	CAMLreturn(Val_int(result));
+}
+
+CAMLprim value mlgmp_z_next_prime(value x)
+{
+	CAMLparam1(x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_ptr result_value = Z_val(result);
+	mpz_init(result_value);
+	mpz_nextprime(result_value, Z_val(x));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_gcdext(value a, value b)
+{
+	CAMLparam2(a, b);
 	CAMLlocal4(result, g, s, t);
 	g = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
 	s = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
@@ -373,7 +417,7 @@ CAMLprim value mlgmp_z_gcdext(value x, value y)
 	mpz_init(s_value);
 	mpz_ptr t_value = Z_val(t);
 	mpz_init(t_value);
-	mpz_gcdext(g_value, s_value, t_value, Z_val(x), Z_val(y));
+	mpz_gcdext(g_value, s_value, t_value, Z_val(a), Z_val(b));
 	result = caml_alloc_tuple(3);
 	Field(result, 0) = g;
 	Field(result, 1) = s;
@@ -397,20 +441,11 @@ CAMLprim value mlgmp_z_invert(value x, value y)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlgmp_z_is_perfect_power(value x)
+CAMLprim value mlgmp_z_legendre(value a, value p)
 {
-	CAMLparam1(x);
-	CAMLlocal1(result);
-	result = Val_bool(mpz_perfect_power_p(Z_val(x)));
-	CAMLreturn(result);
-}
-
-CAMLprim value mlgmp_z_is_perfect_square(value x)
-{
-	CAMLparam1(x);
-	CAMLlocal1(result);
-	result = Val_bool(mpz_perfect_square_p(Z_val(x)));
-	CAMLreturn(result);
+	CAMLparam2(a, p);
+	int result = mpz_legendre(Z_val(a), Z_val(p));
+	CAMLreturn(Val_int(result));
 }
 
 CAMLprim value mlgmp_z_logand(value left, value right)
@@ -511,9 +546,8 @@ CAMLprim value mlgmp_z_of_int(value x)
 CAMLprim value mlgmp_int_of_z(value x)
 {
 	CAMLparam1(x);
-	CAMLlocal1(result);
-	result = Val_long(mpz_get_si(Z_val(x)));
-	CAMLreturn(result);
+	long result = mpz_get_si(Z_val(x));
+	CAMLreturn(Val_long(result));
 }
 
 CAMLprim value mlgmp_z_of_int32(value x)
@@ -1068,6 +1102,13 @@ CAMLprim value mlgmp_f_compare_int(value left, value right)
 	CAMLreturn(Val_int(result));
 }
 
+CAMLprim value mlgmp_f_nearly_equal(value bits, value left, value right)
+{
+	CAMLparam3(bits, left, right);
+	bool result = mpf_eq(F_val(left), F_val(right), Long_val(bits));
+	CAMLreturn(Val_bool(result));
+}
+
 CAMLprim value mlgmp_f_neg(value prec, value x)
 {
 	CAMLparam2(prec, x);
@@ -1248,6 +1289,56 @@ CAMLprim value mlgmp_f_sqrt(value prec, value x)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlgmp_f_frexp(value prec, value x)
+{
+	CAMLparam2(prec, x);
+	CAMLlocal3(result, result_fraction, result_exponent);
+	mp_bitcnt_t p = Long_val(prec);
+	mpf_ptr x_value = F_val(x);
+	long exponent;
+	mpf_get_d_2exp(&exponent, x_value);
+	result_exponent = Val_long(exponent);
+	if(exponent == 0){
+		result_fraction = x;
+	}else{
+		result_fraction = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
+		mpf_ptr rf_value = F_val(result_fraction);
+		mpf_init2(rf_value, p);
+		x_value = F_val(x); /* if gc was invoked by alloc_custom */
+		if(exponent > 0){
+			mpf_div_2exp(rf_value, x_value, exponent);
+		}else{
+			mpf_mul_2exp(rf_value, x_value, - exponent);
+		}
+	}
+	result = caml_alloc_tuple(2);
+	Field(result, 0) = result_fraction;
+	Field(result, 1) = result_exponent;
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_f_ceil(value prec, value x)
+{
+	CAMLparam2(prec, x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
+	mpf_ptr result_value = F_val(result);
+	mpf_init2(result_value, Long_val(prec));
+	mpf_ceil(result_value, F_val(x));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_f_floor(value prec, value x)
+{
+	CAMLparam2(prec, x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
+	mpf_ptr result_value = F_val(result);
+	mpf_init2(result_value, Long_val(prec));
+	mpf_floor(result_value, F_val(x));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlgmp_f_log(value prec, value x)
 {
 	/* log x = log (m * 2^e)
@@ -1296,34 +1387,6 @@ CAMLprim value mlgmp_f_based_log(value prec, value base, value x)
 		mpf_clear(base_value);
 		mpf_clear(logex);
 	}
-	CAMLreturn(result);
-}
-
-CAMLprim value mlgmp_f_frexp(value prec, value x)
-{
-	CAMLparam2(prec, x);
-	CAMLlocal3(result, result_fraction, result_exponent);
-	mp_bitcnt_t p = Long_val(prec);
-	mpf_ptr x_value = F_val(x);
-	long exponent;
-	mpf_get_d_2exp(&exponent, x_value);
-	result_exponent = Val_long(exponent);
-	if(exponent == 0){
-		result_fraction = x;
-	}else{
-		result_fraction = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-		mpf_ptr rf_value = F_val(result_fraction);
-		mpf_init2(rf_value, p);
-		x_value = F_val(x); /* if gc was invoked by alloc_custom */
-		if(exponent > 0){
-			mpf_div_2exp(rf_value, x_value, exponent);
-		}else{
-			mpf_mul_2exp(rf_value, x_value, - exponent);
-		}
-	}
-	result = caml_alloc_tuple(2);
-	Field(result, 0) = result_fraction;
-	Field(result, 1) = result_exponent;
 	CAMLreturn(result);
 }
 
@@ -1449,9 +1512,8 @@ CAMLprim value mlgmp_f_of_f(value prec, value x)
 CAMLprim value mlgmp_f_get_default_prec(value unit)
 {
 	CAMLparam1(unit);
-	CAMLlocal1(result);
-	result = Val_long(mpf_get_default_prec());
-	CAMLreturn(result);
+	long result = mpf_get_default_prec();
+	CAMLreturn(Val_long(result));
 }
 
 /**** Random ****/
@@ -1540,17 +1602,15 @@ CAMLprim value mlgmp_random_copy(value source)
 CAMLprim value mlgmp_random_bits(value state)
 {
 	CAMLparam1(state);
-	CAMLlocal1(result);
-	result = Val_long(gmp_urandomb_ui(Random_val(state), sizeof(value) * 8 - 2));
-	CAMLreturn(result);
+	long result = gmp_urandomb_ui(Random_val(state), sizeof(value) * 8 - 2);
+	CAMLreturn(Val_long(result));
 }
 
 CAMLprim value mlgmp_random_int(value state, value n)
 {
 	CAMLparam2(state, n);
-	CAMLlocal1(result);
-	result = Val_long(gmp_urandomm_ui(Random_val(state), Long_val(n)));
-	CAMLreturn(result);
+	long result = gmp_urandomm_ui(Random_val(state), Long_val(n));
+	CAMLreturn(Val_long(result));
 }
 
 CAMLprim value mlgmp_random_int32(value state, value n)
@@ -1589,9 +1649,8 @@ CAMLprim value mlgmp_random_nativeint(value state, value n)
 CAMLprim value mlgmp_random_bool(value state)
 {
 	CAMLparam1(state);
-	CAMLlocal1(result);
-	result = Val_bool(gmp_urandomb_ui(Random_val(state), 1));
-	CAMLreturn(result);
+	bool result = gmp_urandomb_ui(Random_val(state), 1);
+	CAMLreturn(Val_bool(result));
 }
 
 CAMLprim value mlgmp_random_z(value state, value n)

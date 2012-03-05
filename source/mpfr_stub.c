@@ -6,6 +6,7 @@
 #include <caml/mlvalues.h>
 #include <sys/types.h>
 #include <limits.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
 #include <mpfr.h>
@@ -74,6 +75,13 @@ CAMLprim value mlmpfr_fr_compare_int(value left, value right)
 	CAMLparam2(left, right);
 	int result = mpfr_cmp_si(FR_val(left), Long_val(right));
 	CAMLreturn(Val_int(result));
+}
+
+CAMLprim value mlmpfr_fr_nearly_equal(value bits, value left, value right)
+{
+	CAMLparam2(left, right);
+	bool result = mpfr_eq(FR_val(left), FR_val(right), Long_val(bits));
+	CAMLreturn(Val_bool(result));
 }
 
 CAMLprim value mlmpfr_fr_neg(value prec, value mode, value x)
@@ -218,6 +226,67 @@ CAMLprim value mlmpfr_fr_sqrt(value prec, value mode, value x)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlmpfr_fr_frexp(value prec, value mode, value x)
+{
+	CAMLparam3(prec, mode, x);
+	CAMLlocal3(result, result_fraction, result_exponent);
+	mpfr_prec_t p = Long_val(prec);
+	mpfr_ptr x_value = FR_val(x);
+	mpfr_rnd_t m = Rnd_val(mode);
+	mpfr_exp_t exponent = mpfr_get_exp(x_value);
+	result_exponent = Val_long(exponent);
+	if(exponent == 0){
+		result_fraction = x;
+	}else{
+		result_fraction = alloc_custom(&mlmpfr_fr_ops, sizeof(mpfr_t), 0, 1);
+		mpfr_ptr rf_value = FR_val(result_fraction);
+		mpfr_init2(rf_value, p);
+		x_value = FR_val(x); /* if gc was invoked by alloc_custom */
+		if(exponent > 0){
+			mpfr_div_2exp(rf_value, x_value, exponent, m);
+		}else{
+			mpfr_mul_2exp(rf_value, x_value, - exponent, m);
+		}
+	}
+	result = caml_alloc_tuple(2);
+	Field(result, 0) = result_fraction;
+	Field(result, 1) = result_exponent;
+	CAMLreturn(result);
+}
+
+CAMLprim value mlmpfr_fr_ceil(value prec, value x)
+{
+	CAMLparam2(prec, x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlmpfr_fr_ops, sizeof(mpfr_t), 0, 1);
+	mpfr_ptr result_value = FR_val(result);
+	mpfr_init2(result_value, Long_val(prec));
+	mpfr_ceil(result_value, FR_val(x));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlmpfr_fr_floor(value prec, value x)
+{
+	CAMLparam2(prec, x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlmpfr_fr_ops, sizeof(mpfr_t), 0, 1);
+	mpfr_ptr result_value = FR_val(result);
+	mpfr_init2(result_value, Long_val(prec));
+	mpfr_floor(result_value, FR_val(x));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlmpfr_fr_log(value prec, value mode, value x)
+{
+	CAMLparam3(prec, mode, x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlmpfr_fr_ops, sizeof(mpfr_t), 0, 1);
+	mpfr_ptr result_value = FR_val(result);
+	mpfr_init2(result_value, Long_val(prec));
+	mpfr_log(result_value, FR_val(x), Rnd_val(mode));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlmpfr_fr_based_log(value prec, value mode, value base, value x)
 {
 	CAMLparam4(prec, mode, base, x);
@@ -256,42 +325,47 @@ CAMLprim value mlmpfr_fr_based_log(value prec, value mode, value base, value x)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlmpfr_fr_log(value prec, value mode, value x)
+CAMLprim value mlmpfr_fr_pow(value prec, value mode, value base, value exponent)
+{
+	CAMLparam4(prec, mode, base, exponent);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlmpfr_fr_ops, sizeof(mpfr_t), 0, 1);
+	mpfr_ptr result_value = FR_val(result);
+	mpfr_init2(result_value, Long_val(prec));
+	mpfr_pow(result_value, FR_val(base), FR_val(exponent), Rnd_val(mode));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlmpfr_fr_exp(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
 	CAMLlocal1(result);
 	result = alloc_custom(&mlmpfr_fr_ops, sizeof(mpfr_t), 0, 1);
 	mpfr_ptr result_value = FR_val(result);
 	mpfr_init2(result_value, Long_val(prec));
-	mpfr_log(result_value, FR_val(x), Rnd_val(mode));
+	mpfr_exp(result_value, FR_val(x), Rnd_val(mode));
 	CAMLreturn(result);
 }
 
-CAMLprim value mlmpfr_fr_frexp(value prec, value mode, value x)
+CAMLprim value mlmpfr_fr_sin(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
-	CAMLlocal3(result, result_fraction, result_exponent);
-	mpfr_prec_t p = Long_val(prec);
-	mpfr_ptr x_value = FR_val(x);
-	mpfr_rnd_t m = Rnd_val(mode);
-	mpfr_exp_t exponent = mpfr_get_exp(x_value);
-	result_exponent = Val_long(exponent);
-	if(exponent == 0){
-		result_fraction = x;
-	}else{
-		result_fraction = alloc_custom(&mlmpfr_fr_ops, sizeof(mpfr_t), 0, 1);
-		mpfr_ptr rf_value = FR_val(result_fraction);
-		mpfr_init2(rf_value, p);
-		x_value = FR_val(x); /* if gc was invoked by alloc_custom */
-		if(exponent > 0){
-			mpfr_div_2exp(rf_value, x_value, exponent, m);
-		}else{
-			mpfr_mul_2exp(rf_value, x_value, - exponent, m);
-		}
-	}
-	result = caml_alloc_tuple(2);
-	Field(result, 0) = result_fraction;
-	Field(result, 1) = result_exponent;
+	CAMLlocal1(result);
+	result = alloc_custom(&mlmpfr_fr_ops, sizeof(mpfr_t), 0, 1);
+	mpfr_ptr result_value = FR_val(result);
+	mpfr_init2(result_value, Long_val(prec));
+	mpfr_sin(result_value, FR_val(x), Rnd_val(mode));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlmpfr_fr_acosh(value prec, value mode, value x)
+{
+	CAMLparam3(prec, mode, x);
+	CAMLlocal1(result);
+	result = alloc_custom(&mlmpfr_fr_ops, sizeof(mpfr_t), 0, 1);
+	mpfr_ptr result_value = FR_val(result);
+	mpfr_init2(result_value, Long_val(prec));
+	mpfr_acosh(result_value, FR_val(x), Rnd_val(mode));
 	CAMLreturn(result);
 }
 
@@ -351,6 +425,19 @@ CAMLprim value mlmpfr_based_string_of_fr(value mode, value base, value x)
 		}
 		mpfr_free_str(image);
 	}
+	CAMLreturn(result);
+}
+
+value mlmpfr_fr_get_str(value mode, value base, value digits, value x)
+{
+	CAMLparam4(mode, base, digits, x);
+	CAMLlocal1(result);
+	mp_exp_t exponent;
+	char *image = mpfr_get_str(NULL, &exponent, Int_val(base), Long_val(digits), FR_val(x), Rnd_val(mode));
+	result = alloc_tuple(2);
+	Field(result, 0) = caml_copy_string(image);
+	Field(result, 1) = Val_long(exponent);
+	mpfr_free_str(image);
 	CAMLreturn(result);
 }
 
@@ -691,9 +778,8 @@ CAMLprim value mlmpfr_fr_extended_of_bits(value i80)
 CAMLprim value mlmpfr_fr_get_default_prec(value unit)
 {
 	CAMLparam1(unit);
-	CAMLlocal1(result);
-	result = Val_long(mpfr_get_default_prec());
-	CAMLreturn(result);
+	long result = mpfr_get_default_prec();
+	CAMLreturn(Val_long(result));
 }
 
 CAMLprim value mlmpfr_fr_get_default_rounding_mode(value unit)

@@ -35,9 +35,12 @@ end;;
 
 module type F = sig (* float *)
 	include R;;
+	val nearly_equal: int -> t -> t -> bool;;
+	val frexp: t -> t * int;;
+	val ceil: t -> t;;
+	val floor: t -> t;;
 	val log: t -> t;;
 	val based_log: base:int -> t -> t;;
-	val frexp: t -> t * int;;
 end;;
 
 let (_: unit) = let module Check: S = Gmp.Z in ();;

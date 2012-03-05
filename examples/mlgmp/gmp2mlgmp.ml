@@ -38,23 +38,23 @@ module Gmp = struct
 		let dmod_ui x y = Gmp.Z.modulo x (Gmp.Z.of_int y);;
 		let pow_ui = Gmp.Z.pow_int;;
 		let pow_ui_ui = Gmp.Z.int_pow_int;;
-		let powm _ _ _ = assert false;;
-		let powm_ui _ _ _ = assert false;;
+		let powm base exponent m = Gmp.Z.pow_mod ~base ~exponent m;;
+		let powm_ui base exponent m = Gmp.Z.pow_mod ~base ~exponent:(Gmp.Z.of_int exponent) m;;
 		let sqrt = Gmp.Z.sqrt;;
 		let sqrtrem = Gmp.Z.tsqrt;;
 		let root x y = Gmp.Z.pow_q x (Gmp.Q.make_int 1 y);;
-		let nextprime _ = assert false;;
+		let perfect_power_p = Gmp.Z.is_perfect_power;;
+		let perfect_square_p = Gmp.Z.is_perfect_square;;
+		let is_probab_prime n reps = Gmp.Z.is_probably_prime n reps <> 0;;
+		let is_prime n = Gmp.Z.is_probably_prime n 10 <> 0;;
+		let nextprime = Gmp.Z.next_prime;;
 		let gcdext = Gmp.Z.gcdext;;
 		let inverse = Gmp.Z.invert;;
-		let legendre _ _ = assert false;;
+		let legendre = Gmp.Z.legendre;;
 		let remove _ _ = assert false;;
 		let fac_ui _ = assert false;;
 		let bin_ui ~n ~k = assert false;;
 		let fib_ui _ = assert false;;
-		let perfect_power_p = Gmp.Z.is_perfect_power;;
-		let perfect_square_p = Gmp.Z.is_perfect_square;;
-		let is_prime _ = assert false;;
-		let is_probab_prime _ = assert false;;
 		let bior = Gmp.Z.logor;;
 		let scan0 _ _ = assert false;;
 		let scan1 _ _ = assert false;;
@@ -103,7 +103,7 @@ module Gmp = struct
 		let zero = Default_F.zero;;
 		let compare = Default_F.compare;;
 		let equal x y = Default_F.compare x y = 0;;
-		let eq ~prec x y = assert false;;
+		let eq ~prec x y = Default_F.nearly_equal prec x y;;
 		let sgn x = Default_F.compare x Default_F.zero;;
 		let neg = Default_F.neg;;
 		let abs = Default_F.abs;;
@@ -113,7 +113,7 @@ module Gmp = struct
 		let sub_ui x y = Default_F.add_int x (-y);;
 		let mul = Default_F.mul;;
 		let mul_ui x y = Default_F.mul x (Default_F.of_int y);;
-		let floor _ = assert false;;
+		let floor = Default_F.floor;;
 		let from_int = Default_F.of_int;;
 		let from_float = Default_F.of_float;;
 		let from_string_base = Default_F.of_based_string;;
@@ -126,30 +126,52 @@ module Gmp = struct
 		let default_prec = 120;;
 		module Default_FR = Mpfr.FR (struct let prec = default_prec end);;
 		let compare = Default_FR.compare;;
-		let eq ~prec x y = assert false;;
-		let sgn = Default_FR.compare Default_FR.zero;;
+		let eq ~prec x y = Default_FR.nearly_equal prec x y;;
+		let sgn x = Default_FR.compare x Default_FR.zero;;
 		let neg = Default_FR.neg ~mode:`N;;
 		let abs = Default_FR.abs ~mode:`N;;
 		let add = Default_FR.add ~mode:`N;;
 		let add_ui = Default_FR.add_int ~mode:`N;;
-		let sub = Default_FR.add ~mode:`N;;
+		let sub = Default_FR.sub ~mode:`N;;
 		let sub_ui x y = Default_FR.add_int ~mode:`N x (-y);;
-		let mul = Default_FR.add ~mode:`N;;
-		let mul_ui x y = Default_FR.add ~mode:`N x (Default_FR.of_int ~mode:`N y);;
+		let mul = Default_FR.mul ~mode:`N;;
+		let mul_ui x y = Default_FR.mul ~mode:`N x (Default_FR.of_int ~mode:`N y);;
 		let pow_ui = Default_FR.pow_int ~mode:`N;;
-		let sqrt = Default_FR.sqrt;;
-		let exp _ = assert false;;
-		let exp2 _ = assert false;;
-		let floor _ = assert false;;
-		let sin _ = assert false;;
-		let acosh _ = assert false;;
+		let sqrt = Default_FR.sqrt ~mode:`N;;
+		let exp = Default_FR.exp ~mode:`N;;
+		let exp2 x = Default_FR.pow ~mode:`N (Default_FR.of_int ~mode:`N 2) x;;
+		let floor = Default_FR.floor;;
+		let sin = Default_FR.sin ~mode:`N;;
+		let acosh = Default_FR.acosh ~mode:`N;;
 		let from_int = Default_FR.of_int ~mode:`N;;
 		let from_float = Default_FR.of_float ~mode:`N;;
 		let from_string_base = Default_FR.of_based_string ~mode:`N;;
 		let from_string = Default_FR.of_string ~mode:`N;;
 		let to_float = Default_FR.to_float ~mode:`N;;
-		let to_string = Default_FR.to_string ~mode:`N;;
-		let to_string_base_digits _ = assert false;;
+		let to_string_exp_base_digits ~mode ~base ~digits x =
+			let mode =
+				match mode with
+				| GMP_RNDN -> `N
+				| GMP_RNDZ -> `Z
+				| GMP_RNDU -> `U
+				| GMP_RNDD -> `D
+			in
+			Mpfr.fr_get_str ~mode base digits x;;
+		let to_string_base_digits ~mode ~base ~digits x =
+			let mantissa, exponent = to_string_exp_base_digits ~mode ~base ~digits x in
+			let i = (if sgn x < 0 then 1 else 0) in
+			if mantissa = "Inf" then "Inf" else
+			let lm = String.length mantissa in
+			(if lm > 1 then
+				let tmp = String.create (succ lm) in
+				String.blit mantissa 0 tmp 0 (1+i);
+				String.blit mantissa (1+i) tmp (2+i) ((pred lm)-i);
+				String.set tmp (1+i) '.';
+				tmp
+			else mantissa)
+			^ (if base <= 10 then "E" else "@")
+			^ (string_of_int (pred exponent));;
+		let to_string = to_string_base_digits ~mode:GMP_RNDN ~base:10 ~digits:10;;
 	end;;
 	exception Unimplemented of string;;
 end;;

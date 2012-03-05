@@ -7,6 +7,7 @@ external fr_of_based_string: prec:int -> mode:rounding_mode -> base:int -> strin
 val fr_of_string: prec:int -> mode:rounding_mode -> string -> fr;;
 external based_string_of_fr: mode:rounding_mode -> base:int -> fr -> string = "mlmpfr_based_string_of_fr";;
 val string_of_fr: mode:rounding_mode -> fr -> string;;
+external fr_get_str: mode:rounding_mode -> int -> int -> fr -> string * int = "mlmpfr_fr_get_str";;
 external fr_of_int: prec:int -> mode:rounding_mode -> int -> fr = "mlmpfr_fr_of_int";;
 external fr_of_float: prec:int -> mode:rounding_mode -> float -> fr = "mlmpfr_fr_of_float";;
 external float_of_fr: mode:rounding_mode -> fr -> float = "mlmpfr_float_of_fr";;
@@ -30,6 +31,7 @@ module FR (Prec: sig val prec: int end): sig
 	val one: t;;
 	external compare: t -> t -> int = "mlmpfr_fr_compare";;
 	external compare_int: t -> int -> int = "mlmpfr_fr_compare_int";;
+	external nearly_equal: int -> t -> t -> bool = "mlmpfr_fr_nearly_equal";;
 	val neg: mode:rounding_mode -> t -> t;;
 	val abs: mode:rounding_mode -> t -> t;;
 	val add: mode:rounding_mode -> t -> t -> t;;
@@ -42,9 +44,16 @@ module FR (Prec: sig val prec: int end): sig
 	val scale: mode:rounding_mode -> t -> base:int -> exponent:int -> t;;
 	val sqrt: mode:rounding_mode -> t -> t;;
 	(* floating-point operations *)
+	val frexp: mode:rounding_mode -> t -> t * int;;
+	val ceil: t -> t;;
+	val floor: t -> t;;
 	val log: mode:rounding_mode -> t -> t;;
 	val based_log: mode:rounding_mode -> base:int -> t -> t;;
-	val frexp: mode:rounding_mode -> t -> t * int;;
+	(* elementary functions *)
+	val pow: mode:rounding_mode -> t -> t -> t;;
+	val exp: mode:rounding_mode -> t -> t;;
+	val sin: mode:rounding_mode -> t -> t;;
+	val acosh: mode:rounding_mode -> t -> t;;
 	(* conversions *)
 	val of_based_string: mode:rounding_mode -> base:int -> string -> t;;
 	val of_string: mode:rounding_mode -> string -> t;;
@@ -62,6 +71,7 @@ module FR (Prec: sig val prec: int end): sig
 		val one: t;;
 		external compare: t -> t -> int = "mlmpfr_fr_compare";;
 		external compare_int: t -> int -> int = "mlmpfr_fr_compare_int";;
+		external nearly_equal: int -> t -> t -> bool = "mlmpfr_fr_nearly_equal";;
 		val neg: t -> t;;
 		val abs: t -> t;;
 		val add: t -> t -> t;;
@@ -74,9 +84,16 @@ module FR (Prec: sig val prec: int end): sig
 		val scale: t -> base:int -> exponent:int -> t;;
 		val sqrt: t -> t;;
 		(* floating-point operations *)
+		val frexp: t -> t * int;;
+		val ceil: t -> t;;
+		val floor: t -> t;;
 		val log: t -> t;;
 		val based_log: base:int -> t -> t;;
-		val frexp: t -> t * int;;
+		(* elementary functions *)
+		val pow: t -> t -> t;;
+		val exp: t -> t;;
+		val sin: t -> t;;
+		val acosh: t -> t;;
 		(* conversions *)
 		val of_based_string: base:int -> string -> t;;
 		val of_string: string -> t;;

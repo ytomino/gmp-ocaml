@@ -38,14 +38,19 @@ module Z: sig
 	(* integer operations *)
 	external rem: t -> t -> t = "mlgmp_z_rem";; (* rem x y = snd (tdiv x y) *)
 	external modulo: t -> t -> t = "mlgmp_z_modulo";;
+	external pow_mod: base:t -> exponent:t -> t -> t = "mlgmp_z_pow_mod";;
 	external tdiv: t -> t -> t * t = "mlgmp_z_tdiv";;
 	external cdiv: t -> t -> t * t = "mlgmp_z_cdiv";;
 	external fdiv: t -> t -> t * t = "mlgmp_z_fdiv";;
 	external tsqrt: t -> t * t = "mlgmp_z_tsqrt";;
-	external gcdext: t -> t -> t * t * t = "mlgmp_z_gcdext";;
-	external invert: t -> t -> t option = "mlgmp_z_invert";;
 	external is_perfect_power: t -> bool = "mlgmp_z_is_perfect_power";;
 	external is_perfect_square: t -> bool = "mlgmp_z_is_perfect_square";;
+	(* number theoretic functions *)
+	external is_probably_prime: t -> int -> int = "mlgmp_z_is_probably_prime";;
+	external next_prime: t -> t = "mlgmp_z_next_prime";;
+	external gcdext: t -> t -> t * t * t = "mlgmp_z_gcdext";;
+	external invert: t -> t -> t option = "mlgmp_z_invert";;
+	external legendre: t -> t -> int = "mlgmp_z_legendre";;
 	(* bit operations *)
 	external logand: t -> t -> t = "mlgmp_z_logand";;
 	external logor: t -> t -> t = "mlgmp_z_logor";;
@@ -131,6 +136,7 @@ module F (Prec: sig val prec: int end): sig
 	val one: t;;
 	external compare: t -> t -> int = "mlgmp_f_compare";;
 	external compare_int: t -> int -> int = "mlgmp_f_compare_int";;
+	external nearly_equal: int -> t -> t -> bool = "mlgmp_f_nearly_equal";;
 	val neg: t -> t;;
 	val abs: t -> t;;
 	val add: t -> t -> t;;
@@ -143,9 +149,11 @@ module F (Prec: sig val prec: int end): sig
 	val scale: t -> base:int -> exponent:int -> t;;
 	val sqrt: t -> t;;
 	(* floating-point operations *)
+	val frexp: t -> t * int;;
+	val ceil: t -> t;;
+	val floor: t -> t;;
 	val log: t -> t;;
 	val based_log: base:int -> t -> t;;
-	val frexp: t -> t * int;;
 	(* conversions *)
 	val of_based_string: base:int -> string -> t;;
 	val of_string: string -> t;;
