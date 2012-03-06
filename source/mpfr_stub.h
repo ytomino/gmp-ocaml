@@ -96,3 +96,7 @@ static inline void fr_deserialize(mpfr_ptr x)
 /* custom-operations */
 
 extern struct custom_operations mlmpfr_fr_ops;
+
+/* allocators */
+
+CAMLextern value mlmpfr_alloc_fr_init2(mpfr_prec_t prec);

@@ -41,3 +41,7 @@ static inline void c_deserialize(mpc_ptr x)
 /* custom-operations */
 
 extern struct custom_operations mlmpc_c_ops;
+
+/* allocators */
+
+CAMLextern value mlmpc_alloc_c_init3(mpfr_prec_t prec_r, mpfr_prec_t prec_i);

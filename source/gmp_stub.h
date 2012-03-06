@@ -127,3 +127,9 @@ static inline void f_deserialize(mpf_ptr x)
 extern struct custom_operations mlgmp_z_ops;
 extern struct custom_operations mlgmp_q_ops;
 extern struct custom_operations mlgmp_f_ops;
+
+/* allocators */
+
+CAMLextern value mlgmp_alloc_z_init(void);
+CAMLextern value mlgmp_alloc_q_init(void);
+CAMLextern value mlgmp_alloc_f_init2(mp_bitcnt_t prec);

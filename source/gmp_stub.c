@@ -64,6 +64,15 @@ struct custom_operations mlgmp_z_ops = {
 	.serialize = mlgmp_z_serialize,
 	.deserialize = mlgmp_z_deserialize};
 
+CAMLexport value mlgmp_alloc_z_init(void)
+{
+	CAMLparam0();
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	mpz_init(Z_val(result));
+	CAMLreturn(result);
+}
+
 /* functions */
 
 CAMLprim value mlgmp_z_compare(value left, value right)
@@ -84,10 +93,8 @@ CAMLprim value mlgmp_z_neg(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_neg(result_value, Z_val(x));
+	result = mlgmp_alloc_z_init();
+	mpz_neg(Z_val(result), Z_val(x));
 	CAMLreturn(result);
 }
 
@@ -95,10 +102,8 @@ CAMLprim value mlgmp_z_abs(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_abs(result_value, Z_val(x));
+	result = mlgmp_alloc_z_init();
+	mpz_abs(Z_val(result), Z_val(x));
 	CAMLreturn(result);
 }
 
@@ -106,10 +111,8 @@ CAMLprim value mlgmp_z_add(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_add(result_value, Z_val(left), Z_val(right));
+	result = mlgmp_alloc_z_init();
+	mpz_add(Z_val(result), Z_val(left), Z_val(right));
 	CAMLreturn(result);
 }
 
@@ -117,9 +120,8 @@ CAMLprim value mlgmp_z_add_int(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	result = mlgmp_alloc_z_init();
 	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
 	mpz_ptr l = Z_val(left);
 	long r = Long_val(right);
 	if(r >= 0){
@@ -134,10 +136,8 @@ CAMLprim value mlgmp_z_sub(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_sub(result_value, Z_val(left), Z_val(right));
+	result = mlgmp_alloc_z_init();
+	mpz_sub(Z_val(result), Z_val(left), Z_val(right));
 	CAMLreturn(result);
 }
 
@@ -145,10 +145,8 @@ CAMLprim value mlgmp_z_mul(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_mul(result_value, Z_val(left), Z_val(right));
+	result = mlgmp_alloc_z_init();
+	mpz_mul(Z_val(result), Z_val(left), Z_val(right));
 	CAMLreturn(result);
 }
 
@@ -156,10 +154,8 @@ CAMLprim value mlgmp_z_div(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_tdiv_q(result_value, Z_val(left), Z_val(right));
+	result = mlgmp_alloc_z_init();
+	mpz_tdiv_q(Z_val(result), Z_val(left), Z_val(right));
 	CAMLreturn(result);
 }
 
@@ -167,10 +163,8 @@ CAMLprim value mlgmp_z_rem(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_tdiv_r(result_value, Z_val(left), Z_val(right));
+	result = mlgmp_alloc_z_init();
+	mpz_tdiv_r(Z_val(result), Z_val(left), Z_val(right));
 	CAMLreturn(result);
 }
 
@@ -178,9 +172,8 @@ CAMLprim value mlgmp_z_pow_int(value base, value exponent)
 {
 	CAMLparam2(base, exponent);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	result = mlgmp_alloc_z_init();
 	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
 	long e = Long_val(exponent);
 	if(e >= 0){
 		mpz_pow_ui(result_value, Z_val(base), e);
@@ -194,9 +187,8 @@ CAMLprim value mlgmp_z_pow_q(value base, value exponent)
 {
 	CAMLparam2(base, exponent);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	result = mlgmp_alloc_z_init();
 	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
 	mpz_ptr b = Z_val(base);
 	mpq_ptr e = Q_val(exponent);
 	mpz_ptr e_num = mpq_numref(e);
@@ -228,9 +220,8 @@ CAMLprim value mlgmp_z_int_pow_int(value base, value exponent)
 {
 	CAMLparam2(base, exponent);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	result = mlgmp_alloc_z_init();
 	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
 	long e = Long_val(exponent);
 	if(e >= 0){
 		mpz_ui_pow_ui(result_value, Long_val(base), e);
@@ -244,9 +235,8 @@ CAMLprim value mlgmp_z_scale(value fraction, value base, value exponent)
 {
 	CAMLparam3(fraction, base, exponent);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	result = mlgmp_alloc_z_init();
 	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
 	mpz_ptr f = Z_val(fraction);
 	long b = Long_val(base);
 	long e = Long_val(exponent);
@@ -275,10 +265,8 @@ CAMLprim value mlgmp_z_sqrt(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_sqrt(result_value, Z_val(x));
+	result = mlgmp_alloc_z_init();
+	mpz_sqrt(Z_val(result), Z_val(x));
 	CAMLreturn(result);
 }
 
@@ -286,13 +274,9 @@ CAMLprim value mlgmp_z_tdiv(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal3(result, q, r);
-	q = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	r = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr q_value = Z_val(q);
-	mpz_init(q_value);
-	mpz_ptr r_value = Z_val(r);
-	mpz_init(r_value);
-	mpz_tdiv_qr(q_value, r_value, Z_val(left), Z_val(right));
+	q = mlgmp_alloc_z_init();
+	r = mlgmp_alloc_z_init();
+	mpz_tdiv_qr(Z_val(q), Z_val(r), Z_val(left), Z_val(right));
 	result = caml_alloc_tuple(2);
 	Field(result, 0) = q;
 	Field(result, 1) = r;
@@ -303,13 +287,9 @@ CAMLprim value mlgmp_z_cdiv(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal3(result, q, r);
-	q = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	r = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr q_value = Z_val(q);
-	mpz_init(q_value);
-	mpz_ptr r_value = Z_val(r);
-	mpz_init(r_value);
-	mpz_cdiv_qr(q_value, r_value, Z_val(left), Z_val(right));
+	q = mlgmp_alloc_z_init();
+	r = mlgmp_alloc_z_init();
+	mpz_cdiv_qr(Z_val(q), Z_val(r), Z_val(left), Z_val(right));
 	result = caml_alloc_tuple(2);
 	Field(result, 0) = q;
 	Field(result, 1) = r;
@@ -320,13 +300,9 @@ CAMLprim value mlgmp_z_fdiv(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal3(result, q, r);
-	q = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	r = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr q_value = Z_val(q);
-	mpz_init(q_value);
-	mpz_ptr r_value = Z_val(r);
-	mpz_init(r_value);
-	mpz_fdiv_qr(q_value, r_value, Z_val(left), Z_val(right));
+	q = mlgmp_alloc_z_init();
+	r = mlgmp_alloc_z_init();
+	mpz_fdiv_qr(Z_val(q), Z_val(r), Z_val(left), Z_val(right));
 	result = caml_alloc_tuple(2);
 	Field(result, 0) = q;
 	Field(result, 1) = r;
@@ -337,10 +313,8 @@ CAMLprim value mlgmp_z_modulo(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_mod(result_value, Z_val(left), Z_val(right));
+	result = mlgmp_alloc_z_init();
+	mpz_mod(Z_val(result), Z_val(left), Z_val(right));
 	CAMLreturn(result);
 }
 
@@ -348,10 +322,8 @@ CAMLprim value mlgmp_z_pow_mod(value base, value exponent, value mod)
 {
 	CAMLparam3(base, exponent, mod);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_powm(result_value, Z_val(base), Z_val(exponent), Z_val(mod));
+	result = mlgmp_alloc_z_init();
+	mpz_powm(Z_val(result), Z_val(base), Z_val(exponent), Z_val(mod));
 	CAMLreturn(result);
 }
 
@@ -359,13 +331,9 @@ CAMLprim value mlgmp_z_tsqrt(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal3(result, s, r);
-	s = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	r = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr s_value = Z_val(s);
-	mpz_init(s_value);
-	mpz_ptr r_value = Z_val(r);
-	mpz_init(r_value);
-	mpz_sqrtrem(s_value, r_value, Z_val(x));
+	s = mlgmp_alloc_z_init();
+	r = mlgmp_alloc_z_init();
+	mpz_sqrtrem(Z_val(s), Z_val(r), Z_val(x));
 	result = caml_alloc_tuple(2);
 	Field(result, 0) = s;
 	Field(result, 1) = r;
@@ -397,10 +365,8 @@ CAMLprim value mlgmp_z_next_prime(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_nextprime(result_value, Z_val(x));
+	result = mlgmp_alloc_z_init();
+	mpz_nextprime(Z_val(result), Z_val(x));
 	CAMLreturn(result);
 }
 
@@ -408,16 +374,10 @@ CAMLprim value mlgmp_z_gcdext(value a, value b)
 {
 	CAMLparam2(a, b);
 	CAMLlocal4(result, g, s, t);
-	g = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	s = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	t = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr g_value = Z_val(g);
-	mpz_init(g_value);
-	mpz_ptr s_value = Z_val(s);
-	mpz_init(s_value);
-	mpz_ptr t_value = Z_val(t);
-	mpz_init(t_value);
-	mpz_gcdext(g_value, s_value, t_value, Z_val(a), Z_val(b));
+	g = mlgmp_alloc_z_init();
+	s = mlgmp_alloc_z_init();
+	t = mlgmp_alloc_z_init();
+	mpz_gcdext(Z_val(g), Z_val(s), Z_val(t), Z_val(a), Z_val(b));
 	result = caml_alloc_tuple(3);
 	Field(result, 0) = g;
 	Field(result, 1) = s;
@@ -429,9 +389,8 @@ CAMLprim value mlgmp_z_invert(value x, value y)
 {
 	CAMLparam2(x, y);
 	CAMLlocal2(result, i);
-	i = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	i = mlgmp_alloc_z_init();
 	mpz_ptr i_value = Z_val(i);
-	mpz_init(i_value);
 	if(mpz_invert(i_value, Z_val(x), Z_val(y))){
 		result = caml_alloc(1, Int_val(Val_true)); /* Some i */
 		Field(result, 0) = i;
@@ -452,9 +411,8 @@ CAMLprim value mlgmp_z_remove(value x, value f)
 {
 	CAMLparam2(x, f);
 	CAMLlocal2(result, rop);
-	rop = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	rop = mlgmp_alloc_z_init();
 	mpz_ptr rop_value = Z_val(rop);
-	mpz_init(rop_value);
 	mp_bitcnt_t removed = mpz_remove(rop_value, Z_val(x), Z_val(f));
 	result = alloc_tuple(2);
 	Field(result, 0) = rop;
@@ -466,10 +424,8 @@ CAMLprim value mlgmp_z_fac_int(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_fac_ui(result_value, Long_val(x));
+	result = mlgmp_alloc_z_init();
+	mpz_fac_ui(Z_val(result), Long_val(x));
 	CAMLreturn(result);
 }
 
@@ -477,10 +433,8 @@ CAMLprim value mlgmp_z_bin_int(value n, value k)
 {
 	CAMLparam2(n, k);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_bin_ui(result_value, Z_val(n), Long_val(k));
+	result = mlgmp_alloc_z_init();
+	mpz_bin_ui(Z_val(result), Z_val(n), Long_val(k));
 	CAMLreturn(result);
 }
 
@@ -488,10 +442,8 @@ CAMLprim value mlgmp_z_fib_int(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_fib_ui(result_value, Long_val(x));
+	result = mlgmp_alloc_z_init();
+	mpz_fib_ui(Z_val(result), Long_val(x));
 	CAMLreturn(result);
 }
 
@@ -499,10 +451,8 @@ CAMLprim value mlgmp_z_logand(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_and(result_value, Z_val(left), Z_val(right));
+	result = mlgmp_alloc_z_init();
+	mpz_and(Z_val(result), Z_val(left), Z_val(right));
 	CAMLreturn(result);
 }
 
@@ -510,10 +460,8 @@ CAMLprim value mlgmp_z_logor(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_ior(result_value, Z_val(left), Z_val(right));
+	result = mlgmp_alloc_z_init();
+	mpz_ior(Z_val(result), Z_val(left), Z_val(right));
 	CAMLreturn(result);
 }
 
@@ -521,10 +469,8 @@ CAMLprim value mlgmp_z_logxor(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_xor(result_value, Z_val(left), Z_val(right));
+	result = mlgmp_alloc_z_init();
+	mpz_xor(Z_val(result), Z_val(left), Z_val(right));
 	CAMLreturn(result);
 }
 
@@ -532,10 +478,8 @@ CAMLprim value mlgmp_z_lognot(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_com(result_value, Z_val(x));
+	result = mlgmp_alloc_z_init();
+	mpz_com(Z_val(result), Z_val(x));
 	CAMLreturn(result);
 }
 
@@ -543,10 +487,8 @@ CAMLprim value mlgmp_z_shift_left(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_mul_2exp(result_value, Z_val(left), Long_val(right));
+	result = mlgmp_alloc_z_init();
+	mpz_mul_2exp(Z_val(result), Z_val(left), Long_val(right));
 	CAMLreturn(result);
 }
 
@@ -554,10 +496,8 @@ CAMLprim value mlgmp_z_shift_right(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_fdiv_q_2exp(result_value, Z_val(left), Long_val(right));
+	result = mlgmp_alloc_z_init();
+	mpz_fdiv_q_2exp(Z_val(result), Z_val(left), Long_val(right));
 	CAMLreturn(result);
 }
 
@@ -579,8 +519,8 @@ CAMLprim value mlgmp_z_of_based_string(value base, value x)
 {
 	CAMLparam2(base, x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	int err = mpz_init_set_str(Z_val(result), String_val(x), Int_val(base));
+	result = mlgmp_alloc_z_init();
+	int err = mpz_set_str(Z_val(result), String_val(x), Int_val(base));
 	if(err < 0) caml_failwith(__FUNCTION__);
 	CAMLreturn(result);
 }
@@ -599,8 +539,8 @@ CAMLprim value mlgmp_z_of_int(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_init_set_si(Z_val(result), Long_val(x));
+	result = mlgmp_alloc_z_init();
+	mpz_set_si(Z_val(result), Long_val(x));
 	CAMLreturn(result);
 }
 
@@ -615,8 +555,8 @@ CAMLprim value mlgmp_z_of_int32(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_init_set_si(Z_val(result), Int32_val(x));
+	result = mlgmp_alloc_z_init();
+	mpz_set_si(Z_val(result), Int32_val(x));
 	CAMLreturn(result);
 }
 
@@ -632,12 +572,11 @@ CAMLprim value mlgmp_z_of_int64(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	result = mlgmp_alloc_z_init();
 #if LONG_BIT >= 64
-	mpz_init_set_si(Z_val(result), Int64_val(x));
+	mpz_set_si(Z_val(result), Int64_val(x));
 #elif LONG_BIT >= 32
 	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
 	long long x_value = Int64_val(x);
 	long hi = x_value >> 32; /* arithmetic right shift */
 	unsigned long lo = x_value & 0xffffffffL;
@@ -685,8 +624,8 @@ CAMLprim value mlgmp_z_of_nativeint(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_init_set_si(Z_val(result), Nativeint_val(x));
+	result = mlgmp_alloc_z_init();
+	mpz_set_si(Z_val(result), Nativeint_val(x));
 	CAMLreturn(result);
 }
 
@@ -702,8 +641,8 @@ CAMLprim value mlgmp_z_of_truncated_float(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_init_set_d(Z_val(result), Double_val(x));
+	result = mlgmp_alloc_z_init();
+	mpz_set_d(Z_val(result), Double_val(x));
 	CAMLreturn(result);
 }
 
@@ -763,6 +702,15 @@ struct custom_operations mlgmp_q_ops = {
 	.serialize = mlgmp_q_serialize,
 	.deserialize = mlgmp_q_deserialize};
 
+CAMLexport value mlgmp_alloc_q_init(void)
+{
+	CAMLparam0();
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
+	mpq_init(Q_val(result));
+	CAMLreturn(result);
+}
+
 /* functions */
 
 CAMLprim value mlgmp_q_compare(value left, value right)
@@ -783,10 +731,8 @@ CAMLprim value mlgmp_q_neg(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
-	mpq_ptr result_value = Q_val(result);
-	mpq_init(result_value);
-	mpq_neg(result_value, Q_val(x));
+	result = mlgmp_alloc_q_init();
+	mpq_neg(Q_val(result), Q_val(x));
 	CAMLreturn(result);
 }
 
@@ -794,10 +740,8 @@ CAMLprim value mlgmp_q_abs(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
-	mpq_ptr result_value = Q_val(result);
-	mpq_init(result_value);
-	mpq_abs(result_value, Q_val(x));
+	result = mlgmp_alloc_q_init();
+	mpq_abs(Q_val(result), Q_val(x));
 	CAMLreturn(result);
 }
 
@@ -805,10 +749,8 @@ CAMLprim value mlgmp_q_add(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
-	mpq_ptr result_value = Q_val(result);
-	mpq_init(result_value);
-	mpq_add(result_value, Q_val(left), Q_val(right));
+	result = mlgmp_alloc_q_init();
+	mpq_add(Q_val(result), Q_val(left), Q_val(right));
 	CAMLreturn(result);
 }
 
@@ -816,14 +758,12 @@ CAMLprim value mlgmp_q_add_int(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
-	mpq_ptr result_value = Q_val(result);
-	mpq_init(result_value);
+	result = mlgmp_alloc_q_init();
 	mpq_t r;
 	mpq_init(r);
 	mpq_set_si(r, Long_val(right), 1);
 	mpq_canonicalize(r); /* ? */
-	mpq_add(result_value, Q_val(left), r);
+	mpq_add(Q_val(result), Q_val(left), r);
 	mpq_clear(r);
 	CAMLreturn(result);
 }
@@ -832,10 +772,8 @@ CAMLprim value mlgmp_q_sub(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
-	mpq_ptr result_value = Q_val(result);
-	mpq_init(result_value);
-	mpq_sub(result_value, Q_val(left), Q_val(right));
+	result = mlgmp_alloc_q_init();
+	mpq_sub(Q_val(result), Q_val(left), Q_val(right));
 	CAMLreturn(result);
 }
 
@@ -843,10 +781,8 @@ CAMLprim value mlgmp_q_mul(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
-	mpq_ptr result_value = Q_val(result);
-	mpq_init(result_value);
-	mpq_mul(result_value, Q_val(left), Q_val(right));
+	result = mlgmp_alloc_q_init();
+	mpq_mul(Q_val(result), Q_val(left), Q_val(right));
 	CAMLreturn(result);
 }
 
@@ -854,10 +790,8 @@ CAMLprim value mlgmp_q_div(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
-	mpq_ptr result_value = Q_val(result);
-	mpq_init(result_value);
-	mpq_div(result_value, Q_val(left), Q_val(right));
+	result = mlgmp_alloc_q_init();
+	mpq_div(Q_val(result), Q_val(left), Q_val(right));
 	CAMLreturn(result);
 }
 
@@ -865,9 +799,8 @@ CAMLprim value mlgmp_q_pow_int(value base, value exponent)
 {
 	CAMLparam2(base, exponent);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
+	result = mlgmp_alloc_q_init();
 	mpq_ptr result_value = Q_val(result);
-	mpq_init(result_value);
 	mpq_ptr b = Q_val(base);
 	long e = Long_val(exponent);
 	if(e >= 0){
@@ -885,9 +818,8 @@ CAMLprim value mlgmp_q_int_pow_int(value base, value exponent)
 {
 	CAMLparam2(base, exponent);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
+	result = mlgmp_alloc_q_init();
 	mpq_ptr result_value = Q_val(result);
-	mpq_init(result_value);
 	long b = Long_val(base);
 	long e = Long_val(exponent);
 	if(e >= 0){
@@ -905,9 +837,8 @@ CAMLprim value mlgmp_q_scale(value fraction, value base, value exponent)
 {
 	CAMLparam3(fraction, base, exponent);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
+	result = mlgmp_alloc_q_init();
 	mpq_ptr result_value = Q_val(result);
-	mpq_init(result_value);
 	mpq_ptr f = Q_val(fraction);
 	long b = Long_val(base);
 	long e = Long_val(exponent);
@@ -938,9 +869,8 @@ CAMLprim value mlgmp_q_sqrt(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
+	result = mlgmp_alloc_q_init();
 	mpq_ptr result_value = Q_val(result);
-	mpq_init(result_value);
 	mpq_ptr x_value = Q_val(x);
 	mpz_t a;
 	mpz_init(a);
@@ -956,10 +886,8 @@ CAMLprim value mlgmp_q_num(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpq_get_num(result_value, Q_val(x));
+	result = mlgmp_alloc_z_init();
+	mpq_get_num(Z_val(result), Q_val(x));
 	CAMLreturn(result);
 }
 
@@ -967,10 +895,8 @@ CAMLprim value mlgmp_q_den(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpq_get_den(result_value, Q_val(x));
+	result = mlgmp_alloc_z_init();
+	mpq_get_den(Z_val(result), Q_val(x));
 	CAMLreturn(result);
 }
 
@@ -978,9 +904,8 @@ CAMLprim value mlgmp_q_of_based_string(value base, value x)
 {
 	CAMLparam2(base, x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
+	result = mlgmp_alloc_q_init();
 	mpq_ptr result_value = Q_val(result);
-	mpq_init(result_value);
 	int b = Int_val(base);
 	char *x_value = String_val(x);
 	char *period = strchr(x_value, '.');
@@ -1019,9 +944,8 @@ CAMLprim value mlgmp_q_of_int(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
+	result = mlgmp_alloc_q_init();
 	mpq_ptr result_value = Q_val(result);
-	mpq_init(result_value);
 	mpq_set_si(result_value, Long_val(x), 1);
 	mpq_canonicalize(result_value); /* ? */
 	CAMLreturn(result);
@@ -1035,9 +959,8 @@ CAMLprim value mlgmp_q_of_float(value x)
 	if(! isfinite(x_value)){
 		caml_failwith(__FUNCTION__);
 	}
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
+	result = mlgmp_alloc_q_init();
 	mpq_ptr result_value = Q_val(result);
-	mpq_init(result_value);
 	mpq_set_d(result_value, x_value);
 	mpq_canonicalize(result_value); /* ? */
 	CAMLreturn(result);
@@ -1055,9 +978,8 @@ CAMLprim value mlgmp_q_of_z(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
+	result = mlgmp_alloc_q_init();
 	mpq_ptr result_value = Q_val(result);
-	mpq_init(result_value);
 	mpq_set_z(result_value, Z_val(x));
 	mpq_canonicalize(result_value); /* ? */
 	CAMLreturn(result);
@@ -1067,10 +989,8 @@ CAMLprim value mlgmp_z_of_truncated_q(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_set_q(result_value, Q_val(x));
+	result = mlgmp_alloc_z_init();
+	mpz_set_q(Z_val(result), Q_val(x));
 	CAMLreturn(result);
 }
 
@@ -1078,9 +998,8 @@ CAMLprim value mlgmp_q_make_int(value x, value y)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
+	result = mlgmp_alloc_q_init();
 	mpq_ptr result_value = Q_val(result);
-	mpq_init(result_value);
 	mpq_set_si(result_value, Long_val(x), Long_val(y));
 	mpq_canonicalize(result_value);
 	CAMLreturn(result);
@@ -1090,9 +1009,8 @@ CAMLprim value mlgmp_q_make_z(value x, value y)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
+	result = mlgmp_alloc_q_init();
 	mpq_ptr result_value = Q_val(result);
-	mpq_init(result_value);
 	mpz_set(mpq_numref(result_value), Z_val(x));
 	mpz_set(mpq_denref(result_value), Z_val(y));
 	mpq_canonicalize(result_value);
@@ -1147,6 +1065,15 @@ struct custom_operations mlgmp_f_ops = {
 	.serialize = mlgmp_f_serialize,
 	.deserialize = mlgmp_f_deserialize};
 
+CAMLexport value mlgmp_alloc_f_init2(mp_bitcnt_t prec)
+{
+	CAMLparam0();
+	CAMLlocal1(result);
+	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
+	mpf_init2(F_val(result), prec);
+	CAMLreturn(result);
+}
+
 /* functions */
 
 CAMLprim value mlgmp_f_compare(value left, value right)
@@ -1174,10 +1101,8 @@ CAMLprim value mlgmp_f_neg(value prec, value x)
 {
 	CAMLparam2(prec, x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
-	mpf_init2(result_value, Long_val(prec));
-	mpf_neg(result_value, F_val(x));
+	result = mlgmp_alloc_f_init2(Long_val(prec));
+	mpf_neg(F_val(result), F_val(x));
 	CAMLreturn(result);
 }
 
@@ -1185,10 +1110,8 @@ CAMLprim value mlgmp_f_abs(value prec, value x)
 {
 	CAMLparam2(prec, x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
-	mpf_init2(result_value, Long_val(prec));
-	mpf_abs(result_value, F_val(x));
+	result = mlgmp_alloc_f_init2(Long_val(prec));
+	mpf_abs(F_val(result), F_val(x));
 	CAMLreturn(result);
 }
 
@@ -1196,10 +1119,8 @@ CAMLprim value mlgmp_f_add(value prec, value left, value right)
 {
 	CAMLparam3(prec, left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
-	mpf_init2(result_value, Long_val(prec));
-	mpf_add(result_value, F_val(left), F_val(right));
+	result = mlgmp_alloc_f_init2(Long_val(prec));
+	mpf_add(F_val(result), F_val(left), F_val(right));
 	CAMLreturn(result);
 }
 
@@ -1207,9 +1128,8 @@ CAMLprim value mlgmp_f_add_int(value prec, value left, value right)
 {
 	CAMLparam3(prec, left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
+	result = mlgmp_alloc_f_init2(Long_val(prec));
 	mpf_ptr result_value = F_val(result);
-	mpf_init2(result_value, Long_val(prec));
 	mpf_ptr l = F_val(left);
 	long r = Long_val(right);
 	if(r >= 0){
@@ -1224,10 +1144,8 @@ CAMLprim value mlgmp_f_mul(value prec, value left, value right)
 {
 	CAMLparam3(prec, left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
-	mpf_init2(result_value, Long_val(prec));
-	mpf_mul(result_value, F_val(left), F_val(right));
+	result = mlgmp_alloc_f_init2(Long_val(prec));
+	mpf_mul(F_val(result), F_val(left), F_val(right));
 	CAMLreturn(result);
 }
 
@@ -1235,10 +1153,8 @@ CAMLprim value mlgmp_f_div(value prec, value left, value right)
 {
 	CAMLparam3(prec, left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
-	mpf_init2(result_value, Long_val(prec));
-	mpf_div(result_value, F_val(left), F_val(right));
+	result = mlgmp_alloc_f_init2(Long_val(prec));
+	mpf_div(F_val(result), F_val(left), F_val(right));
 	CAMLreturn(result);
 }
 
@@ -1246,10 +1162,8 @@ CAMLprim value mlgmp_f_sub(value prec, value left, value right)
 {
 	CAMLparam3(prec, left, right);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
-	mpf_init2(result_value, Long_val(prec));
-	mpf_sub(result_value, F_val(left), F_val(right));
+	result = mlgmp_alloc_f_init2(Long_val(prec));
+	mpf_sub(F_val(result), F_val(left), F_val(right));
 	CAMLreturn(result);
 }
 
@@ -1257,14 +1171,13 @@ CAMLprim value mlgmp_f_pow_int(value prec, value base, value exponent)
 {
 	CAMLparam3(prec, base, exponent);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
 	mp_bitcnt_t p = Long_val(prec);
-	mpf_init2(result_value, p);
+	result = mlgmp_alloc_f_init2(p);
+	mpf_ptr result_value = F_val(result);
 	mpf_ptr b = F_val(base);
 	long e = Long_val(exponent);
 	if(e >= 0){
-		mpf_pow_ui(result_value, b, Long_val(exponent));
+		mpf_pow_ui(result_value, b, e);
 	}else{
 		mpf_t a;
 		mpf_init2(a, p);
@@ -1279,10 +1192,9 @@ CAMLprim value mlgmp_f_int_pow_int(value prec, value base, value exponent)
 {
 	CAMLparam3(prec, base, exponent);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
 	mp_bitcnt_t p = Long_val(prec);
-	mpf_init2(result_value, p);
+	result = mlgmp_alloc_f_init2(p);
+	mpf_ptr result_value = F_val(result);
 	long b = Long_val(base);
 	long e = Long_val(exponent);
 	mpz_t a;
@@ -1306,13 +1218,12 @@ CAMLprim value mlgmp_f_scale(value prec, value fraction, value base, value expon
 {
 	CAMLparam4(prec, fraction, base, exponent);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
 	mp_bitcnt_t p = Long_val(prec);
-	mpf_init2(result_value, p);
+	result = mlgmp_alloc_f_init2(p);
+	mpf_ptr result_value = F_val(result);
+	mpf_ptr f = F_val(fraction);
 	long b = Long_val(base);
 	long e = Long_val(exponent);
-	mpf_ptr f = F_val(fraction);
 	if(b == 2){
 		if(e >= 0){
 			mpf_mul_2exp(result_value, f, e);
@@ -1343,10 +1254,8 @@ CAMLprim value mlgmp_f_sqrt(value prec, value x)
 {
 	CAMLparam2(prec, x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
-	mpf_init2(result_value, Long_val(prec));
-	mpf_sqrt(result_value, F_val(x));
+	result = mlgmp_alloc_f_init2(Long_val(prec));
+	mpf_sqrt(F_val(result), F_val(x));
 	CAMLreturn(result);
 }
 
@@ -1362,9 +1271,8 @@ CAMLprim value mlgmp_f_frexp(value prec, value x)
 	if(exponent == 0){
 		result_fraction = x;
 	}else{
-		result_fraction = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
+		result_fraction = mlgmp_alloc_f_init2(p);
 		mpf_ptr rf_value = F_val(result_fraction);
-		mpf_init2(rf_value, p);
 		x_value = F_val(x); /* if gc was invoked by alloc_custom */
 		if(exponent > 0){
 			mpf_div_2exp(rf_value, x_value, exponent);
@@ -1382,10 +1290,8 @@ CAMLprim value mlgmp_f_ceil(value prec, value x)
 {
 	CAMLparam2(prec, x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
-	mpf_init2(result_value, Long_val(prec));
-	mpf_ceil(result_value, F_val(x));
+	result = mlgmp_alloc_f_init2(Long_val(prec));
+	mpf_ceil(F_val(result), F_val(x));
 	CAMLreturn(result);
 }
 
@@ -1393,10 +1299,8 @@ CAMLprim value mlgmp_f_floor(value prec, value x)
 {
 	CAMLparam2(prec, x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
-	mpf_init2(result_value, Long_val(prec));
-	mpf_floor(result_value, F_val(x));
+	result = mlgmp_alloc_f_init2(Long_val(prec));
+	mpf_floor(F_val(result), F_val(x));
 	CAMLreturn(result);
 }
 
@@ -1407,12 +1311,10 @@ CAMLprim value mlgmp_f_log(value prec, value x)
 	 *       = log m + e * log 2 */
 	CAMLparam2(prec, x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
-	mpf_init2(result_value, Long_val(prec));
+	result = mlgmp_alloc_f_init2(Long_val(prec));
 	long exponent;
 	double mantissa = mpf_get_d_2exp(&exponent, F_val(x));
-	mpf_set_d(result_value, log(mantissa) + (double)exponent * M_LN2);
+	mpf_set_d(F_val(result), log(mantissa) + (double)exponent * M_LN2);
 	CAMLreturn(result);
 }
 
@@ -1420,10 +1322,9 @@ CAMLprim value mlgmp_f_based_log(value prec, value base, value x)
 {
 	CAMLparam3(prec, base, x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
 	mp_bitcnt_t p = Long_val(prec);
-	mpf_init2(result_value, p);
+	result = mlgmp_alloc_f_init2(p);
+	mpf_ptr result_value = F_val(result);
 	long b = Long_val(base);
 	long exponent;
 	double mantissa = mpf_get_d_2exp(&exponent, F_val(x));
@@ -1455,10 +1356,8 @@ CAMLprim value mlgmp_f_of_based_string(value prec, value base, value x)
 {
 	CAMLparam3(prec, base, x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
-	mpf_init2(result_value, Long_val(prec));
-	int err = mpf_set_str(result_value, String_val(x), Int_val(base));
+	result = mlgmp_alloc_f_init2(Long_val(prec));
+	int err = mpf_set_str(F_val(result), String_val(x), Int_val(base));
 	if(err < 0) caml_failwith(__FUNCTION__);
 	CAMLreturn(result);
 }
@@ -1507,10 +1406,8 @@ CAMLprim value mlgmp_f_of_int(value prec, value x)
 {
 	CAMLparam2(prec, x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
-	mpf_init2(result_value, Long_val(prec));
-	mpf_set_si(result_value, Long_val(x));
+	result = mlgmp_alloc_f_init2(Long_val(prec));
+	mpf_set_si(F_val(result), Long_val(x));
 	CAMLreturn(result);
 }
 
@@ -1522,10 +1419,8 @@ CAMLprim value mlgmp_f_of_float(value prec, value x)
 	if(! isfinite(x_value)){
 		caml_failwith(__FUNCTION__);
 	}
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
-	mpf_init2(result_value, Long_val(prec));
-	mpf_set_d(result_value, x_value);
+	result = mlgmp_alloc_f_init2(Long_val(prec));
+	mpf_set_d(F_val(result), x_value);
 	CAMLreturn(result);
 }
 
@@ -1541,10 +1436,8 @@ CAMLprim value mlgmp_f_of_z(value prec, value x)
 {
 	CAMLparam2(prec, x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
-	mpf_init2(result_value, Long_val(prec));
-	mpf_set_z(result_value, Z_val(x));
+	result = mlgmp_alloc_f_init2(Long_val(prec));
+	mpf_set_z(F_val(result), Z_val(x));
 	CAMLreturn(result);
 }
 
@@ -1552,10 +1445,8 @@ CAMLprim value mlgmp_z_of_truncated_f(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_set_f(result_value, F_val(x));
+	result = mlgmp_alloc_z_init();
+	mpz_set_f(Z_val(result), F_val(x));
 	CAMLreturn(result);
 }
 
@@ -1563,10 +1454,8 @@ CAMLprim value mlgmp_f_of_f(value prec, value x)
 {
 	CAMLparam2(prec, x);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
-	mpf_init2(result_value, Long_val(prec));
-	mpf_set(result_value, F_val(x));
+	result = mlgmp_alloc_f_init2(Long_val(prec));
+	mpf_set(F_val(result), F_val(x));
 	CAMLreturn(result);
 }
 
@@ -1718,10 +1607,8 @@ CAMLprim value mlgmp_random_z(value state, value n)
 {
 	CAMLparam2(state, n);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
-	mpz_ptr result_value = Z_val(result);
-	mpz_init(result_value);
-	mpz_urandomm(result_value, Random_val(state), Z_val(n));
+	result = mlgmp_alloc_z_init();
+	mpz_urandomm(Z_val(result), Random_val(state), Z_val(n));
 	CAMLreturn(result);
 }
 
@@ -1729,11 +1616,9 @@ CAMLprim value mlgmp_random_f_bits(value state, value bits)
 {
 	CAMLparam2(state, bits);
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
 	mp_bitcnt_t b = Long_val(bits);
-	mpf_init2(result_value, b);
-	mpf_urandomb(result_value, Random_val(state), b);
+	result = mlgmp_alloc_f_init2(b);
+	mpf_urandomb(F_val(result), Random_val(state), b);
 	CAMLreturn(result);
 }
 
@@ -1745,10 +1630,8 @@ CAMLprim value mlgmp_random_f(value state, value prec, value n)
 	mpf_t u;
 	mpf_init2(u, b);
 	mpf_urandomb(u, Random_val(state), b);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
-	mpf_ptr result_value = F_val(result);
-	mpf_init2(result_value, b);
-	mpf_mul(result_value, u, F_val(n));
+	result = mlgmp_alloc_f_init2(b);
+	mpf_mul(F_val(result), u, F_val(n));
 	mpf_clear(u);
 	CAMLreturn(result);
 }
