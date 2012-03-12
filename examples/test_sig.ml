@@ -1,20 +1,21 @@
 module type N = sig (* numeric *)
+	type real;;
 	type t;;
 	val zero: t;;
 	val one: t;;
 	val compare: t -> t -> int;;
 	val compare_int: t -> int -> int;;
 	val neg: t -> t;;
-	(* val abs: t -> real;; *)
+	val abs: t -> real;;
 	val add: t -> t -> t;;
 	val add_int: t -> int -> t;;
 	val sub: t -> t -> t;;
 	val mul: t -> t -> t;;
 	val div: t -> t -> t;;
 	val pow_int: base:t -> exponent:int -> t;;
-	(* val pow_q: base:t -> exponent:Gmp.Q -> t;; *)
 	val int_pow_int: base:int -> exponent:int -> t;;
 	val scale: t -> base:int -> exponent:int -> t;;
+	val root: nth:int -> t -> t;;
 	val sqrt: t -> t;;
 	val of_based_string: base:int -> string -> t;;
 	val of_string: string -> t;;
@@ -24,7 +25,8 @@ module type N = sig (* numeric *)
 end;;
 
 module type S = sig (* scalar *)
-	include N;;
+	type t;;
+	include N with type real := t and type t := t;;
 	val to_float: t -> float;;
 end;;
 
@@ -58,6 +60,6 @@ let (_: unit) = let module Check: F = FR10D in ();;
 module C10 = Mpc.C (struct let prec = 10, 10 end);;
 module C10DD = C10.F (struct let rounding_mode = `D, `D end);;
 
-let (_: unit) = let module Check: N = C10DD in ();;
+let (_: unit) = let module Check: N with type real := Mpfr.fr = C10DD in ();;
 
 Printf.eprintf "ok\n";;

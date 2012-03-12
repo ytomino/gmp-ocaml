@@ -86,13 +86,6 @@ CAMLprim value mlmpfr_fr_compare_int(value left, value right)
 	CAMLreturn(Val_int(result));
 }
 
-CAMLprim value mlmpfr_fr_nearly_equal(value bits, value left, value right)
-{
-	CAMLparam2(left, right);
-	bool result = mpfr_eq(FR_val(left), FR_val(right), Long_val(bits));
-	CAMLreturn(Val_bool(result));
-}
-
 CAMLprim value mlmpfr_fr_neg(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
@@ -161,7 +154,7 @@ CAMLprim value mlmpfr_fr_pow_int(value prec, value mode, value base, value expon
 	CAMLparam4(prec, mode, base, exponent);
 	CAMLlocal1(result);
 	result = mlmpfr_alloc_fr_init2(Long_val(prec));
-	mpfr_pow_ui(FR_val(result), FR_val(base), Long_val(exponent), Rnd_val(mode));
+	mpfr_pow_si(FR_val(result), FR_val(base), Long_val(exponent), Rnd_val(mode));
 	CAMLreturn(result);
 }
 
@@ -169,8 +162,44 @@ CAMLprim value mlmpfr_fr_int_pow_int(value prec, value mode, value base, value e
 {
 	CAMLparam4(prec, mode, base, exponent);
 	CAMLlocal1(result);
-	result = mlmpfr_alloc_fr_init2(Long_val(prec));
-	mpfr_ui_pow_ui(FR_val(result), Long_val(base), Long_val(exponent), Rnd_val(mode));
+	mpfr_prec_t p = Long_val(prec);
+	result = mlmpfr_alloc_fr_init2(p);
+	mpfr_ptr result_value = FR_val(result);
+	mpfr_rnd_t m = Rnd_val(mode);
+	long b = Long_val(base);
+	long e = Long_val(exponent);
+	if(e < 0){
+		long n;
+		mpfr_t d;
+		mpfr_init2(d, p);
+		if(b < 0){
+			if(e % 2 != 0){
+				n = -1;
+			}else{
+				n = 1;
+			}
+			mpfr_ui_pow_ui(d, -b, -e, m);
+		}else{
+			n = 1;
+			mpfr_ui_pow_ui(d, b, -e, m);
+		}
+		mpfr_si_div(result_value, n, d, m);
+		mpfr_clear(d);
+	}else{
+		if(b < 0){
+			if(e % 2 != 0){
+				mpfr_t a;
+				mpfr_init2(a, p);
+				mpfr_ui_pow_ui(a, -b, e, m);
+				mpfr_neg(result_value, a, m);
+				mpfr_clear(a);
+			}else{
+				mpfr_ui_pow_ui(result_value, -b, e, m);
+			}
+		}else{
+			mpfr_ui_pow_ui(result_value, b, e, m);
+		}
+	}
 	CAMLreturn(result);
 }
 
@@ -205,6 +234,15 @@ CAMLprim value mlmpfr_fr_scale(value prec, value mode, value fraction, value bas
 	CAMLreturn(result);
 }
 
+CAMLprim value mlmpfr_fr_root(value prec, value mode, value nth, value x)
+{
+	CAMLparam4(prec, mode, nth, x);
+	CAMLlocal1(result);
+	result = mlmpfr_alloc_fr_init2(Long_val(prec));
+	mpfr_root(FR_val(result), FR_val(x), Long_val(nth), Rnd_val(mode));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlmpfr_fr_sqrt(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
@@ -212,6 +250,13 @@ CAMLprim value mlmpfr_fr_sqrt(value prec, value mode, value x)
 	result = mlmpfr_alloc_fr_init2(Long_val(prec));
 	mpfr_sqrt(FR_val(result), FR_val(x), Rnd_val(mode));
 	CAMLreturn(result);
+}
+
+CAMLprim value mlmpfr_fr_nearly_equal(value bits, value left, value right)
+{
+	CAMLparam2(left, right);
+	bool result = mpfr_eq(FR_val(left), FR_val(right), Long_val(bits));
+	CAMLreturn(Val_bool(result));
 }
 
 CAMLprim value mlmpfr_fr_frexp(value prec, value mode, value x)

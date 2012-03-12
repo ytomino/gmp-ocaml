@@ -35,6 +35,7 @@ module C (Prec: sig val prec: int * int end): sig
 	val pow_int: mode:rounding_mode -> base:t -> exponent:int -> t;;
 	val int_pow_int: mode:rounding_mode -> base:int -> exponent:int -> t;;
 	val scale: mode:rounding_mode -> t -> base:int -> exponent:int -> t;;
+	val root: mode:rounding_mode -> nth:int -> t -> t;;
 	val sqrt: mode:rounding_mode -> t -> t;;
 	(* floating-point operations *)
 	val log: mode:rounding_mode -> t -> t;;
@@ -77,6 +78,7 @@ module C (Prec: sig val prec: int * int end): sig
 		val pow_int: base:t -> exponent:int -> t;;
 		val int_pow_int: base:int -> exponent:int -> t;;
 		val scale: t -> base:int -> exponent:int -> t;;
+		val root: nth:int -> t -> t;;
 		val sqrt: t -> t;;
 		(* floating-point operations *)
 		val log: t -> t;;

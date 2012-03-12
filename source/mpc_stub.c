@@ -160,12 +160,47 @@ CAMLprim value mlmpc_c_int_pow_int(value prec, value mode, value base, value exp
 {
 	CAMLparam4(prec, mode, base, exponent);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
-	mpz_t a;
-	mpz_init(a);
-	mpz_ui_pow_ui(a, Long_val(base), Long_val(exponent));
-	mpc_set_z(C_val(result), a, Crnd_val(mode));
-	mpz_clear(a);
+	mpfr_prec_t real_prec = Long_val(Field(prec, 0));
+	result = mlmpc_alloc_c_init3(real_prec, Long_val(Field(prec, 1)));
+	mpc_ptr result_value = C_val(result);
+	mpc_rnd_t m = Crnd_val(mode);
+	long b = Long_val(base);
+	long e = Long_val(exponent);
+	mpfr_rnd_t real_rounding = MPC_RND_RE(m);
+	mpfr_rnd_t imag_rounding = MPC_RND_IM(m);
+	if(e < 0){
+		long n;
+		mpfr_t d;
+		mpfr_init2(d, real_prec);
+		if(b < 0){
+			if(e % 2 != 0){
+				n = -1;
+			}else{
+				n = 1;
+			}
+			mpfr_ui_pow_ui(d, -b, -e, real_rounding);
+		}else{
+			n = 1;
+			mpfr_ui_pow_ui(d, b, -e, real_rounding);
+		}
+		mpfr_si_div(mpc_realref(result_value), n, d, real_rounding);
+		mpfr_clear(d);
+	}else{
+		if(b < 0){
+			if(e % 2 != 0){
+				mpfr_t a;
+				mpfr_init2(a, real_prec);
+				mpfr_ui_pow_ui(a, -b, e, real_rounding);
+				mpfr_neg(mpc_realref(result_value), a, real_rounding);
+				mpfr_clear(a);
+			}else{
+				mpfr_ui_pow_ui(mpc_realref(result_value), -b, e, real_rounding);
+			}
+		}else{
+			mpfr_ui_pow_ui(mpc_realref(result_value), b, e, real_rounding);
+		}
+	}
+	mpfr_set_ui(mpc_imagref(result_value), 0, imag_rounding);
 	CAMLreturn(result);
 }
 
@@ -198,6 +233,36 @@ CAMLprim value mlmpc_c_scale(value prec, value mode, value fraction, value base,
 			mpc_div_fr(result_value, f, a, m);
 		}
 		mpfr_clear(a);
+	}
+	CAMLreturn(result);
+}
+
+CAMLprim value mlmpc_c_root(value prec, value mode, value nth, value x)
+{
+	CAMLparam4(prec, mode, nth, x);
+	CAMLlocal1(result);
+	mpfr_prec_t real_prec = Long_val(Field(prec, 0));
+	result = mlmpc_alloc_c_init3(real_prec, Long_val(Field(prec, 1)));
+	mpc_ptr result_value = C_val(result);
+	mpc_rnd_t m = Crnd_val(mode);
+	long n = Long_val(nth);
+	mpc_ptr x_value = C_val(x);
+	if(n == 1){
+		mpc_set(result_value, x_value, m);
+	}else if(n == 2){
+		mpc_sqrt(result_value, x_value, m);
+	}else{
+		/* x^(1/nth) */
+		mpfr_rnd_t real_rounding = MPC_RND_RE(m);
+		mpfr_t a; /* n */
+		mpfr_t b; /* 1/n */
+		mpfr_init2(a, real_prec);
+		mpfr_init2(b, real_prec);
+		mpfr_set_ui(a, 1, real_rounding);
+		mpfr_div_ui(b, a, n, real_rounding);
+		mpc_pow_fr(result_value, x_value, b, m);
+		mpfr_clear(a);
+		mpfr_clear(b);
 	}
 	CAMLreturn(result);
 }

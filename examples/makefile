@@ -12,6 +12,7 @@ all: \
 	$(BUILDDIR)/test_conv.opt.exe \
 	$(BUILDDIR)/test_marshal.opt.exe \
 	$(BUILDDIR)/test_sig.opt.exe \
+	$(BUILDDIR)/test_supplied.opt.exe \
 	$(BUILDDIR)/essai.byte.exe $(BUILDDIR)/essai.opt.exe \
 	$(BUILDDIR)/test_creal.byte.exe $(BUILDDIR)/test_creal.opt.exe \
 	$(BUILDDIR)/test_mlgmp.byte.exe $(BUILDDIR)/test_mlgmp.opt.exe \

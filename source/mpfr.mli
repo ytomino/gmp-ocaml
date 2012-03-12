@@ -31,7 +31,6 @@ module FR (Prec: sig val prec: int end): sig
 	val one: t;;
 	external compare: t -> t -> int = "mlmpfr_fr_compare";;
 	external compare_int: t -> int -> int = "mlmpfr_fr_compare_int";;
-	external nearly_equal: int -> t -> t -> bool = "mlmpfr_fr_nearly_equal";;
 	val neg: mode:rounding_mode -> t -> t;;
 	val abs: mode:rounding_mode -> t -> t;;
 	val add: mode:rounding_mode -> t -> t -> t;;
@@ -42,8 +41,10 @@ module FR (Prec: sig val prec: int end): sig
 	val pow_int: mode:rounding_mode -> base:t -> exponent:int -> t;;
 	val int_pow_int: mode:rounding_mode -> base:int -> exponent:int -> t;;
 	val scale: mode:rounding_mode -> t -> base:int -> exponent:int -> t;;
+	val root: mode:rounding_mode -> nth:int -> t -> t;;
 	val sqrt: mode:rounding_mode -> t -> t;;
 	(* floating-point operations *)
+	external nearly_equal: int -> t -> t -> bool = "mlmpfr_fr_nearly_equal";;
 	val frexp: mode:rounding_mode -> t -> t * int;;
 	val ceil: t -> t;;
 	val floor: t -> t;;
@@ -71,7 +72,6 @@ module FR (Prec: sig val prec: int end): sig
 		val one: t;;
 		external compare: t -> t -> int = "mlmpfr_fr_compare";;
 		external compare_int: t -> int -> int = "mlmpfr_fr_compare_int";;
-		external nearly_equal: int -> t -> t -> bool = "mlmpfr_fr_nearly_equal";;
 		val neg: t -> t;;
 		val abs: t -> t;;
 		val add: t -> t -> t;;
@@ -82,8 +82,10 @@ module FR (Prec: sig val prec: int end): sig
 		val pow_int: base:t -> exponent:int -> t;;
 		val int_pow_int: base:int -> exponent:int -> t;;
 		val scale: t -> base:int -> exponent:int -> t;;
+		val root: nth:int -> t -> t;;
 		val sqrt: t -> t;;
 		(* floating-point operations *)
+		external nearly_equal: int -> t -> t -> bool = "mlmpfr_fr_nearly_equal";;
 		val frexp: t -> t * int;;
 		val ceil: t -> t;;
 		val floor: t -> t;;
