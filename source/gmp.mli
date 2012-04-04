@@ -69,8 +69,8 @@ module Z: sig
 	external hamming_distance: t -> t -> int = "mlgmp_z_hamming_distance";;
 	external scan0: t -> int -> int = "mlgmp_z_scan0";;
 	external scan1: t -> int -> int = "mlgmp_z_scan1";;
-	external set_bit: t -> int -> int = "mlgmp_z_set_bit";;
-	external clear_bit: t -> int -> int = "mlgmp_z_clear_bit";;
+	external set_bit: t -> int -> t = "mlgmp_z_set_bit";;
+	external clear_bit: t -> int -> t = "mlgmp_z_clear_bit";;
 	external test_bit: t -> int -> int = "mlgmp_z_test_bit";;
 	(* conversions *)
 	external of_based_string: base:int -> string -> t = "mlgmp_z_of_based_string";;

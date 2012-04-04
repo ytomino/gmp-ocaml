@@ -571,7 +571,7 @@ CAMLprim value mlgmp_z_set_bit(value x, value bit_index)
 	mpz_ptr result_value = Z_val(result);
 	mpz_set(result_value, Z_val(x));
 	mpz_setbit(result_value, Long_val(bit_index));
-	CAMLreturn(Val_int(result));
+	CAMLreturn(result);
 }
 
 CAMLprim value mlgmp_z_clear_bit(value x, value bit_index)
@@ -582,7 +582,7 @@ CAMLprim value mlgmp_z_clear_bit(value x, value bit_index)
 	mpz_ptr result_value = Z_val(result);
 	mpz_set(result_value, Z_val(x));
 	mpz_clrbit(result_value, Long_val(bit_index));
-	CAMLreturn(Val_int(result));
+	CAMLreturn(result);
 }
 
 CAMLprim value mlgmp_z_test_bit(value x, value bit_index)
