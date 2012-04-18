@@ -66,12 +66,19 @@ CSRC=gmp_stub.c
 LIBNAME=gmp
 STUBLIBNAME=ml$(LIBNAME)
 
-OCAMLCFLAGS:=-w Aer
-CFLAGS:=-O2 -W -Wall
+WIFLAGS=
+WLFLAGS=
+ifneq ($(WITH_GMP),)
+WIFLAGS+=-I$(WITH_GMP)/include
+WLFLAGS+=-L$(WITH_GMP)/lib
+endif
 
-OCAMLMKLIBFLAGS=-lgmp
-CCLIB=-cclib -lgmp
-LDFLAGS:=$(call DEFAULTLIB,-lgmp)
+OCAMLCFLAGS=-w Aer
+CFLAGS=$(WIFLAGS) -O2 -W -Wall
+
+OCAMLMKLIBFLAGS=$(WLFLAGS) -lgmp
+CCLIB=$(addprefix -cclib ,-lgmp)
+LDFLAGS=$(WLFLAGS) $(call DEFAULTLIB,-lgmp)
 
 $(BUILDDIR)/gmp_stub.o: gmp_stub.h
 $(BUILDDIR)/gmp.cmo: $(BUILDDIR)/gmp.cmi

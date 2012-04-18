@@ -66,12 +66,27 @@ CSRC=mpc_stub.c
 LIBNAME=mpc
 STUBLIBNAME=ml$(LIBNAME)
 
-OCAMLCFLAGS:=-w Aer
-CFLAGS:=-O2 -W -Wall
+WIFLAGS=
+WLFLAGS=
+ifneq ($(WITH_GMP),)
+WIFLAGS+=-I$(WITH_GMP)/include
+WLFLAGS+=-L$(WITH_GMP)/lib
+endif
+ifneq ($(WITH_MPFR),)
+WIFLAGS+=-I$(WITH_MPFR)/include
+WLFLAGS+=-L$(WITH_MPFR)/lib
+endif
+ifneq ($(WITH_MPC),)
+WIFLAGS+=-I$(WITH_MPC)/include
+WLFLAGS+=-L$(WITH_MPC)/lib
+endif
 
-OCAMLMKLIBFLAGS=-lmpc
-CCLIB=-cclib -lmpc
-LDFLAGS:=$(call DEFAULTLIB,-lmpc) $(call DEFAULTLIB,-lmpfr) $(call DEFAULTLIB,-lgmp)
+OCAMLCFLAGS=-w Aer
+CFLAGS=$(WIFLAGS) -O2 -W -Wall
+
+OCAMLMKLIBFLAGS=$(WLFLAGS) -lmpc
+CCLIB=$(addprefix -cclib ,-lmpc)
+LDFLAGS=$(WLFLAGS) $(call DEFAULTLIB,-lmpc) $(call DEFAULTLIB,-lmpfr) $(call DEFAULTLIB,-lgmp)
 
 $(BUILDDIR)/mpc_stub.o: gmp_stub.h mpfr_stub.h mpc_stub.h
 $(BUILDDIR)/mpc.cmo: $(BUILDDIR)/mpc.cmi
