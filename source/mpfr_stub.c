@@ -281,8 +281,8 @@ CAMLprim value mlmpfr_fr_frexp(value prec, value mode, value x)
 		}
 	}
 	result = caml_alloc_tuple(2);
-	Field(result, 0) = result_fraction;
-	Field(result, 1) = result_exponent;
+	Store_field(result, 0, result_fraction);
+	Store_field(result, 1, result_exponent);
 	CAMLreturn(result);
 }
 
@@ -450,8 +450,8 @@ value mlmpfr_fr_get_str(value mode, value base, value digits, value x)
 	mp_exp_t exponent;
 	char *image = mpfr_get_str(NULL, &exponent, Int_val(base), Long_val(digits), FR_val(x), Rnd_val(mode));
 	result = alloc_tuple(2);
-	Field(result, 0) = caml_copy_string(image);
-	Field(result, 1) = Val_long(exponent);
+	Store_field(result, 0, caml_copy_string(image));
+	Store_field(result, 1, Val_long(exponent));
 	mpfr_free_str(image);
 	CAMLreturn(result);
 }
@@ -635,8 +635,8 @@ CAMLprim value mlmpfr_fr_bits_of_extended(value x)
 	}
 #endif
 	result = caml_alloc_tuple(2);
-	Field(result, 0) = caml_copy_int64(i64);
-	Field(result, 1) = Val_int(i16);
+	Store_field(result, 0, caml_copy_int64(i64));
+	Store_field(result, 1, Val_int(i16));
 	CAMLreturn(result);
 }
 

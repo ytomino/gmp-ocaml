@@ -267,8 +267,8 @@ CAMLprim value mlgmp_z_tdiv(value left, value right)
 	r = mlgmp_alloc_z_init();
 	mpz_tdiv_qr(Z_val(q), Z_val(r), Z_val(left), Z_val(right));
 	result = caml_alloc_tuple(2);
-	Field(result, 0) = q;
-	Field(result, 1) = r;
+	Store_field(result, 0, q);
+	Store_field(result, 1, r);
 	CAMLreturn(result);
 }
 
@@ -280,8 +280,8 @@ CAMLprim value mlgmp_z_cdiv(value left, value right)
 	r = mlgmp_alloc_z_init();
 	mpz_cdiv_qr(Z_val(q), Z_val(r), Z_val(left), Z_val(right));
 	result = caml_alloc_tuple(2);
-	Field(result, 0) = q;
-	Field(result, 1) = r;
+	Store_field(result, 0, q);
+	Store_field(result, 1, r);
 	CAMLreturn(result);
 }
 
@@ -293,8 +293,8 @@ CAMLprim value mlgmp_z_fdiv(value left, value right)
 	r = mlgmp_alloc_z_init();
 	mpz_fdiv_qr(Z_val(q), Z_val(r), Z_val(left), Z_val(right));
 	result = caml_alloc_tuple(2);
-	Field(result, 0) = q;
-	Field(result, 1) = r;
+	Store_field(result, 0, q);
+	Store_field(result, 1, r);
 	CAMLreturn(result);
 }
 
@@ -324,8 +324,8 @@ CAMLprim value mlgmp_z_tsqrt(value x)
 	r = mlgmp_alloc_z_init();
 	mpz_sqrtrem(Z_val(s), Z_val(r), Z_val(x));
 	result = caml_alloc_tuple(2);
-	Field(result, 0) = s;
-	Field(result, 1) = r;
+	Store_field(result, 0, s);
+	Store_field(result, 1, r);
 	CAMLreturn(result);
 }
 
@@ -377,9 +377,9 @@ CAMLprim value mlgmp_z_gcdext(value a, value b)
 	t = mlgmp_alloc_z_init();
 	mpz_gcdext(Z_val(g), Z_val(s), Z_val(t), Z_val(a), Z_val(b));
 	result = caml_alloc_tuple(3);
-	Field(result, 0) = g;
-	Field(result, 1) = s;
-	Field(result, 2) = t;
+	Store_field(result, 0, g);
+	Store_field(result, 1, s);
+	Store_field(result, 2, t);
 	CAMLreturn(result);
 }
 
@@ -400,7 +400,7 @@ CAMLprim value mlgmp_z_invert(value x, value y)
 	mpz_ptr i_value = Z_val(i);
 	if(mpz_invert(i_value, Z_val(x), Z_val(y))){
 		result = caml_alloc(1, Int_val(Val_true)); /* Some i */
-		Field(result, 0) = i;
+		Store_field(result, 0, i);
 	}else{
 		result = Val_false; /* None */
 	}
@@ -436,8 +436,8 @@ CAMLprim value mlgmp_z_remove(value x, value f)
 	mpz_ptr rop_value = Z_val(rop);
 	mp_bitcnt_t removed = mpz_remove(rop_value, Z_val(x), Z_val(f));
 	result = alloc_tuple(2);
-	Field(result, 0) = rop;
-	Field(result, 1) = Val_long(removed);
+	Store_field(result, 0, rop);
+	Store_field(result, 1, Val_long(removed));
 	CAMLreturn(result);
 }
 
@@ -1459,8 +1459,8 @@ CAMLprim value mlgmp_f_frexp(value prec, value x)
 		}
 	}
 	result = caml_alloc_tuple(2);
-	Field(result, 0) = result_fraction;
-	Field(result, 1) = result_exponent;
+	Store_field(result, 0, result_fraction);
+	Store_field(result, 1, result_exponent);
 	CAMLreturn(result);
 }
 
