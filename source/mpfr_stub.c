@@ -266,6 +266,13 @@ CAMLprim value mlmpfr_fr_frexp(value prec, value mode, value x)
 	mpfr_prec_t p = Long_val(prec);
 	mpfr_ptr x_value = FR_val(x);
 	mpfr_rnd_t m = Rnd_val(mode);
+#if MPFR_VERSION >= 0x0310
+	mpfr_exp_t exponent;
+	result_fraction = mlmpfr_alloc_fr_init2(p);
+	mpfr_ptr rf_value = FR_val(result_fraction);
+	mpfr_frexp(&exponent, rf_value, x_value, m);
+	result_exponent = Val_long(exponent);
+#else
 	mpfr_exp_t exponent = mpfr_get_exp(x_value);
 	result_exponent = Val_long(exponent);
 	if(exponent == 0){
@@ -280,6 +287,7 @@ CAMLprim value mlmpfr_fr_frexp(value prec, value mode, value x)
 			mpfr_mul_2exp(rf_value, x_value, - exponent, m);
 		}
 	}
+#endif
 	result = caml_alloc_tuple(2);
 	Store_field(result, 0, result_fraction);
 	Store_field(result, 1, result_exponent);
