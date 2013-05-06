@@ -55,6 +55,9 @@ module Z: sig
 	external kronecker: t -> t -> int = "mlgmp_z_kronecker";;
 	external remove: t -> t -> t * int = "mlgmp_z_remove";;
 	external fac_int: int -> t = "mlgmp_z_fac_int";;
+	external dfac_int: int -> t = "mlgmp_z_dfac_int";; (* dfac_int x = int_mfac_int ~step:2 x *)
+	external int_mfac_int: step:int -> int -> t = "mlgmp_z_int_mfac_int";;
+	external primorial_int: int -> t = "mlgmp_z_primorial_int";;
 	external bin_int: t -> int -> t = "mlgmp_z_bin_int";;
 	external fib_int: int -> t = "mlgmp_z_fib_int";;
 	external lucnum_int: int -> t = "mlgmp_z_lucnum_int";;
