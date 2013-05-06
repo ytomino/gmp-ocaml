@@ -40,6 +40,11 @@ module C (Prec: sig val prec: int * int end): sig
 	(* floating-point operations *)
 	val log: mode:rounding_mode -> t -> t;;
 	val based_log: mode:rounding_mode -> base: int -> t -> t;;
+	(* complex functions *)
+	val conj: mode:rounding_mode -> t -> t;;
+	val norm: mode:Mpfr.rounding_mode -> t -> fr;;
+	val arg: mode:Mpfr.rounding_mode -> t -> fr;;
+	val proj: mode:rounding_mode -> t -> t;;
 	(* partial acccess *)
 	external real: t -> fr = "mlmpc_c_real";;
 	external imag: t -> fr = "mlmpc_c_imag";;
@@ -83,6 +88,11 @@ module C (Prec: sig val prec: int * int end): sig
 		(* floating-point operations *)
 		val log: t -> t;;
 		val based_log: base: int -> t -> t;;
+		(* complex functions *)
+		val conj: t -> t;;
+		val norm: t -> fr;;
+		val arg: t -> fr;;
+		val proj: t -> t;;
 		(* partial acccess *)
 		external real: t -> fr = "mlmpc_c_real";;
 		external imag: t -> fr = "mlmpc_c_imag";;
