@@ -1,3 +1,9 @@
+/* for version < 1.0.0 */
+
+#if !defined(MPC_RND)
+#define MPC_RND RNDC
+#endif
+
 /* word size */
 
 #define WSIZE_32_C (WSIZE_32_FR * 2)
@@ -14,7 +20,7 @@ static inline mpc_rnd_t Crnd_val(value x)
 {
 	int re = Rnd_val(Field(x, 0));
 	int im = Rnd_val(Field(x, 1));
-	return RNDC(re, im);
+	return MPC_RND(re, im);
 }
 
 /* hash */

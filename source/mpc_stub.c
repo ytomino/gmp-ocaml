@@ -11,6 +11,13 @@
 #include "mpfr_stub.h"
 #include "mpc_stub.h"
 
+/* for version < 1.0.0 */
+
+#if MPC_VERSION_MAJOR < 1
+#define mpc_mul_2ui mpc_mul_2exp
+#define mpc_div_2ui mpc_div_2exp
+#endif
+
 /**** C ****/
 
 /* custom data */
@@ -217,9 +224,9 @@ CAMLprim value mlmpc_c_scale(value prec, value mode, value fraction, value base,
 	long e = Long_val(exponent);
 	if(b == 2){
 		if(e >= 0){
-			mpc_mul_2exp(result_value, f, e, m);
+			mpc_mul_2ui(result_value, f, e, m);
 		}else{
-			mpc_div_2exp(result_value, f, -e, m);
+			mpc_div_2ui(result_value, f, -e, m);
 		}
 	}else{
 		mpfr_rnd_t real_rounding = MPC_RND_RE(m);
