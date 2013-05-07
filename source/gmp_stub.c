@@ -1819,6 +1819,7 @@ CAMLprim value mlgmp_random_int64(value state, value n)
 	CAMLlocal1(result);
 	result = caml_copy_int64(gmp_urandomm_ui(Random_val(state), Int64_val(n)));
 #elif LONG_BIT >= 32
+	CAMLextern value mlgmp_random_z(value state, value n); /* prototype */
 	CAMLlocal3(result, nz, rz);
 	nz = mlgmp_z_of_int64(n);
 	rz = mlgmp_random_z(state, nz);
