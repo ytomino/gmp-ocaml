@@ -1,4 +1,5 @@
 #include <caml/alloc.h>
+#include <caml/config.h>
 #include <caml/custom.h>
 #include <caml/fail.h>
 #include <caml/intext.h>
@@ -13,7 +14,7 @@
 #include "gmp_stub.h"
 
 #ifndef LONG_BIT
-#define LONG_BIT (__SIZEOF_LONG__ * 8)
+#define LONG_BIT (SIZEOF_LONG * 8) /* defined in caml/config.h */
 #endif
 
 /**** Z ****/
