@@ -85,7 +85,7 @@ WLFLAGS+=-L$(WITH_MPC)/lib
 endif
 
 OCAMLCFLAGS=-w Aer
-CFLAGS=$(WIFLAGS) -O2 -W -Wall
+CFLAGS=$(WIFLAGS) -O2 -std=gnu99 -Wall -Wextra
 
 OCAMLMKLIBFLAGS=$(WLFLAGS) -lmpc
 CCLIB=$(addprefix -cclib ,-lmpc)
