@@ -44,7 +44,7 @@ external make_f: prec:int * int -> mode:rounding_mode -> f -> f -> c = "mlmpc_c_
 external make_fr: prec:int * int -> mode:rounding_mode -> fr -> fr -> c = "mlmpc_c_make_fr";;
 
 let default_prec () =
-	let mpfr_prec = default_prec () in
+	let mpfr_prec = Mpfr.default_prec () in
 	mpfr_prec, mpfr_prec;;
 
 let nn = (`N, `N);;
