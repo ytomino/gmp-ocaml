@@ -10,7 +10,9 @@ module type N = sig (* numeric *)
 	val add: t -> t -> t;;
 	val add_int: t -> int -> t;;
 	val sub: t -> t -> t;;
+	val sub_int: t -> int -> t;;
 	val mul: t -> t -> t;;
+	val mul_int: t -> int -> t;;
 	val div: t -> t -> t;;
 	val pow_int: base:t -> exponent:int -> t;;
 	val int_pow_int: base:int -> exponent:int -> t;;

@@ -131,12 +131,30 @@ CAMLprim value mlmpfr_fr_sub(value prec, value mode, value left, value right)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlmpfr_fr_sub_int(value prec, value mode, value left, value right)
+{
+	CAMLparam4(prec, mode, left, right);
+	CAMLlocal1(result);
+	result = mlmpfr_alloc_fr_init2(Long_val(prec));
+	mpfr_sub_si(FR_val(result), FR_val(left), Long_val(right), Rnd_val(mode));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlmpfr_fr_mul(value prec, value mode, value left, value right)
 {
 	CAMLparam4(prec, mode, left, right);
 	CAMLlocal1(result);
 	result = mlmpfr_alloc_fr_init2(Long_val(prec));
 	mpfr_mul(FR_val(result), FR_val(left), FR_val(right), Rnd_val(mode));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlmpfr_fr_mul_int(value prec, value mode, value left, value right)
+{
+	CAMLparam4(prec, mode, left, right);
+	CAMLlocal1(result);
+	result = mlmpfr_alloc_fr_init2(Long_val(prec));
+	mpfr_mul_si(FR_val(result), FR_val(left), Long_val(right), Rnd_val(mode));
 	CAMLreturn(result);
 }
 

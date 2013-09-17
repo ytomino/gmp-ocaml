@@ -12,6 +12,10 @@ module C = Cm.F (struct let rounding_mode = Mpc.default_rounding_mode () end);;
 assert (Z.add_int (Z.of_int 4) (+1) = Z.of_int 5);;
 assert (Z.add_int (Z.of_int 4) (-1) = Z.of_int 3);;
 
+(* mpz_sub_si is missing *)
+assert (Z.sub_int (Z.of_int 4) (+1) = Z.of_int 3);;
+assert (Z.sub_int (Z.of_int 4) (-1) = Z.of_int 5);;
+
 (* mpz_pow_si is missing *)
 assert (Z.pow_int (Z.of_int 3) 3 = Z.of_int 27);;
 assert (Z.pow_int (Z.of_int 3) (-3) = Z.zero);;
@@ -29,6 +33,14 @@ assert (Z.int_pow_int (-3) 3 = Z.of_int (-27));;
 (* mpq_add_si is missing *)
 assert (Q.add_int (Q.of_int 4) (+1) = Q.of_int 5);;
 assert (Q.add_int (Q.of_int 4) (-1) = Q.of_int 3);;
+
+(* mpq_sub_si is missing *)
+assert (Q.sub_int (Q.of_int 4) (+1) = Q.of_int 3);;
+assert (Q.sub_int (Q.of_int 4) (-1) = Q.of_int 5);;
+
+(* mpq_mul_si is missing *)
+assert (Q.mul_int (Q.of_int 4) (+2) = Q.of_int 8);;
+assert (Q.mul_int (Q.of_int 4) (-2) = Q.of_int (-8));;
 
 (* mpq_pow_si is missing *)
 assert (Q.pow_int (Q.make_int 2 3) 3 = Q.make_int 8 27);;
@@ -58,6 +70,14 @@ assert (Q.sqrt (Q.make_int 4 9) = Q.make_int 2 3);
 (* mpf_add_si is missing *)
 assert (F.add_int (F.of_int 4) (+1) = F.of_int 5);;
 assert (F.add_int (F.of_int 4) (-1) = F.of_int 3);;
+
+(* mpf_sub_si is missing *)
+assert (F.sub_int (F.of_int 4) (+1) = F.of_int 3);;
+assert (F.sub_int (F.of_int 4) (-1) = F.of_int 5);;
+
+(* mpf_mul_si is missing *)
+assert (F.mul_int (F.of_int 4) (+2) = F.of_int 8);;
+assert (F.mul_int (F.of_int 4) (-2) = F.of_int (-8));;
 
 (* mpf_pow_si is missing *)
 assert (F.pow_int (F.of_int 2) 3 = F.of_int 8);;
@@ -96,6 +116,10 @@ assert (FR.int_pow_int (-2) 2 = FR.of_int 4);;
 assert (FR.int_pow_int (-2) 3 = FR.of_int (-8));;
 assert (FR.int_pow_int (-2) (-2) = FR.of_float (1.0 /. 4.0));;
 assert (FR.int_pow_int (-2) (-3) = FR.of_float (-1.0 /. 8.0));;
+
+(* mpc_sub_si is missing *)
+assert (C.sub_int (C.of_int 4) (+1) = C.of_int 3);;
+assert (C.sub_int (C.of_int 4) (-1) = C.of_int 5);;
 
 (* mpc_si_pow_si is missing *)
 assert (C.int_pow_int 2 3 = C.of_int 8);;

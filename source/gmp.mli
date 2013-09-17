@@ -26,7 +26,9 @@ module Z: sig
 	external add: t -> t -> t = "mlgmp_z_add";;
 	external add_int: t -> int -> t = "mlgmp_z_add_int";;
 	external sub: t -> t -> t = "mlgmp_z_sub";;
+	external sub_int: t -> int -> t = "mlgmp_z_sub_int";;
 	external mul: t -> t -> t = "mlgmp_z_mul";;
+	external mul_int: t -> int -> t = "mlgmp_z_mul_int";;
 	external div: t -> t -> t = "mlgmp_z_div";; (* div x y = fst (tdiv x y) *)
 	external pow_int: base:t -> exponent:int -> t = "mlgmp_z_pow_int";;
 	external int_pow_int: base:int -> exponent:int -> t = "mlgmp_z_int_pow_int";;
@@ -114,7 +116,9 @@ module Q: sig
 	external add: t -> t -> t = "mlgmp_q_add";;
 	external add_int: t -> int -> t = "mlgmp_q_add_int";;
 	external sub: t -> t -> t = "mlgmp_q_sub";;
+	external sub_int: t -> int -> t = "mlgmp_q_sub_int";;
 	external mul: t -> t -> t = "mlgmp_q_mul";;
+	external mul_int: t -> int -> t = "mlgmp_q_mul_int";;
 	external div: t -> t -> t = "mlgmp_q_div";;
 	external pow_int: base:t -> exponent:int -> t = "mlgmp_q_pow_int";;
 	external int_pow_int: base:int -> exponent:int -> t = "mlgmp_q_int_pow_int";;
@@ -163,7 +167,9 @@ module F (Prec: sig val prec: int end): sig
 	val add: t -> t -> t;;
 	val add_int: t -> int -> t;;
 	val sub: t -> t -> t;;
+	val sub_int: t -> int -> t;;
 	val mul: t -> t -> t;;
+	val mul_int: t -> int -> t;;
 	val div: t -> t -> t;;
 	val pow_int: base:t -> exponent:int -> t;;
 	val int_pow_int: base:int -> exponent:int -> t;;

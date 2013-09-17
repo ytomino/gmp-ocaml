@@ -30,7 +30,9 @@ module C (Prec: sig val prec: int * int end): sig
 	val add: mode:rounding_mode -> t -> t -> t;;
 	val add_int: mode:rounding_mode -> t -> int -> t;;
 	val sub: mode:rounding_mode -> t -> t -> t;;
+	val sub_int: mode:rounding_mode -> t -> int -> t;;
 	val mul: mode:rounding_mode -> t -> t -> t;;
+	val mul_int: mode:rounding_mode -> t -> int -> t;;
 	val div: mode:rounding_mode -> t -> t -> t;;
 	val pow_int: mode:rounding_mode -> base:t -> exponent:int -> t;;
 	val int_pow_int: mode:rounding_mode -> base:int -> exponent:int -> t;;
@@ -78,7 +80,9 @@ module C (Prec: sig val prec: int * int end): sig
 		val add: t -> t -> t;;
 		val add_int: t -> int -> t;;
 		val sub: t -> t -> t;;
+		val sub_int: t -> int -> t;;
 		val mul: t -> t -> t;;
+		val mul_int: t -> int -> t;;
 		val div: t -> t -> t;;
 		val pow_int: base:t -> exponent:int -> t;;
 		val int_pow_int: base:int -> exponent:int -> t;;
