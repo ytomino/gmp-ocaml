@@ -1329,6 +1329,15 @@ CAMLprim value mlgmp_f_add_int(value prec, value left, value right)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlgmp_f_sub(value prec, value left, value right)
+{
+	CAMLparam3(prec, left, right);
+	CAMLlocal1(result);
+	result = mlgmp_alloc_f_init2(Long_val(prec));
+	mpf_sub(F_val(result), F_val(left), F_val(right));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlgmp_f_mul(value prec, value left, value right)
 {
 	CAMLparam3(prec, left, right);
@@ -1344,15 +1353,6 @@ CAMLprim value mlgmp_f_div(value prec, value left, value right)
 	CAMLlocal1(result);
 	result = mlgmp_alloc_f_init2(Long_val(prec));
 	mpf_div(F_val(result), F_val(left), F_val(right));
-	CAMLreturn(result);
-}
-
-CAMLprim value mlgmp_f_sub(value prec, value left, value right)
-{
-	CAMLparam3(prec, left, right);
-	CAMLlocal1(result);
-	result = mlgmp_alloc_f_init2(Long_val(prec));
-	mpf_sub(F_val(result), F_val(left), F_val(right));
 	CAMLreturn(result);
 }
 
