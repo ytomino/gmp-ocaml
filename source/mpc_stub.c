@@ -184,7 +184,7 @@ CAMLprim value mlmpc_c_pow_int(value prec, value mode, value base, value exponen
 	CAMLparam4(prec, mode, base, exponent);
 	CAMLlocal1(result);
 	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
-	mpc_pow_ui(C_val(result), C_val(base), Long_val(exponent), Crnd_val(mode));
+	mpc_pow_si(C_val(result), C_val(base), Long_val(exponent), Crnd_val(mode));
 	CAMLreturn(result);
 }
 
