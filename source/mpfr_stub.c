@@ -403,6 +403,24 @@ CAMLprim value mlmpfr_fr_sin(value prec, value mode, value x)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlmpfr_fr_cos(value prec, value mode, value x)
+{
+	CAMLparam3(prec, mode, x);
+	CAMLlocal1(result);
+	result = mlmpfr_alloc_fr_init2(Long_val(prec));
+	mpfr_cos(FR_val(result), FR_val(x), Rnd_val(mode));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlmpfr_fr_tan(value prec, value mode, value x)
+{
+	CAMLparam3(prec, mode, x);
+	CAMLlocal1(result);
+	result = mlmpfr_alloc_fr_init2(Long_val(prec));
+	mpfr_tan(FR_val(result), FR_val(x), Rnd_val(mode));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlmpfr_fr_acosh(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
