@@ -163,11 +163,11 @@ module Gmp = struct
 			if mantissa = "Inf" then "Inf" else
 			let lm = String.length mantissa in
 			(if lm > 1 then
-				let tmp = String.create (succ lm) in
-				String.blit mantissa 0 tmp 0 (1+i);
-				String.blit mantissa (1+i) tmp (2+i) ((pred lm)-i);
-				String.set tmp (1+i) '.';
-				tmp
+				let tmp = Bytes.create (succ lm) in
+				Bytes.blit (Bytes.unsafe_of_string mantissa) 0 tmp 0 (1+i);
+				Bytes.blit (Bytes.unsafe_of_string mantissa) (1+i) tmp (2+i) ((pred lm)-i);
+				Bytes.set tmp (1+i) '.';
+				Bytes.unsafe_to_string tmp
 			else mantissa)
 			^ (if base <= 10 then "E" else "@")
 			^ (string_of_int (pred exponent));;
