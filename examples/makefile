@@ -10,6 +10,7 @@ export CAML_LD_LIBRARY_PATH=$(BUILDDIR)/stublibs
 
 all: \
 	$(BUILDDIR)/test_conv.opt.exe \
+	$(BUILDDIR)/test_export.opt.exe \
 	$(BUILDDIR)/test_marshal.opt.exe \
 	$(BUILDDIR)/test_sig.opt.exe \
 	$(BUILDDIR)/test_supplied.opt.exe \

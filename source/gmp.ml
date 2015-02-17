@@ -2,6 +2,7 @@ external setup: unit -> unit = "mlgmp_setup";;
 setup ();;
 
 type z;;
+type byte_order = [`B | `L | `N];;
 
 external z_of_based_string: base:int -> string -> z = "mlgmp_z_of_based_string";;
 let z_of_string = z_of_based_string ~base:10;;
@@ -77,6 +78,9 @@ module Z = struct
 	external set_bit: t -> int -> t = "mlgmp_z_set_bit";;
 	external clear_bit: t -> int -> t = "mlgmp_z_clear_bit";;
 	external test_bit: t -> int -> int = "mlgmp_z_test_bit";;
+	external export_length: t -> int = "mlgmp_z_export_length";;
+	external export: order:byte_order -> t -> bytes -> int -> int -> unit = "mlgmp_z_export";;
+	external import: order:byte_order -> signed:bool -> bytes -> int -> int -> t = "mlgmp_z_import";;
 	external of_based_string: base:int -> string -> t = "mlgmp_z_of_based_string";;
 	let of_string = z_of_string;;
 	external to_based_string: base:int -> t -> string = "mlgmp_based_string_of_z";;

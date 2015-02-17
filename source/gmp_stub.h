@@ -31,6 +31,21 @@ static inline __gmp_randstate_struct *Random_val(value x)
 	return Data_custom_val(x);
 }
 
+static inline int Order_val(value x)
+{
+	switch(x){
+	case 0x0085: return 1; /* most significant first */
+	case 0x0099: return -1; /* least significant first */
+	case 0x009d: /* native */
+#if __LITTLE_ENDIAN__
+		return -1;
+#else
+		return 1;
+#endif
+	default: caml_failwith(__FUNCTION__);
+	}
+}
+
 /* hash */
 
 #define HASH_MODULUS 4294967291UL /* compatibility for Caml-GMP */
