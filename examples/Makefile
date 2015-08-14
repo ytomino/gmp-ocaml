@@ -10,6 +10,20 @@ else
 BINLN=
 endif
 
+empty=
+
+ifneq ($(ComSpec),)
+RM=del
+LINK=linkd $2 $1
+UNLINK=linkd $1 /d
+DIRSEP=\$(empty)
+else
+RM=rm
+LINK=ln -s $1 $2
+UNLINK=rm $1
+DIRSEP=/
+endif
+
 BUILDDIR=$(TARGET).build
 
 export CAML_LD_LIBRARY_PATH=$(BUILDDIR)/stublibs
@@ -64,17 +78,18 @@ interactive: $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
 	$(RLWRAP) ocaml -I $(BUILDDIR) $(OCAMLCFLAGS) gmp.cma mpfr.cma mpc.cma
 
 $(BUILDDIR)/gmp.cma: $(wildcard ../source/gmp*)
-	make -C ../source -f makefile-gmp install DESTDIR=$(abspath $(BUILDDIR))
+	$(MAKE) -C ../source -f makefile-gmp install DESTDIR=$(abspath $(BUILDDIR))
 
 $(BUILDDIR)/mpfr.cma: $(wildcard ../source/mpfr*) $(BUILDDIR)/gmp.cma
-	make -C ../source -f makefile-mpfr install DESTDIR=$(abspath $(BUILDDIR))
+	$(MAKE) -C ../source -f makefile-mpfr install DESTDIR=$(abspath $(BUILDDIR))
 
 $(BUILDDIR)/mpc.cma: $(wildcard ../source/mpc*) $(BUILDDIR)/mpfr.cma
-	make -C ../source -f makefile-mpc install DESTDIR=$(abspath $(BUILDDIR))
+	$(MAKE) -C ../source -f makefile-mpc install DESTDIR=$(abspath $(BUILDDIR))
 
 $(BINLN):
-	ln -s $(BUILDDIR) $(BINLN)
+	-$(call LINK,$(BUILDDIR),$(BINLN))
 
 clean:
-	make -C ../source clean
-	-rm -rf $(BUILDDIR) $(BINLN)
+	$(MAKE) -C ../source clean
+	-$(call UNLINK,$(BINLN))
+	-rm -rf $(BUILDDIR)
