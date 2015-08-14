@@ -1,8 +1,16 @@
-BUILDDIR=build
+HOST=$(shell gcc -dumpmachine)
+TARGET=$(HOST)
 
+ifeq ($(TARGET),$(HOST))
+BINLN=bin
 ifneq ($(shell rlwrap --version),)
 RLWRAP=rlwrap
 endif
+else
+BINLN=
+endif
+
+BUILDDIR=$(TARGET).build
 
 export CAML_LD_LIBRARY_PATH=$(BUILDDIR)/stublibs
 
@@ -17,7 +25,8 @@ all: \
 	$(BUILDDIR)/essai.byte.exe $(BUILDDIR)/essai.opt.exe \
 	$(BUILDDIR)/test_creal.byte.exe $(BUILDDIR)/test_creal.opt.exe \
 	$(BUILDDIR)/test_mlgmp.byte.exe $(BUILDDIR)/test_mlgmp.opt.exe \
-	$(BUILDDIR)/test_suite.byte.exe $(BUILDDIR)/test_suite.opt.exe
+	$(BUILDDIR)/test_suite.byte.exe $(BUILDDIR)/test_suite.opt.exe \
+	$(BINLN)
 
 $(BUILDDIR)/%.opt.exe: %.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
 	@echo "**** $< ****"
@@ -63,6 +72,9 @@ $(BUILDDIR)/mpfr.cma: $(wildcard ../source/mpfr*) $(BUILDDIR)/gmp.cma
 $(BUILDDIR)/mpc.cma: $(wildcard ../source/mpc*) $(BUILDDIR)/mpfr.cma
 	make -C ../source -f makefile-mpc install DESTDIR=$(abspath $(BUILDDIR))
 
+$(BINLN):
+	ln -s $(BUILDDIR) $(BINLN)
+
 clean:
 	make -C ../source clean
-	-rm -rf $(BUILDDIR)
+	-rm -rf $(BUILDDIR) $(BINLN)
