@@ -6,17 +6,17 @@ all clean install uninstall:
 
 ifneq ($(findstring gmp,$(WITH)),)
 	@echo "**** GMP ****"
-	make -f makefile-gmp $@
+	make -f Makefile-gmp $@
 endif
 ifneq ($(findstring mpfr,$(WITH)),)
-ifneq ($(wildcard makefile-mpfr),)
+ifneq ($(wildcard Makefile-mpfr),)
 	@echo "**** MPFR ****"
-	make -f makefile-mpfr $@
+	make -f Makefile-mpfr $@
 endif
 endif
 ifneq ($(findstring mpc,$(WITH)),)
-ifneq ($(wildcard makefile-mpc),)
+ifneq ($(wildcard Makefile-mpc),)
 	@echo "**** MPC ****"
-	make -f makefile-mpc $@
+	make -f Makefile-mpc $@
 endif
 endif
