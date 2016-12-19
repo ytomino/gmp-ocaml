@@ -76,7 +76,7 @@ WIFLAGS+=-I$(WITH_GMP)/include
 WLFLAGS+=-L$(WITH_GMP)/lib
 endif
 
-OCAMLCFLAGS=-w Aer
+OCAMLCFLAGS=-w +a
 CFLAGS=$(WIFLAGS) -O2 -std=gnu99 -Wall -Wextra
 
 OCAMLMKLIBFLAGS=$(WLFLAGS) -lgmp
