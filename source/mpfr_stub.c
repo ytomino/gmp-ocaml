@@ -456,15 +456,14 @@ CAMLprim value mlmpfr_based_string_of_fr(value mode, value base, value x)
 		int sign_width = image[0] == '-'; /* 0 or 1 */
 		mp_exp_t exponent_p = exponent + sign_width;
 		if(length == 0){
-			result = caml_copy_string("0");
-		}else if(exponent_p > length){
-			char buf[exponent_p + 1];
+			result = caml_copy_string("0.");
+		}else if(exponent_p >= length){
+			char buf[exponent_p + 2];
 			memcpy(buf, image, length);
 			memset(buf + length, '0', exponent_p - length);
-			buf[exponent_p] = '\0';
+			buf[exponent_p] = '.';
+			buf[exponent_p + 1] = '\0';
 			result = caml_copy_string(buf);
-		}else if(exponent_p == length){
-			result = caml_copy_string(image);
 		}else if(exponent_p > 0){
 			char buf[length + 2];
 			memcpy(buf, image, exponent_p);
