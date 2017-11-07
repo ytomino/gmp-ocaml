@@ -89,6 +89,7 @@ $(BUILDDIR)/gmp.cmx: $(BUILDDIR)/gmp.cmi
 $(BUILDDIR)/gmp_pp.cmo: $(BUILDDIR)/gmp.cmi
 $(BUILDDIR)/gmp_pp.cmx: $(BUILDDIR)/gmp.cmi
 $(BUILDDIR)/gmp_pp.cmi: $(BUILDDIR)/gmp_pp.cmo
+$(BUILDDIR)/gmp_pp_install.cmo: override OCAMLCFLAGS+=-I $(OCAMLLIBDIR)/compiler-libs
 $(BUILDDIR)/gmp_pp_install.cmo: $(BUILDDIR)/gmp_pp.cmo
 $(BUILDDIR)/gmp_pp_install.cmx: $(BUILDDIR)/gmp_pp.cmo
 $(BUILDDIR)/gmp_pp_install.cmi: $(BUILDDIR)/gmp_pp_install.cmo

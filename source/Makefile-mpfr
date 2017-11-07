@@ -93,6 +93,7 @@ $(BUILDDIR)/mpfr.cmx: $(BUILDDIR)/mpfr.cmi
 $(BUILDDIR)/mpfr_pp.cmo: $(BUILDDIR)/mpfr.cmi
 $(BUILDDIR)/mpfr_pp.cmx: $(BUILDDIR)/mpfr.cmi
 $(BUILDDIR)/mpfr_pp.cmi: $(BUILDDIR)/mpfr_pp.cmo
+$(BUILDDIR)/mpfr_pp_install.cmo: override OCAMLCFLAGS+=-I $(OCAMLLIBDIR)/compiler-libs
 $(BUILDDIR)/mpfr_pp_install.cmo: $(BUILDDIR)/mpfr_pp.cmo
 $(BUILDDIR)/mpfr_pp_install.cmx: $(BUILDDIR)/mpfr_pp.cmo
 $(BUILDDIR)/mpfr_pp_install.cmi: $(BUILDDIR)/mpfr_pp_install.cmo
