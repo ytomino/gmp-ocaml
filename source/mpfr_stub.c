@@ -698,7 +698,7 @@ CAMLprim value mlmpfr_fr_single_of_bits(value i32)
 	conv.i32 = i32_value;
 	mpfr_set_flt(result_value, conv.s, MPFR_RNDN);
 #else
-	if(i32_value == 0x7fc00000UL){
+	if(i32_value == 0x7fc00000UL || i32_value == 0xffc00000UL){
 		mpfr_set_nan(result_value);
 	}else{
 		uint32_t sgn = i32_value >> 31;
@@ -742,7 +742,7 @@ CAMLprim value mlmpfr_fr_double_of_bits(value i64)
 	conv.i64 = i64_value;
 	mpfr_set_d(result_value, conv.d, MPFR_RNDN);
 #else
-	if(i64_value == 0x7ff8000000000000ULL){
+	if(i64_value == 0x7ff8000000000000ULL || i64_value == 0xfff8000000000000ULL){
 		mpfr_set_nan(result_value);
 	}else{
 		uint64_t sgn = i64_value >> 63;
@@ -791,7 +791,7 @@ CAMLprim value mlmpfr_fr_extended_of_bits(value i80)
 	conv.s.i16 = i16;
 	mpfr_set_ld(result_value, conv.ld, MPFR_RNDN);
 #else
-	if(i64 == 0xc000000000000000ULL && i16 == 0x7fffU){
+	if(i64 == 0xc000000000000000ULL && (i16 == 0x7fffU || i16 == 0xffffU)){
 		mpfr_set_nan(result_value);
 	}else{
 		uint64_t sgn = ((i16 >> 15) & 1U);

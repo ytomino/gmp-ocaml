@@ -66,7 +66,7 @@ assert (single_check 0.5 0x3f000000l);;
 assert (single_check ~-.1.0 0xbf800000l);;
 assert (single_check ~-.0.0 0x80000000l);;
 assert (single_check ~-.1.25 0xbfa00000l);;
-assert (single_check nan 0x7fc00000l);;
+assert (single_check nan 0x7fc00000l || single_check nan 0xffc00000l);;
 assert (single_check infinity 0x7f800000l);;
 assert (single_check ~-.infinity 0xff800000l);;
 
@@ -86,7 +86,8 @@ assert (double_check 0.5 0x3fe0000000000000L);;
 assert (double_check ~-.1.0 0xbff0000000000000L);;
 assert (double_check ~-.0.0 0x8000000000000000L);;
 assert (double_check ~-.1.25 0xbff4000000000000L);;
-assert (double_check nan 0x7ff8000000000000L);;
+assert (double_check nan 0x7ff8000000000000L
+	|| double_check nan 0xfff8000000000000L);;
 assert (double_check infinity 0x7ff0000000000000L);;
 assert (double_check ~-.infinity 0xfff0000000000000L);;
 
@@ -106,7 +107,8 @@ assert (extended_check 0.5 (0x8000000000000000L, 0x3ffe));;
 assert (extended_check ~-.1.0 (0x8000000000000000L, 0xbfff));;
 assert (extended_check ~-.0.0 (0x0000000000000000L, 0x8000));;
 assert (extended_check ~-.1.25 (0xa000000000000000L, 0xbfff));;
-assert (extended_check nan (0xc000000000000000L, 0x7fff));;
+assert (extended_check nan (0xc000000000000000L, 0x7fff)
+	|| extended_check nan (0xc000000000000000L, 0xffff));;
 assert (extended_check infinity (0x8000000000000000L, 0x7fff));;
 assert (extended_check ~-.infinity (0x8000000000000000L, 0xffff));;
 
