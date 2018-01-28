@@ -37,10 +37,12 @@ static inline int Order_val(value x)
 	case 0x0085: return 1; /* most significant first */
 	case 0x0099: return -1; /* least significant first */
 	case 0x009d: /* native */
-#if defined(__LITTLE_ENDIAN__) || defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#if defined(__BYTE_ORDER__)
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 		return -1;
 #else
 		return 1;
+#endif
 #endif
 	default: caml_failwith(__FUNCTION__);
 	}

@@ -639,7 +639,7 @@ CAMLprim value mlmpfr_fr_bits_of_extended(value x)
 	mpfr_ptr x_value = FR_val(x);
 	uint64_t i64;
 	uint16_t i16;
-#if __LDBL_MANT_DIG__ == 64
+#if __LDBL_MANT_DIG__ == 64 && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 	union {
 		struct {
 			uint64_t i64;
@@ -779,7 +779,7 @@ CAMLprim value mlmpfr_fr_extended_of_bits(value i80)
 	mpfr_ptr result_value = FR_val(result);
 	uint64_t i64 = Int64_val(Field(i80, 0));
 	uint16_t i16 = Int_val(Field(i80, 1));
-#if __LDBL_MANT_DIG__ == 64 && __LITTLE_ENDIAN__
+#if __LDBL_MANT_DIG__ == 64 && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 	union {
 		struct {
 			uint64_t i64;
