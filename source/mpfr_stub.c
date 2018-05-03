@@ -257,7 +257,14 @@ CAMLprim value mlmpfr_fr_root(value prec, value mode, value nth, value x)
 	CAMLparam4(prec, mode, nth, x);
 	CAMLlocal1(result);
 	result = mlmpfr_alloc_fr_init2(Long_val(prec));
-	mpfr_root(FR_val(result), FR_val(x), Long_val(nth), Rnd_val(mode));
+	mpfr_ptr op = FR_val(x);
+	unsigned long k = Long_val(nth);
+	mpfr_rnd_t rnd = Rnd_val(mode);
+#if MPFR_VERSION >= 0x040000
+	mpfr_rootn_ui(FR_val(result), op, k, rnd);
+#else
+	mpfr_root(FR_val(result), op, k, rnd);
+#endif
 	CAMLreturn(result);
 }
 
