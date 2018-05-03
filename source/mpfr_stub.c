@@ -284,7 +284,7 @@ CAMLprim value mlmpfr_fr_frexp(value prec, value mode, value x)
 	mpfr_prec_t p = Long_val(prec);
 	mpfr_ptr x_value = FR_val(x);
 	mpfr_rnd_t m = Rnd_val(mode);
-#if MPFR_VERSION >= 0x0310
+#if MPFR_VERSION >= 0x030100
 	mpfr_exp_t exponent;
 	result_fraction = mlmpfr_alloc_fr_init2(p);
 	mpfr_ptr rf_value = FR_val(result_fraction);
