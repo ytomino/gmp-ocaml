@@ -26,8 +26,6 @@ endif
 
 BUILDDIR=$(TARGET).build
 
-export CAML_LD_LIBRARY_PATH=$(BUILDDIR)/stublibs
-
 .PHONY: all interactive clean
 
 all: \
