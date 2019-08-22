@@ -78,18 +78,20 @@ interactive: $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
 	$(RLWRAP) ocaml -I $(BUILDDIR) $(OCAMLCFLAGS) gmp.cma mpfr.cma mpc.cma
 
 $(BUILDDIR)/gmp.cma: $(wildcard ../source/gmp*)
-	$(MAKE) -C ../source -f Makefile-gmp install DESTDIR=$(abspath $(BUILDDIR))
+	$(MAKE) -C ../source -f Makefile-gmp install INSTALLDIR=$(abspath $(BUILDDIR))
 
 $(BUILDDIR)/mpfr.cma: $(wildcard ../source/mpfr*) $(BUILDDIR)/gmp.cma
-	$(MAKE) -C ../source -f Makefile-mpfr install DESTDIR=$(abspath $(BUILDDIR))
+	$(MAKE) -C ../source -f Makefile-mpfr install INSTALLDIR=$(abspath $(BUILDDIR))
 
 $(BUILDDIR)/mpc.cma: $(wildcard ../source/mpc*) $(BUILDDIR)/mpfr.cma
-	$(MAKE) -C ../source -f Makefile-mpc install DESTDIR=$(abspath $(BUILDDIR))
+	$(MAKE) -C ../source -f Makefile-mpc install INSTALLDIR=$(abspath $(BUILDDIR))
 
 $(BINLN):
 	-$(call LINK,$(BUILDDIR),$(BINLN))
 
 clean:
-	$(MAKE) -C ../source clean
+	-$(MAKE) -C ..$(DIRSEP)source clean uninstall INSTALLDIR=$(abspath $(BUILDDIR))
+	-$(RM) $(BUILDDIR)$(DIRSEP)*.exe $(BUILDDIR)$(DIRSEP)*.cm? $(BUILDDIR)$(DIRSEP)*.o
 	-$(call UNLINK,$(BINLN))
-	-rm -rf $(BUILDDIR)
+	-rmdir $(BUILDDIR)$(DIRSEP)stublibs
+	-rmdir $(BUILDDIR)
