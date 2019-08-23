@@ -31,6 +31,11 @@ Specify your preferred directory to ``PREFIX``.
 The libraries would be installed into ``$PREFIX/lib/ocaml`` (default is
 ``ocamlc -where``).
 
+If GMP is not installed in the default search path, specify the directory
+containing GMP to ``WITH_GMP``.
+``$WITH_GMP/include`` and ``$WITH_GMP/lib`` would be used.
+``WITH_MPFR`` and ``WITH_MPC`` are similar.
+
 Uninstall
 +++++++++
 

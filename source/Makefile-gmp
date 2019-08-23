@@ -82,7 +82,7 @@ OCAMLCFLAGS=-w +a
 CFLAGS=$(WIFLAGS) -O2 -std=gnu99 -Wall -Wextra
 
 OCAMLMKLIBFLAGS=$(WLFLAGS) -lgmp
-CCLIB=$(addprefix -cclib ,-lgmp)
+CCLIB=$(addprefix -cclib ,$(WLFLAGS) -lgmp)
 LDFLAGS=$(WLFLAGS) $(call DEFAULTLIB,-lgmp)
 
 $(BUILDDIR)/gmp_stub.o: gmp_stub.h

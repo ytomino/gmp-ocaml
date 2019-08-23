@@ -86,7 +86,7 @@ OCAMLCFLAGS=-w +a
 CFLAGS=$(WIFLAGS) -O2 -std=gnu99 -Wall -Wextra
 
 OCAMLMKLIBFLAGS=$(WLFLAGS) -lmpfr
-CCLIB=$(addprefix -cclib ,-lmpfr)
+CCLIB=$(addprefix -cclib ,$(WLFLAGS) -lmpfr)
 LDFLAGS=$(WLFLAGS) $(call DEFAULTLIB,-lmpfr) $(call DEFAULTLIB,-lgmp)
 
 $(BUILDDIR)/mpfr_stub.o: gmp_stub.h mpfr_stub.h
