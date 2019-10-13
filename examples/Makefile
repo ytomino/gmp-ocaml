@@ -14,7 +14,8 @@ else
 BINLN=
 endif
 
-BUILDDIR=$(TARGET).build
+BUILDSUFFIX=.noindex
+BUILDDIR=$(TARGET)$(BUILDSUFFIX)
 
 .PHONY: all interactive clean
 
