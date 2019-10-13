@@ -16,6 +16,7 @@ endif
 
 BUILDSUFFIX=.noindex
 BUILDDIR=$(TARGET)$(BUILDSUFFIX)
+GMP_BUILDDIR=$(BUILDDIR)/gmp$(BUILDSUFFIX)
 
 .PHONY: all interactive clean
 
@@ -67,19 +68,27 @@ interactive: $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
 	$(RLWRAP) ocaml -I $(BUILDDIR) $(OCAMLCFLAGS) gmp.cma mpfr.cma mpc.cma
 
 $(BUILDDIR)/gmp.cma: $(wildcard ../source/gmp*)
-	$(MAKE) -C ../source -f Makefile-gmp install INSTALLDIR=$(abspath $(BUILDDIR))
+	$(MAKE) -C ../source -f Makefile-gmp install \
+		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
+		INSTALLDIR=$(abspath $(BUILDDIR))
 
 $(BUILDDIR)/mpfr.cma: $(wildcard ../source/mpfr*) $(BUILDDIR)/gmp.cma
-	$(MAKE) -C ../source -f Makefile-mpfr install INSTALLDIR=$(abspath $(BUILDDIR))
+	$(MAKE) -C ../source -f Makefile-mpfr install \
+		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
+		INSTALLDIR=$(abspath $(BUILDDIR))
 
 $(BUILDDIR)/mpc.cma: $(wildcard ../source/mpc*) $(BUILDDIR)/mpfr.cma
-	$(MAKE) -C ../source -f Makefile-mpc install INSTALLDIR=$(abspath $(BUILDDIR))
+	$(MAKE) -C ../source -f Makefile-mpc install \
+		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
+		INSTALLDIR=$(abspath $(BUILDDIR))
 
 $(BINLN):
 	ln -s $(BUILDDIR) $@
 
 clean:
-	-$(MAKE) -C ../source clean uninstall INSTALLDIR=$(abspath $(BUILDDIR))
+	-$(MAKE) -C ../source clean uninstall \
+		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
+		INSTALLDIR=$(abspath $(BUILDDIR))
 	-rm $(BUILDDIR)/*.exe $(BUILDDIR)/*.cm? $(BUILDDIR)/*.o
 	-[ -h "$(BINLN)" ] && rm "$(BINLN)"
 	-rmdir $(BUILDDIR)/stublibs
