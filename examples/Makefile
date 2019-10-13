@@ -81,6 +81,6 @@ $(BINLN):
 clean:
 	-$(MAKE) -C ../source clean uninstall INSTALLDIR=$(abspath $(BUILDDIR))
 	-rm $(BUILDDIR)/*.exe $(BUILDDIR)/*.cm? $(BUILDDIR)/*.o
-	-rm $(BINLN)
+	-[ -h "$(BINLN)" ] && rm "$(BINLN)"
 	-rmdir $(BUILDDIR)/stublibs
 	-rmdir $(BUILDDIR)
