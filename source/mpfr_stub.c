@@ -378,6 +378,7 @@ CAMLprim value mlmpfr_fr_based_log(value prec, value mode, value base, value x)
 		mpfr_log(d, base_value, m);
 		mpfr_div(result_value, n, d, m);
 		mpfr_clear(d);
+		mpfr_clear(base_value);
 		mpfr_clear(n);
 	}
 	CAMLreturn(result);

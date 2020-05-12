@@ -338,6 +338,7 @@ CAMLprim value mlmpc_c_based_log(value prec, value mode, value base, value x)
 	mpc_log(d, base_value, m);
 	mpc_div(result_value, n, d, m);
 	mpc_clear(d);
+	mpc_clear(base_value);
 	mpc_clear(n);
 	CAMLreturn(result);
 }
