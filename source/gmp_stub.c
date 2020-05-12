@@ -579,6 +579,19 @@ CAMLprim value mlgmp_z_logand(value left, value right)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlgmp_z_logand_int(value left, value right)
+{
+	CAMLparam2(left, right);
+	CAMLlocal1(result);
+	result = mlgmp_alloc_z_init();
+	mpz_t a;
+	mpz_init(a);
+	mpz_set_si(a, Long_val(right));
+	mpz_and(Z_val(result), Z_val(left), a);
+	mpz_clear(a);
+	CAMLreturn(result);
+}
+
 CAMLprim value mlgmp_z_logor(value left, value right)
 {
 	CAMLparam2(left, right);
@@ -588,12 +601,38 @@ CAMLprim value mlgmp_z_logor(value left, value right)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlgmp_z_logor_int(value left, value right)
+{
+	CAMLparam2(left, right);
+	CAMLlocal1(result);
+	result = mlgmp_alloc_z_init();
+	mpz_t a;
+	mpz_init(a);
+	mpz_set_si(a, Long_val(right));
+	mpz_ior(Z_val(result), Z_val(left), a);
+	mpz_clear(a);
+	CAMLreturn(result);
+}
+
 CAMLprim value mlgmp_z_logxor(value left, value right)
 {
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
 	result = mlgmp_alloc_z_init();
 	mpz_xor(Z_val(result), Z_val(left), Z_val(right));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_logxor_int(value left, value right)
+{
+	CAMLparam2(left, right);
+	CAMLlocal1(result);
+	result = mlgmp_alloc_z_init();
+	mpz_t a;
+	mpz_init(a);
+	mpz_set_si(a, Long_val(right));
+	mpz_xor(Z_val(result), Z_val(left), a);
+	mpz_clear(a);
 	CAMLreturn(result);
 }
 

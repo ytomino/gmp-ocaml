@@ -30,6 +30,18 @@ assert (Z.int_pow_int 0 0 = Z.one);;
 assert (Z.int_pow_int (-3) 2 = Z.of_int 9);;
 assert (Z.int_pow_int (-3) 3 = Z.of_int (-27));;
 
+(* mpz_and_si is missing *)
+assert (Z.logand_int (Z.of_int 7) 14 = Z.of_int 6);
+assert (Z.logand_int (Z.of_int 7) (-2) = Z.of_int 6);
+
+(* mpz_ior_si is missing *)
+assert (Z.logor_int (Z.of_int 7) 14 = Z.of_int 15);
+assert (Z.logor_int (Z.of_int 7) (-2) = Z.of_int (-1));
+
+(* mpz_xor_si is missing *)
+assert (Z.logxor_int (Z.of_int 7) 14 = Z.of_int 9);
+assert (Z.logxor_int (Z.of_int 7) (-2) = Z.of_int (-7));
+
 (* mpq_add_si is missing *)
 assert (Q.add_int (Q.of_int 4) (+1) = Q.of_int 5);;
 assert (Q.add_int (Q.of_int 4) (-1) = Q.of_int 3);;
