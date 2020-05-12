@@ -188,31 +188,23 @@ CAMLprim value mlmpfr_fr_int_pow_int(value prec, value mode, value base, value e
 	long e = Long_val(exponent);
 	if(e < 0){
 		long n;
-		mpfr_t d;
-		mpfr_init2(d, p);
 		if(b < 0){
 			if(e % 2 != 0){
 				n = -1;
 			}else{
 				n = 1;
 			}
-			mpfr_ui_pow_ui(d, -b, -e, m);
+			mpfr_ui_pow_ui(result_value, -b, -e, m);
 		}else{
 			n = 1;
-			mpfr_ui_pow_ui(d, b, -e, m);
+			mpfr_ui_pow_ui(result_value, b, -e, m);
 		}
-		mpfr_si_div(result_value, n, d, m);
-		mpfr_clear(d);
+		mpfr_si_div(result_value, n, result_value, m);
 	}else{
 		if(b < 0){
+			mpfr_ui_pow_ui(result_value, -b, e, m);
 			if(e % 2 != 0){
-				mpfr_t a;
-				mpfr_init2(a, p);
-				mpfr_ui_pow_ui(a, -b, e, m);
-				mpfr_neg(result_value, a, m);
-				mpfr_clear(a);
-			}else{
-				mpfr_ui_pow_ui(result_value, -b, e, m);
+				mpfr_neg(result_value, result_value, m);
 			}
 		}else{
 			mpfr_ui_pow_ui(result_value, b, e, m);
@@ -361,25 +353,16 @@ CAMLprim value mlmpfr_fr_based_log(value prec, value mode, value base, value x)
 	}else if(b == 10){
 		mpfr_log10(result_value, x_value, m);
 	}else if(b == 16){
-		mpfr_t n;
-		mpfr_init2(n, p);
-		mpfr_log2(n, x_value, m);
-		mpfr_div_ui(result_value, n, 4, m);
-		mpfr_clear(n);
+		mpfr_log2(result_value, x_value, m);
+		mpfr_div_ui(result_value, result_value, 4, m);
 	}else{
-		mpfr_t n;
-		mpfr_init2(n, p);
-		mpfr_log(n, x_value, m);
+		mpfr_log(result_value, x_value, m);
 		mpfr_t base_value;
 		mpfr_init2(base_value, p);
 		mpfr_set_si(base_value, b, m);
-		mpfr_t d;
-		mpfr_init2(d, p);
-		mpfr_log(d, base_value, m);
-		mpfr_div(result_value, n, d, m);
-		mpfr_clear(d);
+		mpfr_log(base_value, base_value, m);
+		mpfr_div(result_value, result_value, base_value, m);
 		mpfr_clear(base_value);
-		mpfr_clear(n);
 	}
 	CAMLreturn(result);
 }
@@ -587,11 +570,8 @@ CAMLprim value mlmpfr_fr_bits_of_single(value x)
 			mpfr_t a;
 			mpfr_init2(a, 24);
 			mpfr_abs(a, x_value, MPFR_RNDN);
-			mpfr_t b;
-			mpfr_init2(b, 24);
-			mpfr_mul_2exp(b, a, 24 - exponent, MPFR_RNDN);
-			i32 = (sgn << 31) | ((uint32_t)(exponent + 0x7eU) << 23) | (mpfr_get_uj(b, MPFR_RNDN) & 0x007fffffUL);
-			mpfr_clear(b);
+			mpfr_mul_2exp(a, a, 24 - exponent, MPFR_RNDN);
+			i32 = (sgn << 31) | ((uint32_t)(exponent + 0x7eU) << 23) | (mpfr_get_uj(a, MPFR_RNDN) & 0x007fffffUL);
 			mpfr_clear(a);
 		}
 	}
@@ -627,11 +607,8 @@ CAMLprim value mlmpfr_fr_bits_of_double(value x)
 			mpfr_t a;
 			mpfr_init2(a, 53);
 			mpfr_abs(a, x_value, MPFR_RNDN);
-			mpfr_t b;
-			mpfr_init2(b, 53);
-			mpfr_mul_2exp(b, a, 53 - exponent, MPFR_RNDN);
-			i64 = (sgn << 63) | ((uint64_t)(exponent + 0x3feU) << 52) | (mpfr_get_uj(b, MPFR_RNDN) & 0x000fffffffffffffULL);
-			mpfr_clear(b);
+			mpfr_mul_2exp(a, a, 53 - exponent, MPFR_RNDN);
+			i64 = (sgn << 63) | ((uint64_t)(exponent + 0x3feU) << 52) | (mpfr_get_uj(a, MPFR_RNDN) & 0x000fffffffffffffULL);
 			mpfr_clear(a);
 		}
 	}
@@ -675,12 +652,9 @@ CAMLprim value mlmpfr_fr_bits_of_extended(value x)
 			mpfr_t a;
 			mpfr_init2(a, 64);
 			mpfr_abs(a, x_value, MPFR_RNDN);
-			mpfr_t b;
-			mpfr_init2(b, 64);
-			mpfr_mul_2exp(b, a, 64 - exponent, MPFR_RNDN);
-			i64 = mpfr_get_uj(b, MPFR_RNDN);
+			mpfr_mul_2exp(a, a, 64 - exponent, MPFR_RNDN);
+			i64 = mpfr_get_uj(a, MPFR_RNDN);
 			i16 = (sgn << 15) | (exponent + 0x3ffeU);
-			mpfr_clear(b);
 			mpfr_clear(a);
 		}
 	}
@@ -719,15 +693,12 @@ CAMLprim value mlmpfr_fr_single_of_bits(value i32)
 			mpfr_t a;
 			mpfr_init2(a, 24);
 			mpfr_set_uj(a, ((i32_value & 0x007fffffUL) | 0x00800000UL), MPFR_RNDN);
-			mpfr_t b;
-			mpfr_init2(b, 24);
-			mpfr_div_2exp(b, a, 24 - exponent, MPFR_RNDN);
+			mpfr_div_2exp(a, a, 24 - exponent, MPFR_RNDN);
 			if(sgn){
-				mpfr_neg(result_value, b, MPFR_RNDN);
+				mpfr_neg(result_value, a, MPFR_RNDN);
 			}else{
-				mpfr_set(result_value, b, MPFR_RNDN);
+				mpfr_set(result_value, a, MPFR_RNDN);
 			}
-			mpfr_clear(b);
 			mpfr_clear(a);
 		}
 	}
@@ -763,15 +734,12 @@ CAMLprim value mlmpfr_fr_double_of_bits(value i64)
 			mpfr_t a;
 			mpfr_init2(a, 53);
 			mpfr_set_uj(a, ((i64_value & 0x000fffffffffffffULL) | 0x0010000000000000ULL), MPFR_RNDN);
-			mpfr_t b;
-			mpfr_init2(b, 53);
-			mpfr_div_2exp(b, a, 53 - exponent, MPFR_RNDN);
+			mpfr_div_2exp(a, a, 53 - exponent, MPFR_RNDN);
 			if(sgn){
-				mpfr_neg(result_value, b, MPFR_RNDN);
+				mpfr_neg(result_value, a, MPFR_RNDN);
 			}else{
-				mpfr_set(result_value, b, MPFR_RNDN);
+				mpfr_set(result_value, a, MPFR_RNDN);
 			}
-			mpfr_clear(b);
 			mpfr_clear(a);
 		}
 	}
@@ -812,15 +780,12 @@ CAMLprim value mlmpfr_fr_extended_of_bits(value i80)
 			mpfr_t a;
 			mpfr_init2(a, 64);
 			mpfr_set_uj(a, i64, MPFR_RNDN);
-			mpfr_t b;
-			mpfr_init2(b, 64);
-			mpfr_div_2exp(b, a, 64 - exponent, MPFR_RNDN);
+			mpfr_div_2exp(a, a, 64 - exponent, MPFR_RNDN);
 			if(sgn){
-				mpfr_neg(result_value, b, MPFR_RNDN);
+				mpfr_neg(result_value, a, MPFR_RNDN);
 			}else{
-				mpfr_set(result_value, b, MPFR_RNDN);
+				mpfr_set(result_value, a, MPFR_RNDN);
 			}
-			mpfr_clear(b);
 			mpfr_clear(a);
 		}
 	}

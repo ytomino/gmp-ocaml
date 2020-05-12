@@ -202,29 +202,25 @@ CAMLprim value mlmpc_c_int_pow_int(value prec, value mode, value base, value exp
 	mpfr_rnd_t imag_rounding = MPC_RND_IM(m);
 	if(e < 0){
 		long n;
-		mpfr_t d;
-		mpfr_init2(d, real_prec);
+		mpfr_ptr result_real = mpc_realref(result_value);
 		if(b < 0){
 			if(e % 2 != 0){
 				n = -1;
 			}else{
 				n = 1;
 			}
-			mpfr_ui_pow_ui(d, -b, -e, real_rounding);
+			mpfr_ui_pow_ui(result_real, -b, -e, real_rounding);
 		}else{
 			n = 1;
-			mpfr_ui_pow_ui(d, b, -e, real_rounding);
+			mpfr_ui_pow_ui(result_real, b, -e, real_rounding);
 		}
-		mpfr_si_div(mpc_realref(result_value), n, d, real_rounding);
-		mpfr_clear(d);
+		mpfr_si_div(result_real, n, result_real, real_rounding);
 	}else{
 		if(b < 0){
 			if(e % 2 != 0){
-				mpfr_t a;
-				mpfr_init2(a, real_prec);
-				mpfr_ui_pow_ui(a, -b, e, real_rounding);
-				mpfr_neg(mpc_realref(result_value), a, real_rounding);
-				mpfr_clear(a);
+				mpfr_ptr result_real = mpc_realref(result_value);
+				mpfr_ui_pow_ui(result_real, -b, e, real_rounding);
+				mpfr_neg(result_real, result_real, real_rounding);
 			}else{
 				mpfr_ui_pow_ui(mpc_realref(result_value), -b, e, real_rounding);
 			}
@@ -286,15 +282,12 @@ CAMLprim value mlmpc_c_root(value prec, value mode, value nth, value x)
 	}else{
 		/* x^(1/nth) */
 		mpfr_rnd_t real_rounding = MPC_RND_RE(m);
-		mpfr_t a; /* n */
-		mpfr_t b; /* 1/n */
+		mpfr_t a; /* 1/n */
 		mpfr_init2(a, real_prec);
-		mpfr_init2(b, real_prec);
 		mpfr_set_ui(a, 1, real_rounding);
-		mpfr_div_ui(b, a, n, real_rounding);
-		mpc_pow_fr(result_value, x_value, b, m);
+		mpfr_div_ui(a, a, n, real_rounding);
+		mpc_pow_fr(result_value, x_value, a, m);
 		mpfr_clear(a);
-		mpfr_clear(b);
 	}
 	CAMLreturn(result);
 }
@@ -327,19 +320,13 @@ CAMLprim value mlmpc_c_based_log(value prec, value mode, value base, value x)
 	mpc_ptr result_value = C_val(result);
 	mpc_rnd_t m = Crnd_val(mode);
 	mpc_ptr x_value = C_val(x);
-	mpc_t n;
-	mpc_init3(n, real_prec, imag_prec);
-	mpc_log(n, x_value, m);
+	mpc_log(result_value, x_value, m);
 	mpc_t base_value;
 	mpc_init3(base_value, real_prec, imag_prec);
 	mpc_set_si(base_value, Long_val(base), m);
-	mpc_t d;
-	mpc_init3(d, real_prec, imag_prec);
-	mpc_log(d, base_value, m);
-	mpc_div(result_value, n, d, m);
-	mpc_clear(d);
+	mpc_log(base_value, base_value, m);
+	mpc_div(result_value, result_value, base_value, m);
 	mpc_clear(base_value);
-	mpc_clear(n);
 	CAMLreturn(result);
 }
 

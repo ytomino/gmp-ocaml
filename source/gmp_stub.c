@@ -225,14 +225,9 @@ CAMLprim value mlgmp_z_int_pow_int(value base, value exponent)
 	}else{
 		long b = Long_val(base);
 		if(b < 0){
+			mpz_ui_pow_ui(result_value, -b, e);
 			if(e % 2 != 0){
-				mpz_t a;
-				mpz_init(a);
-				mpz_ui_pow_ui(a, -b, e);
-				mpz_neg(result_value, a);
-				mpz_clear(a);
-			}else{
-				mpz_ui_pow_ui(result_value, -b, e);
+				mpz_neg(result_value, result_value);
 			}
 		}else{
 			mpz_ui_pow_ui(result_value, b, e);
@@ -257,16 +252,13 @@ CAMLprim value mlgmp_z_scale(value fraction, value base, value exponent)
 			mpz_fdiv_q_2exp(result_value, f, -e); /* arithmetic right shift */
 		}
 	}else{
-		mpz_t a;
-		mpz_init(a);
 		if(e >= 0){
-			mpz_ui_pow_ui(a, b, e);
-			mpz_mul(result_value, f, a);
+			mpz_ui_pow_ui(result_value, b, e);
+			mpz_mul(result_value, f, result_value);
 		}else{
-			mpz_ui_pow_ui(a, b, -e);
-			mpz_fdiv_q(result_value, f, a);
+			mpz_ui_pow_ui(result_value, b, -e);
+			mpz_fdiv_q(result_value, f, result_value);
 		}
-		mpz_clear(a);
 	}
 	CAMLreturn(result);
 }
@@ -584,11 +576,9 @@ CAMLprim value mlgmp_z_logand_int(value left, value right)
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
 	result = mlgmp_alloc_z_init();
-	mpz_t a;
-	mpz_init(a);
-	mpz_set_si(a, Long_val(right));
-	mpz_and(Z_val(result), Z_val(left), a);
-	mpz_clear(a);
+	mpz_ptr result_value = Z_val(result);
+	mpz_set_si(result_value, Long_val(right));
+	mpz_and(result_value, Z_val(left), result_value);
 	CAMLreturn(result);
 }
 
@@ -606,11 +596,9 @@ CAMLprim value mlgmp_z_logor_int(value left, value right)
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
 	result = mlgmp_alloc_z_init();
-	mpz_t a;
-	mpz_init(a);
-	mpz_set_si(a, Long_val(right));
-	mpz_ior(Z_val(result), Z_val(left), a);
-	mpz_clear(a);
+	mpz_ptr result_value = Z_val(result);
+	mpz_set_si(result_value, Long_val(right));
+	mpz_ior(result_value, Z_val(left), result_value);
 	CAMLreturn(result);
 }
 
@@ -628,11 +616,9 @@ CAMLprim value mlgmp_z_logxor_int(value left, value right)
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
 	result = mlgmp_alloc_z_init();
-	mpz_t a;
-	mpz_init(a);
-	mpz_set_si(a, Long_val(right));
-	mpz_xor(Z_val(result), Z_val(left), a);
-	mpz_clear(a);
+	mpz_ptr result_value = Z_val(result);
+	mpz_set_si(result_value, Long_val(right));
+	mpz_xor(result_value, Z_val(left), result_value);
 	CAMLreturn(result);
 }
 
@@ -825,11 +811,9 @@ CAMLprim value mlgmp_z_import(value order, value signed_, value buf, value pos, 
 			is_neg = (s[len_value - 1] & 0x80) != 0;
 		}
 		if(is_neg){
-			mpz_t neg_1, shifted;
-			mpz_init_set_si(neg_1, -1);
-			mpz_init(shifted);
-			mpz_mul_2exp(shifted, neg_1, len_value * 8);
-			mpz_clear(neg_1);
+			mpz_t shifted;
+			mpz_init_set_si(shifted, -1);
+			mpz_mul_2exp(shifted, shifted, len_value * 8);
 			mpz_ior(result_value, result_value, shifted);
 			mpz_clear(shifted);
 		}
@@ -902,14 +886,9 @@ CAMLprim value mlgmp_z_of_int64(value x)
 	long long x_value = Int64_val(x);
 	long hi = x_value >> 32; /* arithmetic right shift */
 	unsigned long lo = x_value & 0xffffffffL;
-	mpz_t hi1;
-	mpz_init_set_si(hi1, hi);
-	mpz_t hi2;
-	mpz_init(hi2);
-	mpz_mul_2exp(hi2, hi1, 32);
-	mpz_add_ui(result_value, hi2, lo);
-	mpz_clear(hi2);
-	mpz_clear(hi1);
+	mpz_set_si(result_value, hi);
+	mpz_mul_2exp(result_value, result_value, 32);
+	mpz_add_ui(result_value, hi, lo);
 #else
 #error "sizeof(long) < 4"
 #endif
@@ -924,18 +903,15 @@ CAMLprim value mlgmp_int64_of_z(value x)
 	result = caml_copy_int64(mpz_get_si(Z_val(x)));
 #elif LONG_BIT >= 32
 	mpz_ptr x_value = Z_val(x);
-	mpz_t lo_mask;
-	mpz_init_set_ui(lo_mask, 0xffffffff);
 	mpz_t lo;
-	mpz_init(lo);
-	mpz_and(lo, x_value, lo_mask);
+	mpz_init_set_ui(lo, 0xffffffff);
+	mpz_and(lo, x_value, lo);
 	mpz_t hi;
 	mpz_init(hi);
 	mpz_fdiv_q_2exp(hi, x_value, 32);
 	result = caml_copy_int64(((long long)mpz_get_si(hi) << 32LL) | mpz_get_ui(lo));
 	mpz_clear(hi);
 	mpz_clear(lo);
-	mpz_clear(lo_mask);
 #else
 #error "sizeof(long) < 4"
 #endif
@@ -1081,12 +1057,10 @@ CAMLprim value mlgmp_q_add_int(value left, value right)
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
 	result = mlgmp_alloc_q_init();
-	mpq_t r;
-	mpq_init(r);
-	mpq_set_si(r, Long_val(right), 1);
-	mpq_canonicalize(r); /* ? */
-	mpq_add(Q_val(result), Q_val(left), r);
-	mpq_clear(r);
+	mpq_ptr result_value = Q_val(result);
+	mpq_set_si(result_value, Long_val(right), 1);
+	mpq_canonicalize(result_value); /* ? */
+	mpq_add(result_value, Q_val(left), result_value);
 	CAMLreturn(result);
 }
 
@@ -1104,12 +1078,10 @@ CAMLprim value mlgmp_q_sub_int(value left, value right)
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
 	result = mlgmp_alloc_q_init();
-	mpq_t r;
-	mpq_init(r);
-	mpq_set_si(r, Long_val(right), 1);
-	mpq_canonicalize(r); /* ? */
-	mpq_sub(Q_val(result), Q_val(left), r);
-	mpq_clear(r);
+	mpq_ptr result_value = Q_val(result);
+	mpq_set_si(result_value, Long_val(right), 1);
+	mpq_canonicalize(result_value); /* ? */
+	mpq_sub(result_value, Q_val(left), result_value);
 	CAMLreturn(result);
 }
 
@@ -1127,12 +1099,10 @@ CAMLprim value mlgmp_q_mul_int(value left, value right)
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
 	result = mlgmp_alloc_q_init();
-	mpq_t r;
-	mpq_init(r);
-	mpq_set_si(r, Long_val(right), 1);
-	mpq_canonicalize(r); /* ? */
-	mpq_mul(Q_val(result), Q_val(left), r);
-	mpq_clear(r);
+	mpq_ptr result_value = Q_val(result);
+	mpq_set_si(result_value, Long_val(right), 1);
+	mpq_canonicalize(result_value); /* ? */
+	mpq_mul(result_value, Q_val(left), result_value);
 	CAMLreturn(result);
 }
 
@@ -1186,14 +1156,10 @@ CAMLprim value mlgmp_q_int_pow_int(value base, value exponent)
 		}
 	}else{
 		if(b < 0){
+			mpz_ptr result_num = mpq_numref(result_value);
+			mpz_ui_pow_ui(result_num, -b, e);
 			if(e % 2 != 0){
-				mpz_t a;
-				mpz_init(a);
-				mpz_ui_pow_ui(a, -b, e);
-				mpz_neg(mpq_numref(result_value), a);
-				mpz_clear(a);
-			}else{
-				mpz_ui_pow_ui(mpq_numref(result_value), -b, e);
+				mpz_neg(result_num, result_num);
 			}
 		}else{
 			mpz_ui_pow_ui(mpq_numref(result_value), b, e);
@@ -1220,18 +1186,15 @@ CAMLprim value mlgmp_q_scale(value fraction, value base, value exponent)
 			mpq_div_2exp(result_value, f, -e);
 		}
 	}else{
-		mpq_t a;
-		mpq_init(a);
 		if(e >= 0){
-			mpz_ui_pow_ui(mpq_numref(a), b, e);
-			mpz_set_ui(mpq_denref(a), 1);
+			mpz_ui_pow_ui(mpq_numref(result_value), b, e);
+			mpz_set_ui(mpq_denref(result_value), 1);
 		}else{
-			mpz_set_ui(mpq_numref(a), 1);
-			mpz_ui_pow_ui(mpq_denref(a), b, -e);
+			mpz_set_ui(mpq_numref(result_value), 1);
+			mpz_ui_pow_ui(mpq_denref(result_value), b, -e);
 		}
-		mpq_canonicalize(a);
-		mpq_mul(result_value, f, a);
-		mpq_clear(a);
+		mpq_canonicalize(result_value);
+		mpq_mul(result_value, f, result_value);
 	}
 	CAMLreturn(result);
 }
@@ -1249,22 +1212,15 @@ CAMLprim value mlgmp_q_root(value nth, value x)
 	}else{
 		/* (d/n)^(1/nth) = ((d*n^(nth-1)) / (n^nth))^(1/nth) */
 		/*               = (d*n^(nth-1))^(1/nth) / n */
-		mpz_t a[2];
 		int i;
-		int index = 0;
-		mpz_init(a[0]);
-		mpz_init(a[1]);
-		mpz_mul(a[index], mpq_numref(x_value), mpq_denref(x_value));
+		mpz_ptr result_num = mpq_numref(result_value);
+		mpz_mul(result_num, mpq_numref(x_value), mpq_denref(x_value));
 		for(i = 3; i <= n; ++i){
-			int next_index = index ^ 1;
-			mpz_mul(a[next_index], a[index], mpq_denref(x_value));
-			index = next_index;
+			mpz_mul(result_num, result_num, mpq_denref(x_value));
 		}
-		mpz_root(mpq_numref(result_value), a[index], n);
+		mpz_root(result_num, result_num, n);
 		mpz_set(mpq_denref(result_value), mpq_denref(x_value));
 		mpq_canonicalize(result_value);
-		mpz_clear(a[0]);
-		mpz_clear(a[1]);
 	}
 	CAMLreturn(result);
 }
@@ -1277,13 +1233,11 @@ CAMLprim value mlgmp_q_sqrt(value x)
 	mpq_ptr result_value = Q_val(result);
 	mpq_ptr x_value = Q_val(x);
 	/* (d/n)^(1/2) = ((d*n) / (n*n))^(1/2) = (d*n)^(1/2) / n */
-	mpz_t a;
-	mpz_init(a);
-	mpz_mul(a, mpq_numref(x_value), mpq_denref(x_value));
-	mpz_sqrt(mpq_numref(result_value), a);
+	mpz_ptr result_num = mpq_numref(result_value);
+	mpz_mul(result_num, mpq_numref(x_value), mpq_denref(x_value));
+	mpz_sqrt(result_num, result_num);
 	mpz_set(mpq_denref(result_value), mpq_denref(x_value));
 	mpq_canonicalize(result_value);
-	mpz_clear(a);
 	CAMLreturn(result);
 }
 
@@ -1584,11 +1538,8 @@ CAMLprim value mlgmp_f_mul_int(value prec, value left, value right)
 	if(r >= 0){
 		mpf_mul_ui(result_value, l, r);
 	}else{
-		mpf_t a;
-		mpf_init2(a, p);
-		mpf_mul_ui(a, l, -r);
-		mpf_neg(result_value, a);
-		mpf_clear(a);
+		mpf_mul_ui(result_value, l, -r);
+		mpf_neg(result_value, result_value);
 	}
 	CAMLreturn(result);
 }
@@ -1614,11 +1565,8 @@ CAMLprim value mlgmp_f_pow_int(value prec, value base, value exponent)
 	if(e >= 0){
 		mpf_pow_ui(result_value, b, e);
 	}else{
-		mpf_t a;
-		mpf_init2(a, p);
-		mpf_pow_ui(a, b, -e);
-		mpf_ui_div(result_value, 1, a);
-		mpf_clear(a);
+		mpf_pow_ui(result_value, b, -e);
+		mpf_ui_div(result_value, 1, result_value);
 	}
 	CAMLreturn(result);
 }
@@ -1636,33 +1584,20 @@ CAMLprim value mlgmp_f_int_pow_int(value prec, value base, value exponent)
 	mpz_init(a);
 	if(e < 0){
 		if(b < 0){
+			mpz_ui_pow_ui(a, -b, -e);
 			if(e % 2 != 0){
-				mpz_t x;
-				mpz_init(x);
-				mpz_ui_pow_ui(x, -b, -e);
-				mpz_neg(a, x);
-				mpz_clear(x);
-			}else{
-				mpz_ui_pow_ui(a, -b, -e);
+				mpz_neg(a, a);
 			}
 		}else{
 			mpz_ui_pow_ui(a, b, -e);
 		}
-		mpf_t af;
-		mpf_init2(af, p);
-		mpf_set_z(af, a);
-		mpf_ui_div(result_value, 1, af);
-		mpf_clear(af);
+		mpf_set_z(result_value, a);
+		mpf_ui_div(result_value, 1, result_value);
 	}else{
 		if(b < 0){
+			mpz_ui_pow_ui(a, -b, e);
 			if(e % 2 != 0){
-				mpz_t x;
-				mpz_init(x);
-				mpz_ui_pow_ui(x, -b, e);
-				mpz_neg(a, x);
-				mpz_clear(x);
-			}else{
-				mpz_ui_pow_ui(a, -b, e);
+				mpz_neg(a, a);
 			}
 		}else{
 			mpz_ui_pow_ui(a, b, e);
@@ -1692,18 +1627,15 @@ CAMLprim value mlgmp_f_scale(value prec, value fraction, value base, value expon
 	}else{
 		mpz_t a;
 		mpz_init(a);
-		mpf_t af;
-		mpf_init2(af, p);
 		if(e >= 0){
 			mpz_ui_pow_ui(a, b, e);
-			mpf_set_z(af, a);
-			mpf_mul(result_value, f, af);
+			mpf_set_z(result_value, a);
+			mpf_mul(result_value, f, result_value);
 		}else{
 			mpz_ui_pow_ui(a, b, -e);
-			mpf_set_z(af, a);
-			mpf_div(result_value, f, af);
+			mpf_set_z(result_value, a);
+			mpf_div(result_value, f, result_value);
 		}
-		mpf_clear(af);
 		mpz_clear(a);
 	}
 	CAMLreturn(result);
@@ -1821,9 +1753,7 @@ CAMLprim value mlgmp_f_based_log(value prec, value base, value x)
 	}else if(b == 16){
 		mpf_set_d(result_value, (log(mantissa) / M_LN2 + (double)exponent) / 4.0);
 	}else{
-		mpf_t logex;
-		mpf_init2(logex, p);
-		mpf_set_d(logex, log(mantissa) + (double)exponent * M_LN2);
+		mpf_set_d(result_value, log(mantissa) + (double)exponent * M_LN2);
 		mpf_t base_value;
 		mpf_init2(base_value, p);
 		mpf_set_ui(base_value, b);
@@ -1832,10 +1762,9 @@ CAMLprim value mlgmp_f_based_log(value prec, value base, value x)
 		mpf_t logeb;
 		mpf_init2(logeb, p);
 		mpf_set_d(logeb, log(base_mantissa) + (double)base_exponent * M_LN2);
-		mpf_div(result_value, logex, logeb);
+		mpf_div(result_value, result_value, logeb);
 		mpf_clear(logeb);
 		mpf_clear(base_value);
-		mpf_clear(logex);
 	}
 	CAMLreturn(result);
 }
@@ -2115,12 +2044,10 @@ CAMLprim value mlgmp_random_f(value state, value prec, value n)
 	CAMLparam3(state, prec, n);
 	CAMLlocal1(result);
 	mp_bitcnt_t b = Long_val(prec);
-	mpf_t u;
-	mpf_init2(u, b);
-	mpf_urandomb(u, Random_val(state), b);
 	result = mlgmp_alloc_f_init2(b);
-	mpf_mul(F_val(result), u, F_val(n));
-	mpf_clear(u);
+	mpf_ptr result_value = F_val(result);
+	mpf_urandomb(result_value, Random_val(state), b);
+	mpf_mul(result_value, result_value, F_val(n));
 	CAMLreturn(result);
 }
 
