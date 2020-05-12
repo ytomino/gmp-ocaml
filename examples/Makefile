@@ -24,6 +24,7 @@ TESTS=$(filter test_%,$(EXAMPLES))
 .PHONY: all check interacitve clean $(TESTS)
 
 all: \
+	$(patsubst %,$(BUILDDIR)/%.byte.exe,$(EXAMPLES)) \
 	$(patsubst %,$(BUILDDIR)/%.opt.exe,$(EXAMPLES)) \
 	$(BUILDDIR)/essai.byte.exe $(BUILDDIR)/essai.opt.exe \
 	$(BUILDDIR)/test_creal.byte.exe $(BUILDDIR)/test_creal.opt.exe \
@@ -31,9 +32,11 @@ all: \
 	$(BUILDDIR)/test_suite.byte.exe $(BUILDDIR)/test_suite.opt.exe \
 	$(BINLN)
 
-$(BUILDDIR)/%.opt.exe: %.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
-	ocamlc -c -o $(@:.opt.exe=.cmo) -I $(BUILDDIR) $(OCAMLCFLAGS) $<
-	ocamlc -o $(@:.opt.exe=.byte.exe) -I $(BUILDDIR) $(OCAMLCFLAGS) gmp.cma mpfr.cma mpc.cma $(@:.opt.exe=.cmo)
+$(BUILDDIR)/%.byte.exe: %.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
+	ocamlc -c -o $(@:.byte.exe=.cmo) -I $(BUILDDIR) $(OCAMLCFLAGS) $<
+	ocamlc -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) gmp.cma mpfr.cma mpc.cma $(@:.byte.exe=.cmo)
+
+$(BUILDDIR)/%.opt.exe: %.ml $(BUILDDIR)/gmp.cmxa $(BUILDDIR)/mpfr.cmxa $(BUILDDIR)/mpc.cmxa
 	ocamlopt -c -o $(@:.opt.exe=.cmx) -I $(BUILDDIR) $(OCAMLCFLAGS) $<
 	ocamlopt -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) gmp.cmxa mpfr.cmxa mpc.cmxa $(@:.opt.exe=.cmx)
 
@@ -61,24 +64,24 @@ $(BUILDDIR)/%.opt.exe: mlgmp/%.ml $(BUILDDIR)/creal.cmx
 
 check: all $(TESTS)
 
-$(TESTS): %: $(BUILDDIR)/%.opt.exe
-	$(patsubst %.opt.exe,%.byte.exe,$<)
+$(TESTS): %: $(BUILDDIR)/%.byte.exe $(BUILDDIR)/%.opt.exe
 	$<
+	$(patsubst %.byte.exe,%.opt.exe,$<)
 
 interactive: $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
 	$(RLWRAP) ocaml -I $(BUILDDIR) $(OCAMLCFLAGS) gmp.cma mpfr.cma mpc.cma
 
-$(BUILDDIR)/gmp.cma: $(wildcard ../source/gmp*)
+$(BUILDDIR)/gmp.cma $(BUILDDIR)/gmp.cmxa: $(wildcard ../source/gmp*)
 	$(MAKE) -C ../source -f Makefile-gmp install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
 		INSTALLDIR=$(abspath $(BUILDDIR))
 
-$(BUILDDIR)/mpfr.cma: $(wildcard ../source/mpfr*) $(BUILDDIR)/gmp.cma
+$(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpfr.cmxa: $(wildcard ../source/mpfr*) $(BUILDDIR)/gmp.cma $(BUILDDIR)/gmp.cmxa
 	$(MAKE) -C ../source -f Makefile-mpfr install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
 		INSTALLDIR=$(abspath $(BUILDDIR))
 
-$(BUILDDIR)/mpc.cma: $(wildcard ../source/mpc*) $(BUILDDIR)/mpfr.cma
+$(BUILDDIR)/mpc.cma $(BUILDDIR)/mpc.cmxa: $(wildcard ../source/mpc*) $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpfr.cmxa
 	$(MAKE) -C ../source -f Makefile-mpc install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
 		INSTALLDIR=$(abspath $(BUILDDIR))
