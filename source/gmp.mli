@@ -133,7 +133,7 @@ module Q: sig
 	external scale: t -> base:int -> exponent:int -> t = "mlgmp_q_scale"
 	external root: nth:int -> t -> t = "mlgmp_q_root"
 	external sqrt: t -> t = "mlgmp_q_sqrt"
-	(* partial acccess *)
+	(* partial access *)
 	external num: t -> z = "mlgmp_q_num"
 	external den: t -> z = "mlgmp_q_den"
 	(* conversions *)
