@@ -4,7 +4,7 @@ open Mpc;;
 
 let log = false;;
 
-let check_marshal (x: 'a): bool = (
+let check_marshal (x: 'a) = (
 	if log then (Printf.eprintf "serialize\n"; flush stderr);
 	let s = Marshal.to_string x [] in
 	if log then (Printf.eprintf "deserialize\n"; flush stderr);

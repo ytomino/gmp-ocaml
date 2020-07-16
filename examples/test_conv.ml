@@ -46,7 +46,7 @@ assert (string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N ~-.1000400.0) = "-1
 assert (string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N ~-.34.25) = "-34.250");;
 assert (string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N ~-.0.015625) = "-0.015625");;
 
-let bit_eq (x: float) (y: float): bool = (
+let bit_eq (x: float) (y: float) = (
 	x = y || (classify_float x = FP_nan && classify_float y = FP_nan)
 );;
 
