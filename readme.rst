@@ -93,6 +93,6 @@ Please apply LGPLv3 when static linking libgmp.a, libmpfr.a or libmpc.a.
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Lesser General Public License for more details.
-
+ 
  You should have received a copy of the GNU Lesser General Public License
  along with gmp-ocaml.  If not, see <http://www.gnu.org/licenses/>.
