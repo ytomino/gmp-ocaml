@@ -3,18 +3,25 @@ open Gmp
 type fr
 type rounding_mode = [`N | `Z | `U | `D | `A | `F | `NA]
 
-external fr_of_based_string: prec:int -> mode:rounding_mode -> base:int -> string -> fr = "mlmpfr_fr_of_based_string"
+external fr_of_based_string: prec:int -> mode:rounding_mode -> base:int ->
+	string -> fr =
+	"mlmpfr_fr_of_based_string"
 val fr_of_string: prec:int -> mode:rounding_mode -> string -> fr
-external based_string_of_fr: mode:rounding_mode -> base:int -> fr -> string = "mlmpfr_based_string_of_fr"
+external based_string_of_fr: mode:rounding_mode -> base:int -> fr -> string =
+	"mlmpfr_based_string_of_fr"
 val string_of_fr: mode:rounding_mode -> fr -> string
-external fr_get_str: mode:rounding_mode -> int -> int -> fr -> string * int = "mlmpfr_fr_get_str"
-external fr_of_int: prec:int -> mode:rounding_mode -> int -> fr = "mlmpfr_fr_of_int"
-external fr_of_float: prec:int -> mode:rounding_mode -> float -> fr = "mlmpfr_fr_of_float"
+external fr_get_str: mode:rounding_mode -> int -> int -> fr -> string * int =
+	"mlmpfr_fr_get_str"
+external fr_of_int: prec:int -> mode:rounding_mode -> int -> fr =
+	"mlmpfr_fr_of_int"
+external fr_of_float: prec:int -> mode:rounding_mode -> float -> fr =
+	"mlmpfr_fr_of_float"
 external float_of_fr: mode:rounding_mode -> fr -> float = "mlmpfr_float_of_fr"
 external fr_of_z: prec:int -> mode:rounding_mode -> z -> fr = "mlmpfr_fr_of_z"
 external z_of_fr: mode:rounding_mode -> fr -> z = "mlmpfr_z_of_fr"
 val z_of_truncated_fr: fr -> z
-external fr_of_fr: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_of_fr"
+external fr_of_fr: prec:int -> mode:rounding_mode -> fr -> fr =
+	"mlmpfr_fr_of_fr"
 external bits_of_single: fr -> int32 = "mlmpfr_fr_bits_of_single"
 external bits_of_double: fr -> int64 = "mlmpfr_fr_bits_of_double"
 external bits_of_extended: fr -> int64 * int = "mlmpfr_fr_bits_of_extended"
@@ -23,7 +30,8 @@ external double_of_bits: int64 -> fr = "mlmpfr_fr_double_of_bits"
 external extended_of_bits: int64 * int -> fr = "mlmpfr_fr_extended_of_bits"
 
 external default_prec: unit -> int = "mlmpfr_fr_get_default_prec"
-external default_rounding_mode: unit -> rounding_mode = "mlmpfr_fr_get_default_rounding_mode"
+external default_rounding_mode: unit -> rounding_mode =
+	"mlmpfr_fr_get_default_rounding_mode"
 
 module FR (Prec: sig val prec: int end): sig
 	type t = fr
@@ -62,7 +70,8 @@ module FR (Prec: sig val prec: int end): sig
 	(* conversions *)
 	val of_based_string: mode:rounding_mode -> base:int -> string -> t
 	val of_string: mode:rounding_mode -> string -> t
-	external to_based_string: mode:rounding_mode -> base:int -> fr -> string = "mlmpfr_based_string_of_fr"
+	external to_based_string: mode:rounding_mode -> base:int -> fr -> string =
+		"mlmpfr_based_string_of_fr"
 	val to_string: mode:rounding_mode -> t -> string
 	val of_int: mode:rounding_mode -> int -> t
 	val of_float: mode:rounding_mode -> float -> t

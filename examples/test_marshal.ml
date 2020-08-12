@@ -37,7 +37,10 @@ assert (check_marshal (Fd.of_float 1.41421356, Fd.of_float ~-.2.3620679));;
 if log then (Printf.eprintf "FR\n"; flush stderr);
 
 module FRdp = FR (struct let prec = Mpfr.default_prec () end);;
-module FRd = FRdp.F (struct let rounding_mode = Mpfr.default_rounding_mode () end);;
+module FRd = FRdp.F (
+	struct
+		let rounding_mode = Mpfr.default_rounding_mode ()
+	end);;
 
 assert (check_marshal FRd.zero);;
 assert (check_marshal FRd.one);;
@@ -46,7 +49,10 @@ assert (check_marshal (FRd.of_float 1.41421356, FRd.of_float ~-.2.3620679));;
 if log then (Printf.eprintf "C\n"; flush stderr);
 
 module Cdp = C (struct let prec = Mpc.default_prec () end);;
-module Cd = Cdp.F (struct let rounding_mode = Mpc.default_rounding_mode () end);;
+module Cd = Cdp.F (
+	struct
+		let rounding_mode = Mpc.default_rounding_mode ()
+	end);;
 
 assert (check_marshal Cd.zero);;
 assert (check_marshal Cd.one);;

@@ -4,9 +4,11 @@ setup ();;
 type z;;
 type byte_order = [`B | `L | `N];;
 
-external z_of_based_string: base:int -> string -> z = "mlgmp_z_of_based_string";;
+external z_of_based_string: base:int -> string -> z =
+	"mlgmp_z_of_based_string";;
 let z_of_string = z_of_based_string ~base:10;;
-external based_string_of_z: base:int -> z -> string = "mlgmp_based_string_of_z";;
+external based_string_of_z: base:int -> z -> string =
+	"mlgmp_based_string_of_z";;
 let string_of_z = based_string_of_z ~base:10;;
 external z_of_int: int -> z = "mlgmp_z_of_int";;
 external int_of_z: z -> int = "mlgmp_int_of_z";;
@@ -82,8 +84,10 @@ module Z = struct
 	external clear_bit: t -> int -> t = "mlgmp_z_clear_bit";;
 	external test_bit: t -> int -> int = "mlgmp_z_test_bit";;
 	external export_length: t -> int = "mlgmp_z_export_length";;
-	external export: order:byte_order -> t -> bytes -> int -> int -> unit = "mlgmp_z_export";;
-	external import: order:byte_order -> signed:bool -> bytes -> int -> int -> t = "mlgmp_z_import";;
+	external export: order:byte_order -> t -> bytes -> int -> int -> unit =
+		"mlgmp_z_export";;
+	external import: order:byte_order -> signed:bool -> bytes -> int -> int -> t =
+		"mlgmp_z_import";;
 	external of_based_string: base:int -> string -> t = "mlgmp_z_of_based_string";;
 	let of_string = z_of_string;;
 	external to_based_string: base:int -> t -> string = "mlgmp_based_string_of_z";;
@@ -101,9 +105,11 @@ end;;
 
 type q;;
 
-external q_of_based_string: base:int -> string -> q = "mlgmp_q_of_based_string";;
+external q_of_based_string: base:int -> string -> q =
+	"mlgmp_q_of_based_string";;
 let q_of_string = q_of_based_string ~base:10;;
-external based_string_of_q: base:int -> q -> string = "mlgmp_based_string_of_q";;
+external based_string_of_q: base:int -> q -> string =
+	"mlgmp_based_string_of_q";;
 let string_of_q = based_string_of_q ~base:10;;
 external q_of_int: int -> q = "mlgmp_q_of_int";;
 external q_of_float: float -> q = "mlgmp_q_of_float";;
@@ -157,8 +163,10 @@ external mul: prec:int -> f -> f -> f = "mlgmp_f_mul";;
 external mul_int: prec:int -> f -> int -> f = "mlgmp_f_mul_int";;
 external div: prec:int -> f -> f -> f = "mlgmp_f_div";;
 external pow_int: prec:int -> base:f -> exponent:int -> f = "mlgmp_f_pow_int";;
-external int_pow_int: prec:int -> base:int -> exponent:int -> f = "mlgmp_f_int_pow_int";;
-external scale: prec:int -> f -> base:int -> exponent:int -> f = "mlgmp_f_scale";;
+external int_pow_int: prec:int -> base:int -> exponent:int -> f =
+	"mlgmp_f_int_pow_int";;
+external scale: prec:int -> f -> base:int -> exponent:int -> f =
+	"mlgmp_f_scale";;
 external root: prec:int -> nth:int -> f -> f = "mlgmp_f_root";;
 external sqrt: prec:int -> f -> f = "mlgmp_f_sqrt";;
 external frexp: prec:int -> f -> f * int = "mlgmp_f_frexp";;
@@ -166,9 +174,11 @@ external ceil: prec:int -> f -> f = "mlgmp_f_ceil";;
 external floor: prec:int -> f -> f = "mlgmp_f_floor";;
 external log: prec:int -> f -> f = "mlgmp_f_log";;
 external based_log: prec:int -> base:int -> f -> f = "mlgmp_f_based_log";;
-external f_of_based_string: prec:int -> base:int -> string -> f = "mlgmp_f_of_based_string";;
+external f_of_based_string: prec:int -> base:int -> string -> f =
+	"mlgmp_f_of_based_string";;
 let f_of_string = f_of_based_string ~base:10;;
-external based_string_of_f: base:int -> f -> string = "mlgmp_based_string_of_f";;
+external based_string_of_f: base:int -> f -> string =
+	"mlgmp_based_string_of_f";;
 let string_of_f = based_string_of_f ~base:10;;
 external f_of_int: prec:int -> int -> f = "mlgmp_f_of_int";;
 external f_of_float: prec:int -> float -> f = "mlgmp_f_of_float";;

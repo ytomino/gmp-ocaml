@@ -95,7 +95,9 @@ CAMLprim value mlmpc_c_neg(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_neg(C_val(result), C_val(x), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -113,7 +115,9 @@ CAMLprim value mlmpc_c_add(value prec, value mode, value left, value right)
 {
 	CAMLparam4(prec, mode, left, right);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_add(C_val(result), C_val(left), C_val(right), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -122,7 +126,9 @@ CAMLprim value mlmpc_c_add_int(value prec, value mode, value left, value right)
 {
 	CAMLparam4(prec, mode, left, right);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_add_si(C_val(result), C_val(left), Long_val(right), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -131,7 +137,9 @@ CAMLprim value mlmpc_c_sub(value prec, value mode, value left, value right)
 {
 	CAMLparam4(prec, mode, left, right);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_sub(C_val(result), C_val(left), C_val(right), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -140,7 +148,9 @@ CAMLprim value mlmpc_c_sub_int(value prec, value mode, value left, value right)
 {
 	CAMLparam4(prec, mode, left, right);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_rnd_t m = Crnd_val(mode);
 	mpc_ptr l = C_val(left);
 	long r = Long_val(right);
@@ -156,7 +166,9 @@ CAMLprim value mlmpc_c_mul(value prec, value mode, value left, value right)
 {
 	CAMLparam4(prec, mode, left, right);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_mul(C_val(result), C_val(left), C_val(right), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -165,7 +177,9 @@ CAMLprim value mlmpc_c_mul_int(value prec, value mode, value left, value right)
 {
 	CAMLparam4(prec, mode, left, right);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_mul_si(C_val(result), C_val(left), Long_val(right), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -174,21 +188,33 @@ CAMLprim value mlmpc_c_div(value prec, value mode, value left, value right)
 {
 	CAMLparam4(prec, mode, left, right);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_div(C_val(result), C_val(left), C_val(right), Crnd_val(mode));
 	CAMLreturn(result);
 }
 
-CAMLprim value mlmpc_c_pow_int(value prec, value mode, value base, value exponent)
+CAMLprim value mlmpc_c_pow_int(
+	value prec,
+	value mode,
+	value base,
+	value exponent)
 {
 	CAMLparam4(prec, mode, base, exponent);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_pow_si(C_val(result), C_val(base), Long_val(exponent), Crnd_val(mode));
 	CAMLreturn(result);
 }
 
-CAMLprim value mlmpc_c_int_pow_int(value prec, value mode, value base, value exponent)
+CAMLprim value mlmpc_c_int_pow_int(
+	value prec,
+	value mode,
+	value base,
+	value exponent)
 {
 	CAMLparam4(prec, mode, base, exponent);
 	CAMLlocal1(result);
@@ -232,7 +258,12 @@ CAMLprim value mlmpc_c_int_pow_int(value prec, value mode, value base, value exp
 	CAMLreturn(result);
 }
 
-CAMLprim value mlmpc_c_scale(value prec, value mode, value fraction, value base, value exponent)
+CAMLprim value mlmpc_c_scale(
+	value prec,
+	value mode,
+	value fraction,
+	value base,
+	value exponent)
 {
 	CAMLparam5(prec, mode, fraction, base, exponent);
 	CAMLlocal1(result);
@@ -296,7 +327,9 @@ CAMLprim value mlmpc_c_sqrt(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_sqrt(C_val(result), C_val(x), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -305,7 +338,9 @@ CAMLprim value mlmpc_c_log(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_log(C_val(result), C_val(x), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -334,7 +369,9 @@ CAMLprim value mlmpc_c_conj(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_conj(C_val(result), C_val(x), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -361,7 +398,9 @@ CAMLprim value mlmpc_c_proj(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_proj(C_val(result), C_val(x), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -386,12 +425,22 @@ CAMLprim value mlmpc_c_imag(value x)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlmpc_c_of_based_string(value prec, value mode, value base, value x)
+CAMLprim value mlmpc_c_of_based_string(
+	value prec,
+	value mode,
+	value base,
+	value x)
 {
 	CAMLparam4(prec, mode, base, x);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
-	int err = mpc_set_str(C_val(result), String_val(x), Int_val(base), Crnd_val(mode));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
+	int err = mpc_set_str(
+		C_val(result),
+		String_val(x),
+		Int_val(base),
+		Crnd_val(mode));
 	if(err < 0) caml_failwith(__FUNCTION__);
 	CAMLreturn(result);
 }
@@ -410,7 +459,9 @@ CAMLprim value mlmpc_c_of_int(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_set_si(C_val(result), Long_val(x), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -419,7 +470,9 @@ CAMLprim value mlmpc_c_of_float(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_set_d(C_val(result), Double_val(x), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -428,7 +481,9 @@ CAMLprim value mlmpc_c_of_z(value prec, value mode, value x)
 {
 	CAMLparam2(prec, x);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_set_z(C_val(result), Z_val(x), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -437,7 +492,9 @@ CAMLprim value mlmpc_c_of_q(value prec, value mode, value x)
 {
 	CAMLparam2(prec, x);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_set_q(C_val(result), Q_val(x), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -446,7 +503,9 @@ CAMLprim value mlmpc_c_of_f(value prec, value mode, value x)
 {
 	CAMLparam2(prec, x);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_set_f(C_val(result), F_val(x), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -455,7 +514,9 @@ CAMLprim value mlmpc_c_of_fr(value prec, value mode, value x)
 {
 	CAMLparam2(prec, x);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_set_fr(C_val(result), FR_val(x), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -464,7 +525,9 @@ CAMLprim value mlmpc_c_make_int(value prec, value mode, value r, value i)
 {
 	CAMLparam3(prec, r, i);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_set_si_si(C_val(result), Long_val(r), Long_val(i), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -473,7 +536,9 @@ CAMLprim value mlmpc_c_make_float(value prec, value mode, value r, value i)
 {
 	CAMLparam3(prec, r, i);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_set_d_d(C_val(result), Double_val(r), Double_val(i), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -482,7 +547,9 @@ CAMLprim value mlmpc_c_make_z(value prec, value mode, value r, value i)
 {
 	CAMLparam3(prec, r, i);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_set_z_z(C_val(result), Z_val(r), Z_val(i), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -491,7 +558,9 @@ CAMLprim value mlmpc_c_make_q(value prec, value mode, value r, value i)
 {
 	CAMLparam3(prec, r, i);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_set_q_q(C_val(result), Q_val(r), Q_val(i), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -500,7 +569,9 @@ CAMLprim value mlmpc_c_make_f(value prec, value mode, value r, value i)
 {
 	CAMLparam3(prec, r, i);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_set_f_f(C_val(result), F_val(r), F_val(i), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -509,7 +580,9 @@ CAMLprim value mlmpc_c_make_fr(value prec, value mode, value r, value i)
 {
 	CAMLparam3(prec, r, i);
 	CAMLlocal1(result);
-	result = mlmpc_alloc_c_init3(Long_val(Field(prec, 0)), Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_set_fr_fr(C_val(result), FR_val(r), FR_val(i), Crnd_val(mode));
 	CAMLreturn(result);
 }
@@ -518,7 +591,7 @@ CAMLprim value mlmpc_c_make_fr(value prec, value mode, value r, value i)
 
 CAMLprim value mlmpc_setup(value unit)
 {
-  CAMLparam1(unit);
-  register_custom_operations(&mlmpc_c_ops);
-  CAMLreturn(Val_unit);
+	CAMLparam1(unit);
+	register_custom_operations(&mlmpc_c_ops);
+	CAMLreturn(Val_unit);
 }

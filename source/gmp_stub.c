@@ -15,7 +15,8 @@
 #include "gmp_stub.h"
 
 #ifndef LONG_BIT
-#define LONG_BIT (SIZEOF_LONG * 8) /* defined in caml/config.h */
+#define LONG_BIT (SIZEOF_LONG * 8)
+	/* defined in caml/config.h */
 #endif
 
 /**** Z ****/
@@ -732,7 +733,12 @@ CAMLprim value mlgmp_z_export_length(value x)
 	CAMLreturn(Val_int(result));
 }
 
-CAMLprim value mlgmp_z_export(value order, value x, value buf, value pos, value len)
+CAMLprim value mlgmp_z_export(
+	value order,
+	value x,
+	value buf,
+	value pos,
+	value len)
 {
 	CAMLparam5(order, x, buf, pos, len);
 	ssize_t pos_value = Long_val(pos);
@@ -787,7 +793,12 @@ CAMLprim value mlgmp_z_export(value order, value x, value buf, value pos, value 
 	CAMLreturn(Val_unit);
 }
 
-CAMLprim value mlgmp_z_import(value order, value signed_, value buf, value pos, value len)
+CAMLprim value mlgmp_z_import(
+	value order,
+	value signed_,
+	value buf,
+	value pos,
+	value len)
 {
 	CAMLparam5(order, signed_, buf, pos, len);
 	CAMLlocal1(result);
@@ -1608,7 +1619,11 @@ CAMLprim value mlgmp_f_int_pow_int(value prec, value base, value exponent)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlgmp_f_scale(value prec, value fraction, value base, value exponent)
+CAMLprim value mlgmp_f_scale(
+	value prec,
+	value fraction,
+	value base,
+	value exponent)
 {
 	CAMLparam4(prec, fraction, base, exponent);
 	CAMLlocal1(result);
@@ -1810,7 +1825,10 @@ CAMLprim value mlgmp_based_string_of_f(value base, value x)
 		buf[sign_width] = '0';
 		buf[sign_width + 1] = '.';
 		memset(buf + sign_width + 2, '0', -exponent);
-		memcpy(buf + sign_width + 2 - exponent, image + sign_width, length - sign_width);
+		memcpy(
+			buf + sign_width + 2 - exponent,
+			image + sign_width,
+			length - sign_width);
 		buf[length - exponent + 2] = '\0';
 		result = caml_copy_string(buf);
 	}
@@ -2009,7 +2027,8 @@ CAMLprim value mlgmp_random_nativeint(value state, value n)
 {
 	CAMLparam2(state, n);
 	CAMLlocal1(result);
-	result = caml_copy_nativeint(gmp_urandomm_ui(Random_val(state), Nativeint_val(n)));
+	result = caml_copy_nativeint(
+		gmp_urandomm_ui(Random_val(state), Nativeint_val(n)));
 	CAMLreturn(result);
 }
 
@@ -2055,9 +2074,9 @@ CAMLprim value mlgmp_random_f(value state, value prec, value n)
 
 CAMLprim value mlgmp_setup(value unit)
 {
-  CAMLparam1(unit);
-  register_custom_operations(&mlgmp_z_ops);
-  register_custom_operations(&mlgmp_q_ops);
-  register_custom_operations(&mlgmp_f_ops);
-  CAMLreturn(Val_unit);
+	CAMLparam1(unit);
+	register_custom_operations(&mlgmp_z_ops);
+	register_custom_operations(&mlgmp_q_ops);
+	register_custom_operations(&mlgmp_f_ops);
+	CAMLreturn(Val_unit);
 }

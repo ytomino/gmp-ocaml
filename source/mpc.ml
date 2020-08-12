@@ -9,41 +9,79 @@ type rounding_mode_elem = [`N | `Z | `U | `D];;
 type rounding_mode = rounding_mode_elem * rounding_mode_elem;;
 
 external neg: prec:int * int -> mode:rounding_mode -> c -> c = "mlmpc_c_neg";;
-external abs: prec:int * int -> mode:Mpfr.rounding_mode -> c -> fr = "mlmpc_c_abs";;
-external add: prec:int * int -> mode:rounding_mode -> c -> c -> c = "mlmpc_c_add";;
-external add_int: prec:int * int -> mode:rounding_mode -> c -> int -> c = "mlmpc_c_add_int";;
-external sub: prec:int * int -> mode:rounding_mode -> c -> c -> c = "mlmpc_c_sub";;
-external sub_int: prec:int * int -> mode:rounding_mode -> c -> int -> c = "mlmpc_c_sub_int";;
-external mul: prec:int * int -> mode:rounding_mode -> c -> c -> c = "mlmpc_c_mul";;
-external mul_int: prec:int * int -> mode:rounding_mode -> c -> int -> c = "mlmpc_c_mul_int";;
-external div: prec:int * int -> mode:rounding_mode -> c -> c -> c = "mlmpc_c_div";;
-external pow_int: prec:int * int -> mode:rounding_mode -> base:c -> exponent:int -> c = "mlmpc_c_pow_int";;
-external int_pow_int: prec:int * int -> mode:rounding_mode -> base:int -> exponent:int -> c = "mlmpc_c_int_pow_int";;
-external scale: prec:int * int -> mode:rounding_mode -> c -> base:int -> exponent:int -> c = "mlmpc_c_scale";;
-external root: prec:int * int -> mode:rounding_mode -> nth:int -> c -> c = "mlmpc_c_root";;
-external sqrt: prec:int * int -> mode:rounding_mode -> c -> c = "mlmpc_c_sqrt";;
+external abs: prec:int * int -> mode:Mpfr.rounding_mode -> c -> fr =
+	"mlmpc_c_abs";;
+external add: prec:int * int -> mode:rounding_mode -> c -> c -> c =
+	"mlmpc_c_add";;
+external add_int: prec:int * int -> mode:rounding_mode -> c -> int -> c =
+	"mlmpc_c_add_int";;
+external sub: prec:int * int -> mode:rounding_mode -> c -> c -> c =
+	"mlmpc_c_sub";;
+external sub_int: prec:int * int -> mode:rounding_mode -> c -> int -> c =
+	"mlmpc_c_sub_int";;
+external mul: prec:int * int -> mode:rounding_mode -> c -> c -> c =
+	"mlmpc_c_mul";;
+external mul_int: prec:int * int -> mode:rounding_mode -> c -> int -> c =
+	"mlmpc_c_mul_int";;
+external div: prec:int * int -> mode:rounding_mode -> c -> c -> c =
+	"mlmpc_c_div";;
+external pow_int: prec:int * int -> mode:rounding_mode -> base:c ->
+	exponent:int -> c =
+	"mlmpc_c_pow_int";;
+external int_pow_int: prec:int * int -> mode:rounding_mode -> base:int ->
+	exponent:int -> c =
+	"mlmpc_c_int_pow_int";;
+external scale: prec:int * int -> mode:rounding_mode -> c -> base:int ->
+	exponent:int -> c =
+	"mlmpc_c_scale";;
+external root: prec:int * int -> mode:rounding_mode -> nth:int -> c -> c =
+	"mlmpc_c_root";;
+external sqrt: prec:int * int -> mode:rounding_mode -> c -> c =
+	"mlmpc_c_sqrt";;
 external log: prec:int * int -> mode:rounding_mode -> c -> c = "mlmpc_c_log";;
-external based_log: prec:int * int -> mode:rounding_mode -> base:int -> c -> c = "mlmpc_c_based_log";;
-external conj: prec:int * int -> mode:rounding_mode -> c -> c = "mlmpc_c_conj";;
-external norm: prec:int * int -> mode:Mpfr.rounding_mode -> c -> fr = "mlmpc_c_norm";;
-external arg: prec:int * int -> mode:Mpfr.rounding_mode -> c -> fr = "mlmpc_c_arg";;
-external proj: prec:int * int -> mode:rounding_mode -> c -> c = "mlmpc_c_proj";;
-external c_of_based_string: prec:int * int -> mode:rounding_mode -> base:int -> string -> c = "mlmpc_c_of_based_string";;
+external based_log: prec:int * int -> mode:rounding_mode -> base:int -> c ->
+	c =
+	"mlmpc_c_based_log";;
+external conj: prec:int * int -> mode:rounding_mode -> c -> c =
+	"mlmpc_c_conj";;
+external norm: prec:int * int -> mode:Mpfr.rounding_mode -> c -> fr =
+	"mlmpc_c_norm";;
+external arg: prec:int * int -> mode:Mpfr.rounding_mode -> c -> fr =
+	"mlmpc_c_arg";;
+external proj: prec:int * int -> mode:rounding_mode -> c -> c =
+	"mlmpc_c_proj";;
+external c_of_based_string: prec:int * int -> mode:rounding_mode -> base:int ->
+	string -> c =
+	"mlmpc_c_of_based_string";;
 let c_of_string = c_of_based_string ~base:10;;
-external based_string_of_c: mode:rounding_mode -> base:int -> c -> string = "mlmpc_based_string_of_c";;
+external based_string_of_c: mode:rounding_mode -> base:int -> c -> string =
+	"mlmpc_based_string_of_c";;
 let string_of_c = based_string_of_c ~base:10;;
-external c_of_int: prec:int * int -> mode:rounding_mode -> int -> c = "mlmpc_c_of_int";;
-external c_of_float: prec:int * int -> mode:rounding_mode -> float -> c = "mlmpc_c_of_float";;
-external c_of_z: prec:int * int -> mode:rounding_mode -> z -> c = "mlmpc_c_of_z";;
-external c_of_q: prec:int * int -> mode:rounding_mode -> q -> c = "mlmpc_c_of_q";;
-external c_of_f: prec:int * int -> mode:rounding_mode -> f -> c = "mlmpc_c_of_f";;
-external c_of_fr: prec:int * int -> mode:rounding_mode -> fr -> c = "mlmpc_c_of_fr";;
-external make_int: prec:int * int -> mode:rounding_mode -> int -> int -> c = "mlmpc_c_make_int";;
-external make_float: prec:int * int -> mode:rounding_mode -> float -> float -> c = "mlmpc_c_make_float";;
-external make_z: prec:int * int -> mode:rounding_mode -> z -> z -> c = "mlmpc_c_make_z";;
-external make_q: prec:int * int -> mode:rounding_mode -> q -> q -> c = "mlmpc_c_make_q";;
-external make_f: prec:int * int -> mode:rounding_mode -> f -> f -> c = "mlmpc_c_make_f";;
-external make_fr: prec:int * int -> mode:rounding_mode -> fr -> fr -> c = "mlmpc_c_make_fr";;
+external c_of_int: prec:int * int -> mode:rounding_mode -> int -> c =
+	"mlmpc_c_of_int";;
+external c_of_float: prec:int * int -> mode:rounding_mode -> float -> c =
+	"mlmpc_c_of_float";;
+external c_of_z: prec:int * int -> mode:rounding_mode -> z -> c =
+	"mlmpc_c_of_z";;
+external c_of_q: prec:int * int -> mode:rounding_mode -> q -> c =
+	"mlmpc_c_of_q";;
+external c_of_f: prec:int * int -> mode:rounding_mode -> f -> c =
+	"mlmpc_c_of_f";;
+external c_of_fr: prec:int * int -> mode:rounding_mode -> fr -> c =
+	"mlmpc_c_of_fr";;
+external make_int: prec:int * int -> mode:rounding_mode -> int -> int -> c =
+	"mlmpc_c_make_int";;
+external make_float: prec:int * int -> mode:rounding_mode -> float -> float ->
+	c =
+	"mlmpc_c_make_float";;
+external make_z: prec:int * int -> mode:rounding_mode -> z -> z -> c =
+	"mlmpc_c_make_z";;
+external make_q: prec:int * int -> mode:rounding_mode -> q -> q -> c =
+	"mlmpc_c_make_q";;
+external make_f: prec:int * int -> mode:rounding_mode -> f -> f -> c =
+	"mlmpc_c_make_f";;
+external make_fr: prec:int * int -> mode:rounding_mode -> fr -> fr -> c =
+	"mlmpc_c_make_fr";;
 
 let default_prec () =
 	let mpfr_prec = Mpfr.default_prec () in
@@ -59,7 +97,7 @@ let default_rounding_mode () =
 module C (Prec: sig val prec: int * int end) = struct
 	let prec = Prec.prec;;
 	type t = c;;
-	let zero = c_of_int ~prec ~mode:nn 0;; 
+	let zero = c_of_int ~prec ~mode:nn 0;;
 	let one = c_of_int ~prec ~mode:nn 1;;
 	let i = make_int ~prec ~mode:nn 0 1;;
 	external compare: t -> t -> int = "mlmpc_c_compare";;
@@ -88,7 +126,8 @@ module C (Prec: sig val prec: int * int end) = struct
 	external imag: t -> fr = "mlmpc_c_imag";;
 	let of_based_string = c_of_based_string ~prec;;
 	let of_string = of_based_string ~base:10;;
-	external to_based_string: mode:rounding_mode -> base:int -> c -> string = "mlmpc_based_string_of_c";;
+	external to_based_string: mode:rounding_mode -> base:int -> c -> string =
+		"mlmpc_based_string_of_c";;
 	let to_string = string_of_c;;
 	let of_int = c_of_int ~prec;;
 	let of_float = c_of_float ~prec;;

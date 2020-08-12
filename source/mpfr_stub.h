@@ -1,7 +1,9 @@
 /* word size */
 
-#define WSIZE_32_FR 16 /* 4 byte int + 4 byte int + 4 byte int + 4 byte pointer */
-#define WSIZE_64_FR 32 /* 8 byte int + 4 byte int + 4 byte alignment + 8 byte int + 8 byte pointer */
+#define WSIZE_32_FR 16
+	/* 4 byte int + 4 byte int + 4 byte int + 4 byte pointer */
+#define WSIZE_64_FR 32
+	/* 8 byte int + 4 byte int + 4 byte alignment + 8 byte int + 8 byte pointer */
 
 /* conversions */
 

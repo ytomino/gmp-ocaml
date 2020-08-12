@@ -113,7 +113,11 @@ CAMLprim value mlmpfr_fr_add(value prec, value mode, value left, value right)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlmpfr_fr_add_int(value prec, value mode, value left, value right)
+CAMLprim value mlmpfr_fr_add_int(
+	value prec,
+	value mode,
+	value left,
+	value right)
 {
 	CAMLparam4(prec, mode, left, right);
 	CAMLlocal1(result);
@@ -131,7 +135,11 @@ CAMLprim value mlmpfr_fr_sub(value prec, value mode, value left, value right)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlmpfr_fr_sub_int(value prec, value mode, value left, value right)
+CAMLprim value mlmpfr_fr_sub_int(
+	value prec,
+	value mode,
+	value left,
+	value right)
 {
 	CAMLparam4(prec, mode, left, right);
 	CAMLlocal1(result);
@@ -149,7 +157,11 @@ CAMLprim value mlmpfr_fr_mul(value prec, value mode, value left, value right)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlmpfr_fr_mul_int(value prec, value mode, value left, value right)
+CAMLprim value mlmpfr_fr_mul_int(
+	value prec,
+	value mode,
+	value left,
+	value right)
 {
 	CAMLparam4(prec, mode, left, right);
 	CAMLlocal1(result);
@@ -167,7 +179,11 @@ CAMLprim value mlmpfr_fr_div(value prec, value mode, value left, value right)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlmpfr_fr_pow_int(value prec, value mode, value base, value exponent)
+CAMLprim value mlmpfr_fr_pow_int(
+	value prec,
+	value mode,
+	value base,
+	value exponent)
 {
 	CAMLparam4(prec, mode, base, exponent);
 	CAMLlocal1(result);
@@ -176,7 +192,11 @@ CAMLprim value mlmpfr_fr_pow_int(value prec, value mode, value base, value expon
 	CAMLreturn(result);
 }
 
-CAMLprim value mlmpfr_fr_int_pow_int(value prec, value mode, value base, value exponent)
+CAMLprim value mlmpfr_fr_int_pow_int(
+	value prec,
+	value mode,
+	value base,
+	value exponent)
 {
 	CAMLparam4(prec, mode, base, exponent);
 	CAMLlocal1(result);
@@ -213,7 +233,12 @@ CAMLprim value mlmpfr_fr_int_pow_int(value prec, value mode, value base, value e
 	CAMLreturn(result);
 }
 
-CAMLprim value mlmpfr_fr_scale(value prec, value mode, value fraction, value base, value exponent)
+CAMLprim value mlmpfr_fr_scale(
+	value prec,
+	value mode,
+	value fraction,
+	value base,
+	value exponent)
 {
 	CAMLparam5(prec, mode, fraction, base, exponent);
 	CAMLlocal1(result);
@@ -367,7 +392,11 @@ CAMLprim value mlmpfr_fr_based_log(value prec, value mode, value base, value x)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlmpfr_fr_pow(value prec, value mode, value base, value exponent)
+CAMLprim value mlmpfr_fr_pow(
+	value prec,
+	value mode,
+	value base,
+	value exponent)
 {
 	CAMLparam4(prec, mode, base, exponent);
 	CAMLlocal1(result);
@@ -421,12 +450,20 @@ CAMLprim value mlmpfr_fr_acosh(value prec, value mode, value x)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlmpfr_fr_of_based_string(value prec, value mode, value base, value x)
+CAMLprim value mlmpfr_fr_of_based_string(
+	value prec,
+	value mode,
+	value base,
+	value x)
 {
 	CAMLparam4(prec, mode, base, x);
 	CAMLlocal1(result);
 	result = mlmpfr_alloc_fr_init2(Long_val(prec));
-	int err = mpfr_set_str(FR_val(result), String_val(x), Int_val(base), Rnd_val(mode));
+	int err = mpfr_set_str(
+		FR_val(result),
+		String_val(x),
+		Int_val(base),
+		Rnd_val(mode));
 	if(err < 0) caml_failwith(__FUNCTION__);
 	CAMLreturn(result);
 }
@@ -442,7 +479,13 @@ CAMLprim value mlmpfr_based_string_of_fr(value mode, value base, value x)
 		result = caml_copy_string("-infinity" + 1 - mpfr_signbit(x_value));
 	}else{
 		mp_exp_t exponent;
-		char *image = mpfr_get_str(NULL, &exponent, Int_val(base), 0, x_value, Rnd_val(mode));
+		char *image = mpfr_get_str(
+			NULL,
+			&exponent,
+			Int_val(base),
+			0,
+			x_value,
+			Rnd_val(mode));
 		ssize_t length = strlen(image);
 		int sign_width = image[0] == '-'; /* 0 or 1 */
 		mp_exp_t exponent_p = exponent + sign_width;
@@ -468,7 +511,10 @@ CAMLprim value mlmpfr_based_string_of_fr(value mode, value base, value x)
 			buf[sign_width] = '0';
 			buf[sign_width + 1] = '.';
 			memset(buf + sign_width + 2, '0', -exponent);
-			memcpy(buf + sign_width + 2 - exponent, image + sign_width, length - sign_width);
+			memcpy(
+				buf + sign_width + 2 - exponent,
+				image + sign_width,
+				length - sign_width);
 			buf[length - exponent + 2] = '\0';
 			result = caml_copy_string(buf);
 		}
@@ -482,7 +528,13 @@ value mlmpfr_fr_get_str(value mode, value base, value digits, value x)
 	CAMLparam4(mode, base, digits, x);
 	CAMLlocal1(result);
 	mp_exp_t exponent;
-	char *image = mpfr_get_str(NULL, &exponent, Int_val(base), Long_val(digits), FR_val(x), Rnd_val(mode));
+	char *image = mpfr_get_str(
+		NULL,
+		&exponent,
+		Int_val(base),
+		Long_val(digits),
+		FR_val(x),
+		Rnd_val(mode));
 	result = alloc_tuple(2);
 	Store_field(result, 0, caml_copy_string(image));
 	Store_field(result, 1, Val_long(exponent));
@@ -571,7 +623,9 @@ CAMLprim value mlmpfr_fr_bits_of_single(value x)
 			mpfr_init2(a, 24);
 			mpfr_abs(a, x_value, MPFR_RNDN);
 			mpfr_mul_2exp(a, a, 24 - exponent, MPFR_RNDN);
-			i32 = (sgn << 31) | ((uint32_t)(exponent + 0x7eU) << 23) | (mpfr_get_uj(a, MPFR_RNDN) & 0x007fffffUL);
+			i32 = (sgn << 31)
+				| ((uint32_t)(exponent + 0x7eU) << 23)
+				| (mpfr_get_uj(a, MPFR_RNDN) & 0x007fffffUL);
 			mpfr_clear(a);
 		}
 	}
@@ -608,7 +662,9 @@ CAMLprim value mlmpfr_fr_bits_of_double(value x)
 			mpfr_init2(a, 53);
 			mpfr_abs(a, x_value, MPFR_RNDN);
 			mpfr_mul_2exp(a, a, 53 - exponent, MPFR_RNDN);
-			i64 = (sgn << 63) | ((uint64_t)(exponent + 0x3feU) << 52) | (mpfr_get_uj(a, MPFR_RNDN) & 0x000fffffffffffffULL);
+			i64 = (sgn << 63)
+				| ((uint64_t)(exponent + 0x3feU) << 52)
+				| (mpfr_get_uj(a, MPFR_RNDN) & 0x000fffffffffffffULL);
 			mpfr_clear(a);
 		}
 	}
@@ -733,7 +789,10 @@ CAMLprim value mlmpfr_fr_double_of_bits(value i64)
 			mpfr_exp_t exponent = ((i64_value >> 52) & 0x7ffU) - 0x3feU;
 			mpfr_t a;
 			mpfr_init2(a, 53);
-			mpfr_set_uj(a, ((i64_value & 0x000fffffffffffffULL) | 0x0010000000000000ULL), MPFR_RNDN);
+			mpfr_set_uj(
+				a,
+				((i64_value & 0x000fffffffffffffULL) | 0x0010000000000000ULL),
+				MPFR_RNDN);
 			mpfr_div_2exp(a, a, 53 - exponent, MPFR_RNDN);
 			if(sgn){
 				mpfr_neg(result_value, a, MPFR_RNDN);
@@ -812,7 +871,7 @@ CAMLprim value mlmpfr_fr_get_default_rounding_mode(value unit)
 
 CAMLprim value mlmpfr_setup(value unit)
 {
-  CAMLparam1(unit);
-  register_custom_operations(&mlmpfr_fr_ops);
-  CAMLreturn(Val_unit);
+	CAMLparam1(unit);
+	register_custom_operations(&mlmpfr_fr_ops);
+	CAMLreturn(Val_unit);
 }

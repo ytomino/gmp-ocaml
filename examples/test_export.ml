@@ -33,41 +33,71 @@ let expect_export order x buf pos len expect =
 
 expect_export `N Z.zero (Bytes.create 0) 0 0 Bytes.empty;;
 
-expect_export `B (Z.of_int (-65536)) (Bytes.make 3 'x') 0 3 (Bytes.of_string "\xff\x00\x00");;
-expect_export `B (Z.of_int (-65536)) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\x00\x00");;
-expect_export `B (Z.of_int (-257)) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\xfe\xff");;
-expect_export `B (Z.of_int (-256)) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\xff\x00");;
-expect_export `B (Z.of_int (-128)) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\xff\x80");;
-expect_export `B (Z.of_int (-1)) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\xff\xff");;
-expect_export `B (Z.of_int (-1)) (Bytes.make 1 'x') 0 1 (Bytes.of_string "\xff");;
+expect_export `B (Z.of_int (-65536)) (Bytes.make 3 'x') 0 3
+	(Bytes.of_string "\xff\x00\x00");;
+expect_export `B (Z.of_int (-65536)) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\x00\x00");;
+expect_export `B (Z.of_int (-257)) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\xfe\xff");;
+expect_export `B (Z.of_int (-256)) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\xff\x00");;
+expect_export `B (Z.of_int (-128)) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\xff\x80");;
+expect_export `B (Z.of_int (-1)) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\xff\xff");;
+expect_export `B (Z.of_int (-1)) (Bytes.make 1 'x') 0 1
+	(Bytes.of_string "\xff");;
 expect_export `B Z.zero (Bytes.make 1 'x') 0 1 (Bytes.of_string "\x00");;
 expect_export `B Z.one (Bytes.make 1 'x') 0 1 (Bytes.of_string "\x01");;
-expect_export `B (Z.of_int 127) (Bytes.make 1 'x') 0 1 (Bytes.of_string "\x7f");;
-expect_export `B (Z.of_int 127) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\x00\x7f");;
-expect_export `B (Z.of_int 128) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\x00\x80");;
-expect_export `B (Z.of_int 255) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\x00\xff");;
-expect_export `B (Z.of_int 256) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\x01\x00");;
-expect_export `B (Z.of_int 32767) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\x7f\xff");;
-expect_export `B (Z.of_int 32768) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\x80\x00");;
-expect_export `B (Z.of_int 32768) (Bytes.make 3 'x') 0 3 (Bytes.of_string "\x00\x80\x00");;
+expect_export `B (Z.of_int 127) (Bytes.make 1 'x') 0 1
+	(Bytes.of_string "\x7f");;
+expect_export `B (Z.of_int 127) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\x00\x7f");;
+expect_export `B (Z.of_int 128) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\x00\x80");;
+expect_export `B (Z.of_int 255) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\x00\xff");;
+expect_export `B (Z.of_int 256) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\x01\x00");;
+expect_export `B (Z.of_int 32767) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\x7f\xff");;
+expect_export `B (Z.of_int 32768) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\x80\x00");;
+expect_export `B (Z.of_int 32768) (Bytes.make 3 'x') 0 3
+	(Bytes.of_string "\x00\x80\x00");;
 
-expect_export `L (Z.of_int (-65536)) (Bytes.make 3 'x') 0 3 (Bytes.of_string "\x00\x00\xff");;
-expect_export `L (Z.of_int (-65536)) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\x00\x00");;
-expect_export `L (Z.of_int (-257)) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\xff\xfe");;
-expect_export `L (Z.of_int (-256)) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\x00\xff");;
-expect_export `L (Z.of_int (-128)) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\x80\xff");;
-expect_export `L (Z.of_int (-1)) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\xff\xff");;
-expect_export `L (Z.of_int (-1)) (Bytes.make 1 'x') 0 1 (Bytes.of_string "\xff");;
+expect_export `L (Z.of_int (-65536)) (Bytes.make 3 'x') 0 3
+	(Bytes.of_string "\x00\x00\xff");;
+expect_export `L (Z.of_int (-65536)) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\x00\x00");;
+expect_export `L (Z.of_int (-257)) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\xff\xfe");;
+expect_export `L (Z.of_int (-256)) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\x00\xff");;
+expect_export `L (Z.of_int (-128)) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\x80\xff");;
+expect_export `L (Z.of_int (-1)) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\xff\xff");;
+expect_export `L (Z.of_int (-1)) (Bytes.make 1 'x') 0 1
+	(Bytes.of_string "\xff");;
 expect_export `L Z.zero (Bytes.make 1 'x') 0 1 (Bytes.of_string "\x00");;
 expect_export `L Z.one (Bytes.make 1 'x') 0 1 (Bytes.of_string "\x01");;
-expect_export `L (Z.of_int 127) (Bytes.make 1 'x') 0 1 (Bytes.of_string "\x7f");;
-expect_export `L (Z.of_int 127) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\x7f\x00");;
-expect_export `L (Z.of_int 128) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\x80\x00");;
-expect_export `L (Z.of_int 255) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\xff\x00");;
-expect_export `L (Z.of_int 256) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\x00\x01");;
-expect_export `L (Z.of_int 32767) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\xff\x7f");;
-expect_export `L (Z.of_int 32768) (Bytes.make 2 'x') 0 2 (Bytes.of_string "\x00\x80");;
-expect_export `L (Z.of_int 32768) (Bytes.make 3 'x') 0 3 (Bytes.of_string "\x00\x80\x00");;
+expect_export `L (Z.of_int 127) (Bytes.make 1 'x') 0 1
+	(Bytes.of_string "\x7f");;
+expect_export `L (Z.of_int 127) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\x7f\x00");;
+expect_export `L (Z.of_int 128) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\x80\x00");;
+expect_export `L (Z.of_int 255) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\xff\x00");;
+expect_export `L (Z.of_int 256) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\x00\x01");;
+expect_export `L (Z.of_int 32767) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\xff\x7f");;
+expect_export `L (Z.of_int 32768) (Bytes.make 2 'x') 0 2
+	(Bytes.of_string "\x00\x80");;
+expect_export `L (Z.of_int 32768) (Bytes.make 3 'x') 0 3
+	(Bytes.of_string "\x00\x80\x00");;
 
 let test_export_and_import x =
 	let len = Z.export_length x in
@@ -75,9 +105,7 @@ let test_export_and_import x =
 	Z.export ~order:`N x buf 0 len;
 	let r = Z.import ~order:`N ~signed:true buf 0 len in
 	if r <> x then (
-		Printf.printf "x = %s; r = %s; buf = \"%s\"\n"
-			(string_of_z x)
-			(string_of_z r)
+		Printf.printf "x = %s; r = %s; buf = \"%s\"\n" (string_of_z x) (string_of_z r)
 			(String.escaped (Bytes.to_string buf));
 		flush stdout;
 		assert false

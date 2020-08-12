@@ -35,16 +35,37 @@ assert (string_of_f (f_of_float ~prec:10 ~-.0.0625) = "-0.0625");;
 
 assert (123.0 = float_of_fr ~mode:`N (fr_of_int ~prec:8 ~mode:`N 123));;
 assert (-123.0 = float_of_fr ~mode:`N (fr_of_int ~prec:8 ~mode:`N (-123)));;
-assert (fr_of_int ~prec:8 ~mode:`N 10 = fr_of_z ~prec:4 ~mode:`N (z_of_int 10));;
-assert (string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N 0.0) = "0.00000");;
-assert (string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N 12352.0) = "12352.");;
-assert (string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N 1000400.0) = "1000400.");;
-assert (string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N 34.812) = "34.812");;
-assert (string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N 0.015625) = "0.015625");;
-assert (string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N ~-.12352.0) = "-12352.");;
-assert (string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N ~-.1000400.0) = "-1000400.");;
-assert (string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N ~-.34.25) = "-34.250");;
-assert (string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N ~-.0.015625) = "-0.015625");;
+assert (
+	fr_of_int ~prec:8 ~mode:`N 10 = fr_of_z ~prec:4 ~mode:`N (z_of_int 10)
+);;
+assert (
+	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N 0.0) = "0.00000"
+);;
+assert (
+	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N 12352.0) = "12352."
+);;
+assert (
+	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N 1000400.0) = "1000400."
+);;
+assert (
+	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N 34.812) = "34.812"
+);;
+assert (
+	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N 0.015625) = "0.015625"
+);;
+assert (
+	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N ~-.12352.0) = "-12352."
+);;
+assert (
+	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N ~-.1000400.0)
+		= "-1000400."
+);;
+assert (
+	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N ~-.34.25) = "-34.250"
+);;
+assert (
+	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N ~-.0.015625) = "-0.015625"
+);;
 
 let bit_eq (x: float) (y: float) = (
 	x = y || (classify_float x = FP_nan && classify_float y = FP_nan)
@@ -112,7 +133,10 @@ assert (extended_check nan (0xc000000000000000L, 0x7fff)
 assert (extended_check infinity (0x8000000000000000L, 0x7fff));;
 assert (extended_check ~-.infinity (0x8000000000000000L, 0xffff));;
 
-assert (c_of_int ~prec:(8, 8) ~mode:(`N, `N) 10 = c_of_string ~prec:(4, 4) ~mode:(`N, `N) "10");;
+assert (
+	c_of_int ~prec:(8, 8) ~mode:(`N, `N) 10
+		= c_of_string ~prec:(4, 4) ~mode:(`N, `N) "10"
+);;
 
 assert (Gmp.default_prec () = 64);;
 assert (Mpfr.default_prec () = 53);;

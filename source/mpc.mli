@@ -4,16 +4,25 @@ open Mpfr
 type c
 type rounding_mode = [`N | `Z | `U | `D] * [`N | `Z | `U | `D]
 
-external c_of_based_string: prec:int * int -> mode:rounding_mode -> base:int -> string -> c = "mlmpc_c_of_based_string"
+external c_of_based_string: prec:int * int -> mode:rounding_mode -> base:int ->
+	string -> c =
+	"mlmpc_c_of_based_string"
 val c_of_string: prec:int * int -> mode:rounding_mode -> string -> c
-external based_string_of_c: mode:rounding_mode -> base:int -> c -> string = "mlmpc_based_string_of_c"
+external based_string_of_c: mode:rounding_mode -> base:int -> c -> string =
+	"mlmpc_based_string_of_c"
 val string_of_c: mode:rounding_mode -> c -> string
-external c_of_int: prec:int * int -> mode:rounding_mode -> int -> c = "mlmpc_c_of_int"
-external c_of_float: prec:int * int -> mode:rounding_mode -> float -> c = "mlmpc_c_of_float"
-external c_of_z: prec:int * int -> mode:rounding_mode -> z -> c = "mlmpc_c_of_z"
-external c_of_q: prec:int * int -> mode:rounding_mode -> q -> c = "mlmpc_c_of_q"
-external c_of_f: prec:int * int -> mode:rounding_mode -> f -> c = "mlmpc_c_of_f"
-external c_of_fr: prec:int * int -> mode:rounding_mode -> fr -> c = "mlmpc_c_of_fr"
+external c_of_int: prec:int * int -> mode:rounding_mode -> int -> c =
+	"mlmpc_c_of_int"
+external c_of_float: prec:int * int -> mode:rounding_mode -> float -> c =
+	"mlmpc_c_of_float"
+external c_of_z: prec:int * int -> mode:rounding_mode -> z -> c =
+	"mlmpc_c_of_z"
+external c_of_q: prec:int * int -> mode:rounding_mode -> q -> c =
+	"mlmpc_c_of_q"
+external c_of_f: prec:int * int -> mode:rounding_mode -> f -> c =
+	"mlmpc_c_of_f"
+external c_of_fr: prec:int * int -> mode:rounding_mode -> fr -> c =
+	"mlmpc_c_of_fr"
 
 val default_prec: unit -> int * int
 val default_rounding_mode: unit -> rounding_mode
@@ -53,7 +62,8 @@ module C (Prec: sig val prec: int * int end): sig
 	(* conversions *)
 	val of_based_string: mode:rounding_mode -> base:int -> string -> t
 	val of_string: mode:rounding_mode -> string -> t
-	external to_based_string: mode:rounding_mode -> base:int -> c -> string = "mlmpc_based_string_of_c"
+	external to_based_string: mode:rounding_mode -> base:int -> c -> string =
+		"mlmpc_based_string_of_c"
 	val to_string: mode:rounding_mode -> t -> string
 	val of_int: mode:rounding_mode -> int -> t
 	val of_float: mode:rounding_mode -> float -> t

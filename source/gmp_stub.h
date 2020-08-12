@@ -1,13 +1,17 @@
 /* word size */
 
-#define WSIZE_32_Z 12 /* 4 byte int + 4 byte int + 4 byte pointer */
-#define WSIZE_64_Z 16 /* 4 byte int + 4 byte int + 8 byte pointer */
+#define WSIZE_32_Z 12
+	/* 4 byte int + 4 byte int + 4 byte pointer */
+#define WSIZE_64_Z 16
+	/* 4 byte int + 4 byte int + 8 byte pointer */
 
 #define WSIZE_32_Q (WSIZE_32_Z * 2)
 #define WSIZE_64_Q (WSIZE_64_Z * 2)
 
-#define WSIZE_32_F 16 /* 4 byte int + 4 byte int + 4 byte int + 4 byte pointer */
-#define WSIZE_64_F 24 /* 4 byte int + 4 byte int + 8 byte int + 8 byte pointer */
+#define WSIZE_32_F 16
+	/* 4 byte int + 4 byte int + 4 byte int + 4 byte pointer */
+#define WSIZE_64_F 24
+	/* 4 byte int + 4 byte int + 8 byte int + 8 byte pointer */
 
 /* conversions */
 
@@ -50,7 +54,8 @@ static inline int Order_val(value x)
 
 /* hash */
 
-#define HASH_MODULUS 4294967291UL /* compatibility for Caml-GMP */
+#define HASH_MODULUS 4294967291UL
+	/* compatibility for Caml-GMP */
 
 static inline long z_hash(mpz_ptr x)
 {

@@ -4,7 +4,10 @@ open Mpc;;
 
 module F = Gmp.F (struct let prec = Gmp.default_prec () end);;
 module FRm = Mpfr.FR (struct let prec = Mpfr.default_prec () end);;
-module FR = FRm.F (struct let rounding_mode = Mpfr.default_rounding_mode () end);;
+module FR = FRm.F (
+	struct
+		let rounding_mode = Mpfr.default_rounding_mode ()
+	end);;
 module Cm = Mpc.C (struct let prec = Mpc.default_prec () end);;
 module C = Cm.F (struct let rounding_mode = Mpc.default_rounding_mode () end);;
 
@@ -116,7 +119,9 @@ assert (F.root ~nth:3 (F.of_int 8) = F.of_int 2);;
 
 (* mpf_log is missing *)
 let prec = 10 in
-assert (F.nearly_equal prec (F.log (F.of_float 10.0)) (F.of_float 2.302585093));;
+assert (
+	F.nearly_equal prec (F.log (F.of_float 10.0)) (F.of_float 2.302585093)
+);;
 assert (F.based_log ~base:2 (F.of_int 2) = F.of_int 1);;
 assert (F.based_log ~base:4 (F.of_int 4) = F.of_int 1);;
 

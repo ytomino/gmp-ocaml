@@ -8,41 +8,68 @@ type rounding_mode = [`N | `Z | `U | `D | `A | `F | `NA];;
 
 external neg: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_neg";;
 external abs: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_abs";;
-external add: prec:int -> mode:rounding_mode -> fr -> fr -> fr = "mlmpfr_fr_add";;
-external add_int: prec:int -> mode:rounding_mode -> fr -> int -> fr = "mlmpfr_fr_add_int";;
-external sub: prec:int -> mode:rounding_mode -> fr -> fr -> fr = "mlmpfr_fr_sub";;
-external sub_int: prec:int -> mode:rounding_mode -> fr -> int -> fr = "mlmpfr_fr_sub_int";;
-external mul: prec:int -> mode:rounding_mode -> fr -> fr -> fr = "mlmpfr_fr_mul";;
-external mul_int: prec:int -> mode:rounding_mode -> fr -> int -> fr = "mlmpfr_fr_mul_int";;
-external div: prec:int -> mode:rounding_mode -> fr -> fr -> fr = "mlmpfr_fr_div";;
-external pow_int: prec:int -> mode:rounding_mode -> base:fr -> exponent:int -> fr = "mlmpfr_fr_pow_int";;
-external int_pow_int: prec:int -> mode:rounding_mode -> base:int -> exponent:int -> fr = "mlmpfr_fr_int_pow_int";;
-external scale: prec:int -> mode:rounding_mode -> fr -> base:int -> exponent:int -> fr = "mlmpfr_fr_scale";;
-external root: prec:int -> mode:rounding_mode -> nth:int -> fr -> fr = "mlmpfr_fr_root";;
+external add: prec:int -> mode:rounding_mode -> fr -> fr -> fr =
+	"mlmpfr_fr_add";;
+external add_int: prec:int -> mode:rounding_mode -> fr -> int -> fr =
+	"mlmpfr_fr_add_int";;
+external sub: prec:int -> mode:rounding_mode -> fr -> fr -> fr =
+	"mlmpfr_fr_sub";;
+external sub_int: prec:int -> mode:rounding_mode -> fr -> int -> fr =
+	"mlmpfr_fr_sub_int";;
+external mul: prec:int -> mode:rounding_mode -> fr -> fr -> fr =
+	"mlmpfr_fr_mul";;
+external mul_int: prec:int -> mode:rounding_mode -> fr -> int -> fr =
+	"mlmpfr_fr_mul_int";;
+external div: prec:int -> mode:rounding_mode -> fr -> fr -> fr =
+	"mlmpfr_fr_div";;
+external pow_int: prec:int -> mode:rounding_mode -> base:fr -> exponent:int ->
+	fr =
+	"mlmpfr_fr_pow_int";;
+external int_pow_int: prec:int -> mode:rounding_mode -> base:int ->
+	exponent:int -> fr =
+	"mlmpfr_fr_int_pow_int";;
+external scale: prec:int -> mode:rounding_mode -> fr -> base:int ->
+	exponent:int -> fr =
+	"mlmpfr_fr_scale";;
+external root: prec:int -> mode:rounding_mode -> nth:int -> fr -> fr =
+	"mlmpfr_fr_root";;
 external sqrt: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_sqrt";;
-external frexp: prec:int -> mode:rounding_mode -> fr -> fr * int = "mlmpfr_fr_frexp";;
+external frexp: prec:int -> mode:rounding_mode -> fr -> fr * int =
+	"mlmpfr_fr_frexp";;
 external ceil: prec:int -> fr -> fr = "mlmpfr_fr_ceil";;
 external floor: prec:int -> fr -> fr = "mlmpfr_fr_floor";;
 external log: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_log";;
-external based_log: prec:int -> mode:rounding_mode -> base:int -> fr -> fr = "mlmpfr_fr_based_log";;
-external pow: prec:int -> mode:rounding_mode -> fr -> fr -> fr = "mlmpfr_fr_pow";;
+external based_log: prec:int -> mode:rounding_mode -> base:int -> fr -> fr =
+	"mlmpfr_fr_based_log";;
+external pow: prec:int -> mode:rounding_mode -> fr -> fr -> fr =
+	"mlmpfr_fr_pow";;
 external exp: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_exp";;
 external sin: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_sin";;
 external cos: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_cos";;
 external tan: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_tan";;
-external acosh: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_acosh";;
-external fr_of_based_string: prec:int -> mode:rounding_mode -> base:int -> string -> fr = "mlmpfr_fr_of_based_string";;
+external acosh: prec:int -> mode:rounding_mode -> fr -> fr =
+	"mlmpfr_fr_acosh";;
+external fr_of_based_string: prec:int -> mode:rounding_mode -> base:int ->
+	string -> fr =
+	"mlmpfr_fr_of_based_string";;
 let fr_of_string = fr_of_based_string ~base:10;;
-external based_string_of_fr: mode:rounding_mode -> base:int -> fr -> string = "mlmpfr_based_string_of_fr";;
+external based_string_of_fr: mode:rounding_mode -> base:int -> fr -> string =
+	"mlmpfr_based_string_of_fr";;
 let string_of_fr = based_string_of_fr ~base:10;;
-external fr_get_str: mode:rounding_mode -> int -> int -> fr -> string * int = "mlmpfr_fr_get_str";;
-external fr_of_int: prec:int -> mode:rounding_mode -> int -> fr = "mlmpfr_fr_of_int";;
-external fr_of_float: prec:int -> mode:rounding_mode -> float -> fr = "mlmpfr_fr_of_float";;
-external float_of_fr: mode:rounding_mode -> fr -> float = "mlmpfr_float_of_fr";;
-external fr_of_z: prec:int -> mode:rounding_mode -> z -> fr = "mlmpfr_fr_of_z";;
+external fr_get_str: mode:rounding_mode -> int -> int -> fr -> string * int =
+	"mlmpfr_fr_get_str";;
+external fr_of_int: prec:int -> mode:rounding_mode -> int -> fr =
+	"mlmpfr_fr_of_int";;
+external fr_of_float: prec:int -> mode:rounding_mode -> float -> fr =
+	"mlmpfr_fr_of_float";;
+external float_of_fr: mode:rounding_mode -> fr -> float =
+	"mlmpfr_float_of_fr";;
+external fr_of_z: prec:int -> mode:rounding_mode -> z -> fr =
+	"mlmpfr_fr_of_z";;
 external z_of_fr: mode:rounding_mode -> fr -> z = "mlmpfr_z_of_fr";;
 let z_of_truncated_fr = z_of_fr ~mode:`Z;;
-external fr_of_fr: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_of_fr";;
+external fr_of_fr: prec:int -> mode:rounding_mode -> fr -> fr =
+	"mlmpfr_fr_of_fr";;
 external bits_of_single: fr -> int32 = "mlmpfr_fr_bits_of_single";;
 external bits_of_double: fr -> int64 = "mlmpfr_fr_bits_of_double";;
 external bits_of_extended: fr -> int64 * int = "mlmpfr_fr_bits_of_extended";;
@@ -51,12 +78,13 @@ external double_of_bits: int64 -> fr = "mlmpfr_fr_double_of_bits";;
 external extended_of_bits: int64 * int -> fr = "mlmpfr_fr_extended_of_bits";;
 
 external default_prec: unit -> int = "mlmpfr_fr_get_default_prec";;
-external default_rounding_mode: unit -> rounding_mode = "mlmpfr_fr_get_default_rounding_mode";;
+external default_rounding_mode: unit -> rounding_mode =
+	"mlmpfr_fr_get_default_rounding_mode";;
 
 module FR (Prec: sig val prec: int end) = struct
 	let prec = Prec.prec;;
 	type t = fr;;
-	let zero = fr_of_int ~prec ~mode:`N 0;; 
+	let zero = fr_of_int ~prec ~mode:`N 0;;
 	let one = fr_of_int ~prec ~mode:`N 1;;
 	external compare: t -> t -> int = "mlmpfr_fr_compare";;
 	external compare_int: t -> int -> int = "mlmpfr_fr_compare_int";;
@@ -88,7 +116,8 @@ module FR (Prec: sig val prec: int end) = struct
 	let acosh = acosh ~prec;;
 	let of_based_string = fr_of_based_string ~prec;;
 	let of_string = of_based_string ~base:10;;
-	external to_based_string: mode:rounding_mode -> base:int -> fr -> string = "mlmpfr_based_string_of_fr";;
+	external to_based_string: mode:rounding_mode -> base:int -> fr -> string =
+		"mlmpfr_based_string_of_fr";;
 	let to_string = string_of_fr;;
 	let of_int = fr_of_int ~prec;;
 	let of_float = fr_of_float ~prec;;

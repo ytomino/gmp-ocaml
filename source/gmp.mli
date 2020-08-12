@@ -35,7 +35,8 @@ module Z: sig
 	external int_pow_int: base:int -> exponent:int -> t = "mlgmp_z_int_pow_int"
 	external scale: t -> base:int -> exponent:int -> t = "mlgmp_z_scale"
 	external root: nth:int -> t -> t = "mlgmp_z_root"
-	external sqrt: t -> t = "mlgmp_z_sqrt" (* sqrt x = fst (tsqrt x) = root ~nth:2 x *)
+	external sqrt: t -> t = "mlgmp_z_sqrt"
+		(* sqrt x = fst (tsqrt x) = root ~nth:2 x *)
 	(* integer operations *)
 	external rem: t -> t -> t = "mlgmp_z_rem" (* rem x y = snd (tdiv x y) *)
 	external modulo: t -> t -> t = "mlgmp_z_modulo"
@@ -58,7 +59,8 @@ module Z: sig
 	external kronecker: t -> t -> int = "mlgmp_z_kronecker"
 	external remove: t -> t -> t * int = "mlgmp_z_remove"
 	external fac_int: int -> t = "mlgmp_z_fac_int"
-	external dfac_int: int -> t = "mlgmp_z_dfac_int" (* dfac_int x = int_mfac_int ~step:2 x *)
+	external dfac_int: int -> t = "mlgmp_z_dfac_int"
+		(* dfac_int x = int_mfac_int ~step:2 x *)
 	external int_mfac_int: step:int -> int -> t = "mlgmp_z_int_mfac_int"
 	external primorial_int: int -> t = "mlgmp_z_primorial_int"
 	external bin_int: t -> int -> t = "mlgmp_z_bin_int"
@@ -83,8 +85,10 @@ module Z: sig
 	external test_bit: t -> int -> int = "mlgmp_z_test_bit"
 	(* import/export *)
 	external export_length: t -> int = "mlgmp_z_export_length"
-	external export: order:byte_order -> t -> bytes -> int -> int -> unit = "mlgmp_z_export"
-	external import: order:byte_order -> signed:bool -> bytes -> int -> int -> t = "mlgmp_z_import"
+	external export: order:byte_order -> t -> bytes -> int -> int -> unit =
+		"mlgmp_z_export"
+	external import: order:byte_order -> signed:bool -> bytes -> int -> int -> t =
+		"mlgmp_z_import"
 	(* conversions *)
 	external of_based_string: base:int -> string -> t = "mlgmp_z_of_based_string"
 	val of_string: string -> t
@@ -151,7 +155,8 @@ end
 
 type f
 
-external f_of_based_string: prec:int -> base:int -> string -> f = "mlgmp_f_of_based_string"
+external f_of_based_string: prec:int -> base:int -> string -> f =
+	"mlgmp_f_of_based_string"
 val f_of_string: prec:int -> string -> f
 external based_string_of_f: base:int -> f -> string = "mlgmp_based_string_of_f"
 val string_of_f: f -> string
