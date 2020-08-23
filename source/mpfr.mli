@@ -66,6 +66,8 @@ module FR (Prec: sig val prec: int end): sig
 	val sin: mode:rounding_mode -> t -> t
 	val cos: mode:rounding_mode -> t -> t
 	val tan: mode:rounding_mode -> t -> t
+	val atan: mode:rounding_mode -> t -> t
+	val atan2: mode:rounding_mode -> t -> t -> t
 	val acosh: mode:rounding_mode -> t -> t
 	(* conversions *)
 	val of_based_string: mode:rounding_mode -> base:int -> string -> t
@@ -112,6 +114,8 @@ module FR (Prec: sig val prec: int end): sig
 		val sin: t -> t
 		val cos: t -> t
 		val tan: t -> t
+		val atan: t -> t
+		val atan2: t -> t -> t
 		val acosh: t -> t
 		(* conversions *)
 		val of_based_string: base:int -> string -> t

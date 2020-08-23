@@ -47,6 +47,9 @@ external exp: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_exp";;
 external sin: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_sin";;
 external cos: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_cos";;
 external tan: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_tan";;
+external atan: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_atan";;
+external atan2: prec:int -> mode:rounding_mode -> fr -> fr -> fr =
+	"mlmpfr_fr_atan2";;
 external acosh: prec:int -> mode:rounding_mode -> fr -> fr =
 	"mlmpfr_fr_acosh";;
 external fr_of_based_string: prec:int -> mode:rounding_mode -> base:int ->
@@ -113,6 +116,8 @@ module FR (Prec: sig val prec: int end) = struct
 	let sin = sin ~prec;;
 	let cos = cos ~prec;;
 	let tan = tan ~prec;;
+	let atan = atan ~prec;;
+	let atan2 = atan2 ~prec;;
 	let acosh = acosh ~prec;;
 	let of_based_string = fr_of_based_string ~prec;;
 	let of_string = of_based_string ~base:10;;
@@ -156,6 +161,8 @@ module FR (Prec: sig val prec: int end) = struct
 		let sin = sin ~mode;;
 		let cos = cos ~mode;;
 		let tan = tan ~mode;;
+		let atan = atan ~mode;;
+		let atan2 = atan2 ~mode;;
 		let acosh = acosh ~mode;;
 		let of_based_string = of_based_string ~mode;;
 		let of_string = of_based_string ~base:10;;
