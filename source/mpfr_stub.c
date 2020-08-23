@@ -336,6 +336,15 @@ CAMLprim value mlmpfr_fr_frexp(value prec, value mode, value x)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlmpfr_fr_trunc(value prec, value x)
+{
+	CAMLparam2(prec, x);
+	CAMLlocal1(result);
+	result = mlmpfr_alloc_fr_init2(Long_val(prec));
+	mpfr_trunc(FR_val(result), FR_val(x));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlmpfr_fr_ceil(value prec, value x)
 {
 	CAMLparam2(prec, x);

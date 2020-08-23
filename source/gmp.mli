@@ -192,6 +192,7 @@ module F (Prec: sig val prec: int end): sig
 	(* floating-point operations *)
 	external nearly_equal: int -> t -> t -> bool = "mlgmp_f_nearly_equal"
 	val frexp: t -> t * int
+	val trunc: t -> t
 	val ceil: t -> t
 	val floor: t -> t
 	val log: t -> t

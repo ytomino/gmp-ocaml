@@ -41,6 +41,7 @@ module type F = sig (* float *)
 	include R
 	val nearly_equal: int -> t -> t -> bool
 	val frexp: t -> t * int
+	val trunc: t -> t
 	val ceil: t -> t
 	val floor: t -> t
 	val log: t -> t

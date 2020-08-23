@@ -1721,6 +1721,15 @@ CAMLprim value mlgmp_f_frexp(value prec, value x)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlgmp_f_trunc(value prec, value x)
+{
+	CAMLparam2(prec, x);
+	CAMLlocal1(result);
+	result = mlgmp_alloc_f_init2(Long_val(prec));
+	mpf_trunc(F_val(result), F_val(x));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlgmp_f_ceil(value prec, value x)
 {
 	CAMLparam2(prec, x);
