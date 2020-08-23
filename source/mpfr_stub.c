@@ -392,6 +392,15 @@ CAMLprim value mlmpfr_fr_based_log(value prec, value mode, value base, value x)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlmpfr_fr_pi(value prec, value mode)
+{
+	CAMLparam2(prec, mode);
+	CAMLlocal1(result);
+	result = mlmpfr_alloc_fr_init2(Long_val(prec));
+	mpfr_const_pi(FR_val(result), Rnd_val(mode));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlmpfr_fr_pow(
 	value prec,
 	value mode,

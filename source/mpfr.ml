@@ -41,6 +41,7 @@ external floor: prec:int -> fr -> fr = "mlmpfr_fr_floor";;
 external log: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_log";;
 external based_log: prec:int -> mode:rounding_mode -> base:int -> fr -> fr =
 	"mlmpfr_fr_based_log";;
+external pi: prec:int -> mode:rounding_mode -> fr = "mlmpfr_fr_pi";;
 external pow: prec:int -> mode:rounding_mode -> fr -> fr -> fr =
 	"mlmpfr_fr_pow";;
 external exp: prec:int -> mode:rounding_mode -> fr -> fr = "mlmpfr_fr_exp";;
@@ -111,6 +112,7 @@ module FR (Prec: sig val prec: int end) = struct
 	let floor = floor ~prec;;
 	let log = log ~prec;;
 	let based_log = based_log ~prec;;
+	let pi = pi ~prec;;
 	let pow = pow ~prec;;
 	let exp = exp ~prec;;
 	let sin = sin ~prec;;
@@ -156,6 +158,7 @@ module FR (Prec: sig val prec: int end) = struct
 		let floor = floor;;
 		let log = log ~mode;;
 		let based_log = based_log ~mode;;
+		let pi = pi ~mode;;
 		let pow = pow ~mode;;
 		let exp = exp ~mode;;
 		let sin = sin ~mode;;

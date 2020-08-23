@@ -61,6 +61,7 @@ module FR (Prec: sig val prec: int end): sig
 	val log: mode:rounding_mode -> t -> t
 	val based_log: mode:rounding_mode -> base:int -> t -> t
 	(* elementary functions *)
+	val pi: mode:rounding_mode -> t
 	val pow: mode:rounding_mode -> t -> t -> t
 	val exp: mode:rounding_mode -> t -> t
 	val sin: mode:rounding_mode -> t -> t
@@ -109,6 +110,7 @@ module FR (Prec: sig val prec: int end): sig
 		val log: t -> t
 		val based_log: base:int -> t -> t
 		(* elementary functions *)
+		val pi: t
 		val pow: t -> t -> t
 		val exp: t -> t
 		val sin: t -> t
