@@ -34,16 +34,16 @@ assert (Z.int_pow_int (-3) 2 = Z.of_int 9);;
 assert (Z.int_pow_int (-3) 3 = Z.of_int (-27));;
 
 (* mpz_and_si is missing *)
-assert (Z.logand_int (Z.of_int 7) 14 = Z.of_int 6);
-assert (Z.logand_int (Z.of_int 7) (-2) = Z.of_int 6);
+assert (Z.logand_int (Z.of_int 7) 14 = Z.of_int 6);;
+assert (Z.logand_int (Z.of_int 7) (-2) = Z.of_int 6);;
 
 (* mpz_ior_si is missing *)
-assert (Z.logor_int (Z.of_int 7) 14 = Z.of_int 15);
-assert (Z.logor_int (Z.of_int 7) (-2) = Z.of_int (-1));
+assert (Z.logor_int (Z.of_int 7) 14 = Z.of_int 15);;
+assert (Z.logor_int (Z.of_int 7) (-2) = Z.of_int (-1));;
 
 (* mpz_xor_si is missing *)
-assert (Z.logxor_int (Z.of_int 7) 14 = Z.of_int 9);
-assert (Z.logxor_int (Z.of_int 7) (-2) = Z.of_int (-7));
+assert (Z.logxor_int (Z.of_int 7) 14 = Z.of_int 9);;
+assert (Z.logxor_int (Z.of_int 7) (-2) = Z.of_int (-7));;
 
 (* mpq_add_si is missing *)
 assert (Q.add_int (Q.of_int 4) (+1) = Q.of_int 5);;
@@ -75,12 +75,12 @@ assert (Q.int_pow_int (-3) (-2) = Q.make_int 1 9);;
 assert (Q.int_pow_int (-3) (-3) = Q.make_int (-1) 27);;
 
 (* mpq_root is missing *)
-assert (Q.root ~nth:1 (Q.make_int 2 3) = Q.make_int 2 3);
-assert (Q.root ~nth:2 (Q.make_int 4 9) = Q.make_int 2 3);
-assert (Q.root ~nth:3 (Q.make_int 8 27) = Q.make_int 2 3);
+assert (Q.root ~nth:1 (Q.make_int 2 3) = Q.make_int 2 3);;
+assert (Q.root ~nth:2 (Q.make_int 4 9) = Q.make_int 2 3);;
+assert (Q.root ~nth:3 (Q.make_int 8 27) = Q.make_int 2 3);;
 
 (* mpq_sqrt is missing *)
-assert (Q.sqrt (Q.make_int 4 9) = Q.make_int 2 3);
+assert (Q.sqrt (Q.make_int 4 9) = Q.make_int 2 3);;
 
 (* mpf_add_si is missing *)
 assert (F.add_int (F.of_int 4) (+1) = F.of_int 5);;
