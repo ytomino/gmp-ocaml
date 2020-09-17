@@ -1347,7 +1347,7 @@ CAMLprim value mlgmp_q_of_based_string(value base, value x)
 	if(period == NULL){
 		int err = mpq_set_str(result_value, x_value, b);
 		if(err < 0) caml_failwith(__FUNCTION__);
-		if(mpz_cmp_ui(mpq_denref(result_value), 0) == 0) caml_raise_zero_divide();
+		if(mpz_sgn(mpq_denref(result_value)) == 0) caml_raise_zero_divide();
 	}else{
 		int length = strlen(x_value);
 		char buf[length]; /* length + 1(NUL) - 1('.') */
