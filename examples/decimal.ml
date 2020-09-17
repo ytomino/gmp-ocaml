@@ -7,8 +7,8 @@ module Decimal = struct
 	let canonicalize (x_val, _ as x: t) = (
 		if Z.compare_int x_val 0 = 0 then Z.zero, 0 else
 		let rec loop (x_val, x_exp as x: t) = (
-			let q, r = Z.tdiv x_val (Z.of_int 10) in
-			if Z.compare_int r 0 <> 0 then x else
+			let q, r = Z.tdiv_int x_val 10 in
+			if r <> 0 then x else
 			loop (q, x_exp + 1)
 		) in
 		loop x

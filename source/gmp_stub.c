@@ -295,6 +295,27 @@ CAMLprim value mlgmp_z_tdiv(value left, value right)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlgmp_z_tdiv_int(value left, value right)
+{
+	CAMLparam2(left, right);
+	CAMLlocal2(result, q);
+	q = mlgmp_alloc_z_init();
+	mpz_ptr q_value = Z_val(q);
+	mpz_ptr l = Z_val(left);
+	long d = Long_val(right);
+	long r = mpz_tdiv_q_ui(q_value, l, labs(d));
+	if(d < 0){
+		mpz_neg(q_value, q_value);
+	}
+	if(mpz_sgn(l) < 0){
+		r = -r;
+	}
+	result = caml_alloc_tuple(2);
+	Store_field(result, 0, q);
+	Store_field(result, 1, Val_long(r));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlgmp_z_cdiv(value left, value right)
 {
 	CAMLparam2(left, right);
@@ -308,6 +329,29 @@ CAMLprim value mlgmp_z_cdiv(value left, value right)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlgmp_z_cdiv_int(value left, value right)
+{
+	CAMLparam2(left, right);
+	CAMLlocal2(result, q);
+	q = mlgmp_alloc_z_init();
+	mpz_ptr q_value = Z_val(q);
+	mpz_ptr l = Z_val(left);
+	long d = Long_val(right);
+	long r = mpz_cdiv_q_ui(q_value, l, labs(d));
+	if(d < 0){
+		mpz_neg(q_value, q_value);
+		if(r != 0){
+			mpz_add_ui(q_value, q_value, 1);
+			r += d;
+		}
+	}
+	r = -r;
+	result = caml_alloc_tuple(2);
+	Store_field(result, 0, q);
+	Store_field(result, 1, Val_long(r));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlgmp_z_fdiv(value left, value right)
 {
 	CAMLparam2(left, right);
@@ -318,6 +362,27 @@ CAMLprim value mlgmp_z_fdiv(value left, value right)
 	result = caml_alloc_tuple(2);
 	Store_field(result, 0, q);
 	Store_field(result, 1, r);
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_fdiv_int(value left, value right)
+{
+	CAMLparam2(left, right);
+	CAMLlocal2(result, q);
+	q = mlgmp_alloc_z_init();
+	mpz_ptr q_value = Z_val(q);
+	long d = Long_val(right);
+	long r = mpz_fdiv_q_ui(q_value, Z_val(left), labs(d));
+	if(d < 0){
+		mpz_neg(q_value, q_value);
+		if(r != 0){
+			mpz_sub_ui(q_value, q_value, 1);
+			r += d;
+		}
+	}
+	result = caml_alloc_tuple(2);
+	Store_field(result, 0, q);
+	Store_field(result, 1, Val_long(r));
 	CAMLreturn(result);
 }
 

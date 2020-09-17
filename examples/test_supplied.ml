@@ -33,6 +33,29 @@ assert (Z.int_pow_int 0 0 = Z.one);;
 assert (Z.int_pow_int (-3) 2 = Z.of_int 9);;
 assert (Z.int_pow_int (-3) 3 = Z.of_int (-27));;
 
+(* mpz_tdiv_q_si, mpz_tdiv_c_si, and mpz_tdiv_f_si are missing *)
+let table = [
+	(Z.tdiv, Z.tdiv_int, 't');
+	(Z.fdiv, Z.fdiv_int, 'f');
+	(Z.cdiv, Z.cdiv_int, 'c')]
+in
+List.iter (fun (f1, f2, id) ->
+	for d = ~-10 to 10 do
+		if d <> 0 then (
+			for n = ~-10 to 10 do
+				let r1, q1 = f1 (Z.of_int n) (Z.of_int d) in
+				let r2, q2 = f2 (Z.of_int n) d in
+				if Z.compare r1 r2 <> 0 || Z.compare_int q1 q2 <> 0 then (
+					Printf.printf "Z.%cdiv %d %d = %s, %s\n" id n d (Z.to_string r1)
+						(Z.to_string q1);
+					Printf.printf "Z.%cdiv_int %d %d = %s, %d\n" id n d (Z.to_string r2) q2;
+					assert false
+				)
+			done
+		)
+	done
+) table;;
+
 (* mpz_and_si is missing *)
 assert (Z.logand_int (Z.of_int 7) 14 = Z.of_int 6);;
 assert (Z.logand_int (Z.of_int 7) (-2) = Z.of_int 6);;
