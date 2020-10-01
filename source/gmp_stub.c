@@ -1910,6 +1910,24 @@ CAMLprim value mlgmp_based_string_of_f(value base, value x)
 	CAMLreturn(result);
 }
 
+value mlgmp_f_get_str(value base, value digits, value x)
+{
+	CAMLparam3(base, digits, x);
+	CAMLlocal1(result);
+	mp_exp_t exponent;
+	char *image = mpf_get_str(
+		NULL,
+		&exponent,
+		Int_val(base),
+		Long_val(digits),
+		F_val(x));
+	result = alloc_tuple(2);
+	Store_field(result, 0, caml_copy_string(image));
+	Store_field(result, 1, Val_long(exponent));
+	free(image);
+	CAMLreturn(result);
+}
+
 CAMLprim value mlgmp_f_of_int(value prec, value x)
 {
 	CAMLparam2(prec, x);

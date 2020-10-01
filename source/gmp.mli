@@ -163,6 +163,7 @@ external f_of_based_string: prec:int -> base:int -> string -> f =
 val f_of_string: prec:int -> string -> f
 external based_string_of_f: base:int -> f -> string = "mlgmp_based_string_of_f"
 val string_of_f: f -> string
+external f_get_str: base:int -> int -> f -> string * int = "mlgmp_f_get_str"
 external f_of_int: prec:int -> int -> f = "mlgmp_f_of_int"
 external f_of_float: prec:int -> float -> f = "mlgmp_f_of_float"
 external float_of_f: f -> float = "mlgmp_float_of_f"
