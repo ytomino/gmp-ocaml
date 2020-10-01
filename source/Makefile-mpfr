@@ -72,6 +72,7 @@ CCLIB=$(addprefix -cclib ,$(WLFLAGS) -lmpfr)
 LDFLAGS=$(WLFLAGS) $(call DEFAULTLIB,-lmpfr) $(call DEFAULTLIB,-lgmp)
 
 $(BUILDDIR)/mpfr_stub.o: gmp_stub.h mpfr_stub.h
+$(BUILDDIR)/mpfr.cmi: gmp.mli
 $(BUILDDIR)/mpfr.cmo: $(BUILDDIR)/mpfr.cmi
 $(BUILDDIR)/mpfr.cmx: $(BUILDDIR)/mpfr.cmi
 $(BUILDDIR)/mpfr_pp.cmo: $(BUILDDIR)/mpfr.cmi
