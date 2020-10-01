@@ -61,7 +61,8 @@ let fr_of_string = fr_of_based_string ~base:10;;
 external based_string_of_fr: mode:rounding_mode -> base:int -> fr -> string =
 	"mlmpfr_based_string_of_fr";;
 let string_of_fr = based_string_of_fr ~base:10;;
-external fr_get_str: mode:rounding_mode -> int -> int -> fr -> string * int =
+external fr_get_str: mode:rounding_mode -> base:int -> int -> fr ->
+	string * int =
 	"mlmpfr_fr_get_str";;
 external fr_of_int: prec:int -> mode:rounding_mode -> int -> fr =
 	"mlmpfr_fr_of_int";;

@@ -10,7 +10,8 @@ val fr_of_string: prec:int -> mode:rounding_mode -> string -> fr
 external based_string_of_fr: mode:rounding_mode -> base:int -> fr -> string =
 	"mlmpfr_based_string_of_fr"
 val string_of_fr: mode:rounding_mode -> fr -> string
-external fr_get_str: mode:rounding_mode -> int -> int -> fr -> string * int =
+external fr_get_str: mode:rounding_mode -> base:int -> int -> fr ->
+	string * int =
 	"mlmpfr_fr_get_str"
 external fr_of_int: prec:int -> mode:rounding_mode -> int -> fr =
 	"mlmpfr_fr_of_int"

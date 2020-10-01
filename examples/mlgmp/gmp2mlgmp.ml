@@ -156,7 +156,7 @@ module Gmp = struct
 				| GMP_RNDU -> `U
 				| GMP_RNDD -> `D
 			in
-			Mpfr.fr_get_str ~mode base digits x;;
+			Mpfr.fr_get_str ~mode ~base digits x;;
 		let to_string_base_digits ~mode ~base ~digits x =
 			let mantissa, exponent = to_string_exp_base_digits ~mode ~base ~digits x in
 			let i = (if sgn x < 0 then 1 else 0) in
