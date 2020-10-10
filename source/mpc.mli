@@ -31,6 +31,7 @@ module C (Prec: sig val prec: int * int end): sig
 	type t = c
 	val zero: t
 	val one: t
+	val minus_one: t
 	val i: t
 	external compare: t -> t -> int = "mlmpc_c_compare"
 	external compare_int: t -> int -> int = "mlmpc_c_compare_int"
@@ -82,6 +83,7 @@ module C (Prec: sig val prec: int * int end): sig
 		type t = c
 		val zero: t
 		val one: t
+		val minus_one: t
 		val i: t
 		external compare: t -> t -> int = "mlmpc_c_compare"
 		external compare_int: t -> int -> int = "mlmpc_c_compare_int"

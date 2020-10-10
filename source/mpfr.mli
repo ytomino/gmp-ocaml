@@ -38,6 +38,7 @@ module FR (Prec: sig val prec: int end): sig
 	type t = fr
 	val zero: t
 	val one: t
+	val minus_one: t
 	external compare: t -> t -> int = "mlmpfr_fr_compare"
 	external compare_int: t -> int -> int = "mlmpfr_fr_compare_int"
 	val neg: mode:rounding_mode -> t -> t
@@ -87,6 +88,7 @@ module FR (Prec: sig val prec: int end): sig
 		type t = fr
 		val zero: t
 		val one: t
+		val minus_one: t
 		external compare: t -> t -> int = "mlmpfr_fr_compare"
 		external compare_int: t -> int -> int = "mlmpfr_fr_compare_int"
 		val neg: t -> t

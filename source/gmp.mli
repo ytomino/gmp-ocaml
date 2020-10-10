@@ -20,6 +20,7 @@ module Z: sig
 	type t = z
 	val zero: t
 	val one: t
+	val minus_one: t
 	external compare: t -> t -> int = "mlgmp_z_compare"
 	external compare_int: t -> int -> int = "mlgmp_z_compare_int"
 	external neg: t -> t = "mlgmp_z_neg"
@@ -124,6 +125,7 @@ module Q: sig
 	type t = q
 	val zero: t
 	val one: t
+	val minus_one: t
 	external compare: t -> t -> int = "mlgmp_q_compare"
 	external compare_int: t -> int -> int = "mlgmp_q_compare_int"
 	external neg: t -> t = "mlgmp_q_neg"
@@ -177,6 +179,7 @@ module F (Prec: sig val prec: int end): sig
 	type t = f
 	val zero: t
 	val one: t
+	val minus_one: t
 	external compare: t -> t -> int = "mlgmp_f_compare"
 	external compare_int: t -> int -> int = "mlgmp_f_compare_int"
 	val neg: t -> t

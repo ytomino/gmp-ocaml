@@ -145,8 +145,8 @@ let prec = 10 in
 assert (
 	F.nearly_equal prec (F.log (F.of_float 10.0)) (F.of_float 2.302585093)
 );;
-assert (F.based_log ~base:2 (F.of_int 2) = F.of_int 1);;
-assert (F.based_log ~base:4 (F.of_int 4) = F.of_int 1);;
+assert (F.based_log ~base:2 (F.of_int 2) = F.one);;
+assert (F.based_log ~base:4 (F.of_int 4) = F.one);;
 
 (* mpfr_si_pow_si is missing *)
 assert (FR.int_pow_int 2 3 = FR.of_int 8);;

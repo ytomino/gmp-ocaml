@@ -3,6 +3,7 @@ module type N = sig (* numeric *)
 	type t
 	val zero: t
 	val one: t
+	val minus_one: t
 	val compare: t -> t -> int
 	val compare_int: t -> int -> int
 	val neg: t -> t
