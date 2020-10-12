@@ -13,6 +13,13 @@
 #include "gmp_stub.h"
 #include "mpfr_stub.h"
 
+/* for version < 3.0.0 */
+
+#if MPFR_VERSION < 0x030000
+#define MPFR_RNDN GMP_RNDN
+typedef mp_exp_t mpfr_exp_t;
+#endif
+
 /**** FR ****/
 
 /* custom data */
@@ -637,7 +644,11 @@ CAMLprim value mlmpfr_fr_bits_of_single(value x)
 		uint32_t i32;
 		float s;
 	} conv;
+#if MPFR_VERSION >= 0x030000
 	conv.s = mpfr_get_flt(FR_val(x), MPFR_RNDN);
+#else
+	conv.s = (float)mpfr_get_d(FR_val(x), MPFR_RNDN);
+#endif
 	i32 = conv.i32;
 #else
 	mpfr_ptr x_value = FR_val(x);
@@ -764,7 +775,11 @@ CAMLprim value mlmpfr_fr_single_of_bits(value i32)
 		float s;
 	} conv;
 	conv.i32 = Int32_val(i32);
+#if MPFR_VERSION >= 0x030000
 	mpfr_set_flt(FR_val(result), conv.s, MPFR_RNDN);
+#else
+	mpfr_set_d(FR_val(result), (double)conv.s, MPFR_RNDN);
+#endif
 #else
 	mpfr_ptr result_value = FR_val(result);
 	uint32_t i32_value = Int32_val(i32);
@@ -775,7 +790,12 @@ CAMLprim value mlmpfr_fr_single_of_bits(value i32)
 		if((i32_value & 0x7fffffffUL) == 0x7f800000UL){
 			mpfr_set_inf(result_value, sgn ? -1 : +1);
 		}else if((i32_value & 0x7fffffffUL) == 0x00000000L){
+#if MPFR_VERSION >= 0x030000
 			mpfr_set_zero(result_value, sgn ? -1 : +1);
+#else
+			mpfr_set_ui(result_value, 0, GMP_RNDN);
+			mpfr_set4(result_value, result_value, GMP_RNDN, sgn ? -1 : 1);
+#endif
 		}else{
 			mpfr_exp_t exponent = ((i32_value >> 23) & 0xffU) - 0x7eU;
 			mpfr_t a;
@@ -816,7 +836,12 @@ CAMLprim value mlmpfr_fr_double_of_bits(value i64)
 		if((i64_value & 0x7fffffffffffffffULL) == 0x7ff0000000000000ULL){
 			mpfr_set_inf(result_value, sgn ? -1 : +1);
 		}else if((i64_value & 0x7fffffffffffffffULL) == 0x0000000000000000ULL){
+#if MPFR_VERSION >= 0x030000
 			mpfr_set_zero(result_value, sgn ? -1 : +1);
+#else
+			mpfr_set_ui(result_value, 0, GMP_RNDN);
+			mpfr_set4(result_value, result_value, GMP_RNDN, sgn ? -1 : 1);
+#endif
 		}else{
 			mpfr_exp_t exponent = ((i64_value >> 52) & 0x7ffU) - 0x3feU;
 			mpfr_t a;
@@ -865,7 +890,12 @@ CAMLprim value mlmpfr_fr_extended_of_bits(value i80)
 		if(i64 == 0x8000000000000000ULL && (i16 & 0x7fffU) == 0x7fffU){
 			mpfr_set_inf(result_value, sgn ? -1 : +1);
 		}else if(i64 == 0x0000000000000000ULL && (i16 & 0x7fffU) == 0x0000U){
+#if MPFR_VERSION >= 0x030000
 			mpfr_set_zero(result_value, sgn ? -1 : +1);
+#else
+			mpfr_set_ui(result_value, 0, GMP_RNDN);
+			mpfr_set4(result_value, result_value, GMP_RNDN, sgn ? -1 : 1);
+#endif
 		}else{
 			mpfr_exp_t exponent = (i16 & 0x7fffU) - 0x3ffeU;
 			mpfr_t a;
