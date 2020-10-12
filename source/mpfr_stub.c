@@ -385,8 +385,12 @@ CAMLprim value mlmpfr_fr_based_log(value prec, value mode, value base, value x)
 		mpfr_log(result_value, x_value, m);
 		mpfr_t base_value;
 		mpfr_init2(base_value, p);
+#if MPFR_VERSION >= 0x040000
+		mpfr_log_ui(base_value, b, m);
+#else
 		mpfr_set_ui(base_value, b, m);
 		mpfr_log(base_value, base_value, m);
+#endif
 		mpfr_div(result_value, result_value, base_value, m);
 		mpfr_clear(base_value);
 	}
