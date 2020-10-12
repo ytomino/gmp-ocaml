@@ -13,9 +13,8 @@
 
 /* for version < 1.0.0 */
 
-#if MPC_VERSION_MAJOR < 1
-#define mpc_mul_2ui mpc_mul_2exp
-#define mpc_div_2ui mpc_div_2exp
+#if MPC_VERSION < 0x010000
+#include "mpc_010000.h"
 #endif
 
 /**** C ****/
@@ -357,11 +356,9 @@ CAMLprim value mlmpc_c_based_log(value prec, value mode, value base, value x)
 	mpc_rnd_t m = Crnd_val(mode);
 	long b = Long_val(base);
 	mpc_ptr x_value = C_val(x);
-#if MPC_VERSION >= 0x010000
 	if(b == 10){
 		mpc_log10(result_value, x_value, m);
 	}else{
-#endif
 		mpc_log(result_value, x_value, m);
 		mpfr_rnd_t real_rounding = MPC_RND_RE(m);
 		mpfr_t base_value;
@@ -370,9 +367,7 @@ CAMLprim value mlmpc_c_based_log(value prec, value mode, value base, value x)
 		mpfr_log(base_value, base_value, real_rounding);
 		mpc_div_fr(result_value, result_value, base_value, m);
 		mpfr_clear(base_value);
-#if MPC_VERSION >= 0x010002
 	}
-#endif
 	CAMLreturn(result);
 }
 
