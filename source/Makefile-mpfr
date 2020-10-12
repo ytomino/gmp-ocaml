@@ -71,7 +71,7 @@ OCAMLMKLIBFLAGS=$(WLFLAGS) -lmpfr
 CCLIB=$(addprefix -cclib ,$(WLFLAGS) -lmpfr)
 LDFLAGS=$(WLFLAGS) $(call DEFAULTLIB,-lmpfr) $(call DEFAULTLIB,-lgmp)
 
-$(BUILDDIR)/mpfr_stub.o: gmp_stub.h mpfr_stub.h
+$(BUILDDIR)/mpfr_stub.o: gmp_stub.h mpfr_stub.h mpfr_030000.h mpfr_030100.h mpfr_040000.h
 $(BUILDDIR)/mpfr.cmi: gmp.mli
 $(BUILDDIR)/mpfr.cmo: $(BUILDDIR)/mpfr.cmi
 $(BUILDDIR)/mpfr.cmx: $(BUILDDIR)/mpfr.cmi
