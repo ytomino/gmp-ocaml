@@ -77,6 +77,10 @@ static inline long f_hash(mpf_ptr x)
 
 /* serialize */
 
+#if __GNU_MP_RELEASE < 50000
+typedef unsigned long int mp_bitcnt_t;
+#endif
+
 static inline void z_serialize(mpz_ptr x)
 {
 	char *image = mpz_get_str (NULL, 16, x);
