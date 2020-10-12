@@ -363,12 +363,13 @@ CAMLprim value mlmpc_c_based_log(value prec, value mode, value base, value x)
 	}else{
 #endif
 		mpc_log(result_value, x_value, m);
-		mpc_t base_value;
-		mpc_init3(base_value, real_prec, imag_prec);
-		mpc_set_ui(base_value, b, m);
-		mpc_log(base_value, base_value, m);
-		mpc_div(result_value, result_value, base_value, m);
-		mpc_clear(base_value);
+		mpfr_rnd_t real_rounding = MPC_RND_RE(m);
+		mpfr_t base_value;
+		mpfr_init2(base_value, real_prec);
+		mpfr_set_ui(base_value, b, real_rounding);
+		mpfr_log(base_value, base_value, real_rounding);
+		mpc_div_fr(result_value, result_value, base_value, m);
+		mpfr_clear(base_value);
 #if MPC_VERSION >= 0x010002
 	}
 #endif
