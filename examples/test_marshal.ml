@@ -4,14 +4,18 @@ open Mpc;;
 
 let log = false;;
 
-let check_marshal (x: 'a) = (
+let marshal (x: 'a) = (
 	if log then (Printf.eprintf "serialize\n"; flush stderr);
 	let s = Marshal.to_string x [] in
 	if log then (Printf.eprintf "deserialize\n"; flush stderr);
 	let y = Marshal.from_string s 0 in
 	if log then (Printf.eprintf "compare\n"; flush stderr);
 	Gc.full_major ();
-	x = y
+	y
+);;
+
+let check_marshal (x: 'a) = (
+	x = marshal x
 );;
 
 if log then (Printf.eprintf "Z\n"; flush stderr);;
@@ -45,6 +49,9 @@ module FRd = FRdp.F (
 assert (check_marshal FRd.zero);;
 assert (check_marshal FRd.one);;
 assert (check_marshal (FRd.of_float 1.41421356, FRd.of_float ~-.2.3620679));;
+assert (check_marshal (FRd.of_float infinity));;
+assert (check_marshal (FRd.of_float neg_infinity));;
+assert (classify_float (FRd.to_float (marshal (FRd.of_float nan))) = FP_nan);;
 
 if log then (Printf.eprintf "C\n"; flush stderr);;
 

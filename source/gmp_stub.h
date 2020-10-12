@@ -115,18 +115,18 @@ static inline void f_serialize(mpf_ptr x)
 	mp_exp_t exponent;
 	char *image = mpf_get_str (NULL, &exponent, 16, 0, x);
 	size_t i_length = strlen(image);
+	serialize_int_4(prec);
 	char exponent_buf[sizeof(mp_exp_t) * 2 + 1];
 	size_t e_length = gmp_sprintf(exponent_buf, "%lx", (long)exponent);
-	size_t length = i_length + e_length + 3;
-	serialize_int_4(prec);
-	serialize_int_4(length);
-	if(image[0] == '-'){
-		serialize_block_1("-0.", 3);
-		serialize_block_1(image + 1, i_length - 1);
-	}else{
-		serialize_block_1("0.", 2);
-		serialize_block_1(image, i_length);
+	serialize_int_4(i_length + e_length + 3);
+	char *p = image;
+	if(*p == '-'){
+		serialize_block_1(p, 1);
+		++ p;
+		-- i_length;
 	}
+	serialize_block_1("0.", 2);
+	serialize_block_1(p, i_length);
 	serialize_block_1("@", 1);
 	serialize_block_1(exponent_buf, e_length);
 	free(image);
