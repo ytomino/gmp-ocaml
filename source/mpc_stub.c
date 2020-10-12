@@ -417,6 +417,7 @@ CAMLprim value mlmpc_c_real(value x)
 	CAMLlocal1(result);
 	mpfr_ptr real = mpc_realref(C_val(x));
 	result = mlmpfr_alloc_fr_init2(mpfr_get_prec(real));
+	real = mpc_realref(C_val(x)); /* moved if gc was invoked by alloc_custom */
 	mpfr_set(FR_val(result), real, GMP_RNDN);
 	CAMLreturn(result);
 }
@@ -427,6 +428,7 @@ CAMLprim value mlmpc_c_imag(value x)
 	CAMLlocal1(result);
 	mpfr_ptr imag = mpc_imagref(C_val(x));
 	result = mlmpfr_alloc_fr_init2(mpfr_get_prec(imag));
+	imag = mpc_imagref(C_val(x)); /* moved if gc was invoked by alloc_custom */
 	mpfr_set(FR_val(result), imag, GMP_RNDN);
 	CAMLreturn(result);
 }
