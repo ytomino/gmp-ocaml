@@ -959,7 +959,7 @@ CAMLprim value mlgmp_z_of_int64(value x)
 	uint32_t lo = x_value & 0xffffffffL;
 	mpz_set_si(result_value, hi);
 	mpz_mul_2exp(result_value, result_value, 32);
-	mpz_add_ui(result_value, hi, lo);
+	mpz_add_ui(result_value, result_value, lo);
 #else
 #error "sizeof(long) < 4"
 #endif
