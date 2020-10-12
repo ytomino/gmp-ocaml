@@ -200,8 +200,7 @@ CAMLprim value mlmpfr_fr_int_pow_int(
 {
 	CAMLparam4(prec, mode, base, exponent);
 	CAMLlocal1(result);
-	mpfr_prec_t p = Long_val(prec);
-	result = mlmpfr_alloc_fr_init2(p);
+	result = mlmpfr_alloc_fr_init2(Long_val(prec));
 	mpfr_ptr result_value = FR_val(result);
 	mpfr_rnd_t m = Rnd_val(mode);
 	long b = Long_val(base);
@@ -274,13 +273,10 @@ CAMLprim value mlmpfr_fr_root(value prec, value mode, value nth, value x)
 	CAMLparam4(prec, mode, nth, x);
 	CAMLlocal1(result);
 	result = mlmpfr_alloc_fr_init2(Long_val(prec));
-	mpfr_ptr op = FR_val(x);
-	unsigned long k = Long_val(nth);
-	mpfr_rnd_t rnd = Rnd_val(mode);
 #if MPFR_VERSION >= 0x040000
-	mpfr_rootn_ui(FR_val(result), op, k, rnd);
+	mpfr_rootn_ui(FR_val(result), FR_val(x), Long_val(nth), Rnd_val(mode));
 #else
-	mpfr_root(FR_val(result), op, k, rnd);
+	mpfr_root(FR_val(result), FR_val(x), Long_val(nth), Rnd_val(mode));
 #endif
 	CAMLreturn(result);
 }
@@ -304,23 +300,19 @@ CAMLprim value mlmpfr_fr_nearly_equal(value bits, value left, value right)
 CAMLprim value mlmpfr_fr_frexp(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
-	CAMLlocal3(result, result_fraction, result_exponent);
-	mpfr_prec_t p = Long_val(prec);
+	CAMLlocal2(result, result_fraction);
+	mpfr_exp_t exponent;
+#if MPFR_VERSION >= 0x030100
+	result_fraction = mlmpfr_alloc_fr_init2(Long_val(prec));
+	mpfr_frexp(&exponent, FR_val(result_fraction), FR_val(x), Rnd_val(mode));
+#else
 	mpfr_ptr x_value = FR_val(x);
 	mpfr_rnd_t m = Rnd_val(mode);
-#if MPFR_VERSION >= 0x030100
-	mpfr_exp_t exponent;
-	result_fraction = mlmpfr_alloc_fr_init2(p);
-	mpfr_ptr rf_value = FR_val(result_fraction);
-	mpfr_frexp(&exponent, rf_value, x_value, m);
-	result_exponent = Val_long(exponent);
-#else
-	mpfr_exp_t exponent = mpfr_get_exp(x_value);
-	result_exponent = Val_long(exponent);
+	exponent = mpfr_get_exp(x_value);
 	if(exponent == 0){
 		result_fraction = x;
 	}else{
-		result_fraction = mlmpfr_alloc_fr_init2(p);
+		result_fraction = mlmpfr_alloc_fr_init2(Long_val(prec));
 		mpfr_ptr rf_value = FR_val(result_fraction);
 		x_value = FR_val(x); /* if gc was invoked by alloc_custom */
 		if(exponent > 0){
@@ -332,7 +324,7 @@ CAMLprim value mlmpfr_fr_frexp(value prec, value mode, value x)
 #endif
 	result = caml_alloc_tuple(2);
 	Store_field(result, 0, result_fraction);
-	Store_field(result, 1, result_exponent);
+	Store_field(result, 1, Val_long(exponent));
 	CAMLreturn(result);
 }
 
@@ -635,16 +627,16 @@ CAMLprim value mlmpfr_fr_bits_of_single(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	mpfr_ptr x_value = FR_val(x);
 	uint32_t i32;
 #if __FLT_MANT_DIG__ == 24
 	union {
 		uint32_t i32;
 		float s;
 	} conv;
-	conv.s = mpfr_get_flt(x_value, MPFR_RNDN);
+	conv.s = mpfr_get_flt(FR_val(x), MPFR_RNDN);
 	i32 = conv.i32;
 #else
+	mpfr_ptr x_value = FR_val(x);
 	if(mpfr_nan_p(x_value)){
 		i32 = 0x7fc00000UL;
 	}else{
@@ -674,16 +666,16 @@ CAMLprim value mlmpfr_fr_bits_of_double(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	mpfr_ptr x_value = FR_val(x);
 	uint64_t i64;
 #if __DBL_MANT_DIG__ == 53
 	union {
 		uint64_t i64;
 		double d;
 	} conv;
-	conv.d = mpfr_get_d(x_value, MPFR_RNDN);
+	conv.d = mpfr_get_d(FR_val(x), MPFR_RNDN);
 	i64 = conv.i64;
 #else
+	mpfr_ptr x_value = FR_val(x);
 	if(mpfr_nan_p(x_value)){
 		i64 = 0x7ff8000000000000ULL;
 	}else{
@@ -713,7 +705,6 @@ CAMLprim value mlmpfr_fr_bits_of_extended(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
-	mpfr_ptr x_value = FR_val(x);
 	uint64_t i64;
 	uint16_t i16;
 #if __LDBL_MANT_DIG__ == 64 && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
@@ -724,10 +715,11 @@ CAMLprim value mlmpfr_fr_bits_of_extended(value x)
 		} s;
 		long double ld;
 	} conv;
-	conv.ld = mpfr_get_ld(x_value, MPFR_RNDN);
+	conv.ld = mpfr_get_ld(FR_val(x), MPFR_RNDN);
 	i64 = conv.s.i64;
 	i16 = conv.s.i16;
 #else
+	mpfr_ptr x_value = FR_val(x);
 	if(mpfr_nan_p(x_value)){
 		i64 = 0xc000000000000000ULL;
 		i16 = 0x7fff;
@@ -762,16 +754,16 @@ CAMLprim value mlmpfr_fr_single_of_bits(value i32)
 	CAMLparam1(i32);
 	CAMLlocal1(result);
 	result = mlmpfr_alloc_fr_init2(24);
-	mpfr_ptr result_value = FR_val(result);
-	uint32_t i32_value = Int32_val(i32);
 #if __FLT_MANT_DIG__ == 24
 	union {
 		uint32_t i32;
 		float s;
 	} conv;
-	conv.i32 = i32_value;
-	mpfr_set_flt(result_value, conv.s, MPFR_RNDN);
+	conv.i32 = Int32_val(i32);
+	mpfr_set_flt(FR_val(result), conv.s, MPFR_RNDN);
 #else
+	mpfr_ptr result_value = FR_val(result);
+	uint32_t i32_value = Int32_val(i32);
 	if(i32_value == 0x7fc00000UL || i32_value == 0xffc00000UL){
 		mpfr_set_nan(result_value);
 	}else{
@@ -803,16 +795,16 @@ CAMLprim value mlmpfr_fr_double_of_bits(value i64)
 	CAMLparam1(i64);
 	CAMLlocal1(result);
 	result = mlmpfr_alloc_fr_init2(53);
-	mpfr_ptr result_value = FR_val(result);
-	uint64_t i64_value = Int64_val(i64);
 #if __DBL_MANT_DIG__ == 53
 	union {
 		uint64_t i64;
 		double d;
 	} conv;
-	conv.i64 = i64_value;
-	mpfr_set_d(result_value, conv.d, MPFR_RNDN);
+	conv.i64 = Int64_val(i64);
+	mpfr_set_d(FR_val(result), conv.d, MPFR_RNDN);
 #else
+	mpfr_ptr result_value = FR_val(result);
+	uint64_t i64_value = Int64_val(i64);
 	if(i64_value == 0x7ff8000000000000ULL || i64_value == 0xfff8000000000000ULL){
 		mpfr_set_nan(result_value);
 	}else{
@@ -847,9 +839,6 @@ CAMLprim value mlmpfr_fr_extended_of_bits(value i80)
 	CAMLparam1(i80);
 	CAMLlocal1(result);
 	result = mlmpfr_alloc_fr_init2(64);
-	mpfr_ptr result_value = FR_val(result);
-	uint64_t i64 = Int64_val(Field(i80, 0));
-	uint16_t i16 = Int_val(Field(i80, 1));
 #if __LDBL_MANT_DIG__ == 64 && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 	union {
 		struct {
@@ -858,10 +847,13 @@ CAMLprim value mlmpfr_fr_extended_of_bits(value i80)
 		} s;
 		long double ld;
 	} conv;
-	conv.s.i64 = i64;
-	conv.s.i16 = i16;
-	mpfr_set_ld(result_value, conv.ld, MPFR_RNDN);
+	conv.s.i64 = Int64_val(Field(i80, 0));
+	conv.s.i16 = Int_val(Field(i80, 1));
+	mpfr_set_ld(FR_val(result), conv.ld, MPFR_RNDN);
 #else
+	mpfr_ptr result_value = FR_val(result);
+	uint64_t i64 = Int64_val(Field(i80, 0));
+	uint16_t i16 = Int_val(Field(i80, 1));
 	if(i64 == 0xc000000000000000ULL && (i16 == 0x7fffU || i16 == 0xffffU)){
 		mpfr_set_nan(result_value);
 	}else{
@@ -898,9 +890,8 @@ CAMLprim value mlmpfr_fr_get_default_prec(value unit)
 CAMLprim value mlmpfr_fr_get_default_rounding_mode(value unit)
 {
 	CAMLparam1(unit);
-	CAMLlocal1(result);
-	result = Val_rnd(mpfr_get_default_rounding_mode());
-	CAMLreturn(result);
+	mpfr_rnd_t result = mpfr_get_default_rounding_mode();
+	CAMLreturn(Val_rnd(result));
 }
 
 /* setup */

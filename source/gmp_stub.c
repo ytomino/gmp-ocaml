@@ -174,10 +174,7 @@ CAMLprim value mlgmp_z_mul_int(value left, value right)
 	CAMLparam2(left, right);
 	CAMLlocal1(result);
 	result = mlgmp_alloc_z_init();
-	mpz_ptr result_value = Z_val(result);
-	mpz_ptr l = Z_val(left);
-	long r = Long_val(right);
-	mpz_mul_si(result_value, l, r);
+	mpz_mul_si(Z_val(result), Z_val(left), Long_val(right));
 	CAMLreturn(result);
 }
 
@@ -335,9 +332,8 @@ CAMLprim value mlgmp_z_cdiv_int(value left, value right)
 	CAMLlocal2(result, q);
 	q = mlgmp_alloc_z_init();
 	mpz_ptr q_value = Z_val(q);
-	mpz_ptr l = Z_val(left);
 	long d = Long_val(right);
-	long r = mpz_cdiv_q_ui(q_value, l, labs(d));
+	long r = mpz_cdiv_q_ui(q_value, Z_val(left), labs(d));
 	if(d < 0){
 		mpz_neg(q_value, q_value);
 		if(r != 0){
@@ -521,8 +517,7 @@ CAMLprim value mlgmp_z_remove(value x, value f)
 	CAMLparam2(x, f);
 	CAMLlocal2(result, rop);
 	rop = mlgmp_alloc_z_init();
-	mpz_ptr rop_value = Z_val(rop);
-	mp_bitcnt_t removed = mpz_remove(rop_value, Z_val(x), Z_val(f));
+	mp_bitcnt_t removed = mpz_remove(Z_val(rop), Z_val(x), Z_val(f));
 	result = alloc_tuple(2);
 	Store_field(result, 0, rop);
 	Store_field(result, 1, Val_long(removed));
@@ -1606,8 +1601,7 @@ CAMLprim value mlgmp_f_mul_int(value prec, value left, value right)
 {
 	CAMLparam3(prec, left, right);
 	CAMLlocal1(result);
-	mp_bitcnt_t p = Long_val(prec);
-	result = mlgmp_alloc_f_init2(p);
+	result = mlgmp_alloc_f_init2(Long_val(prec));
 	mpf_ptr result_value = F_val(result);
 	mpf_ptr l = F_val(left);
 	long r = Long_val(right);
@@ -1633,8 +1627,7 @@ CAMLprim value mlgmp_f_pow_int(value prec, value base, value exponent)
 {
 	CAMLparam3(prec, base, exponent);
 	CAMLlocal1(result);
-	mp_bitcnt_t p = Long_val(prec);
-	result = mlgmp_alloc_f_init2(p);
+	result = mlgmp_alloc_f_init2(Long_val(prec));
 	mpf_ptr result_value = F_val(result);
 	mpf_ptr b = F_val(base);
 	long e = Long_val(exponent);
@@ -1651,8 +1644,7 @@ CAMLprim value mlgmp_f_int_pow_int(value prec, value base, value exponent)
 {
 	CAMLparam3(prec, base, exponent);
 	CAMLlocal1(result);
-	mp_bitcnt_t p = Long_val(prec);
-	result = mlgmp_alloc_f_init2(p);
+	result = mlgmp_alloc_f_init2(Long_val(prec));
 	mpf_ptr result_value = F_val(result);
 	long b = Long_val(base);
 	long e = Long_val(exponent);
@@ -1692,8 +1684,7 @@ CAMLprim value mlgmp_f_scale(
 {
 	CAMLparam4(prec, fraction, base, exponent);
 	CAMLlocal1(result);
-	mp_bitcnt_t p = Long_val(prec);
-	result = mlgmp_alloc_f_init2(p);
+	result = mlgmp_alloc_f_init2(Long_val(prec));
 	mpf_ptr result_value = F_val(result);
 	mpf_ptr f = F_val(fraction);
 	long b = Long_val(base);
@@ -1762,16 +1753,14 @@ CAMLprim value mlgmp_f_nearly_equal(value bits, value left, value right)
 CAMLprim value mlgmp_f_frexp(value prec, value x)
 {
 	CAMLparam2(prec, x);
-	CAMLlocal3(result, result_fraction, result_exponent);
-	mp_bitcnt_t p = Long_val(prec);
+	CAMLlocal2(result, result_fraction);
 	mpf_ptr x_value = F_val(x);
 	long exponent;
 	mpf_get_d_2exp(&exponent, x_value);
-	result_exponent = Val_long(exponent);
 	if(exponent == 0){
 		result_fraction = x;
 	}else{
-		result_fraction = mlgmp_alloc_f_init2(p);
+		result_fraction = mlgmp_alloc_f_init2(Long_val(prec));
 		mpf_ptr rf_value = F_val(result_fraction);
 		x_value = F_val(x); /* if gc was invoked by alloc_custom */
 		if(exponent > 0){
@@ -1782,7 +1771,7 @@ CAMLprim value mlgmp_f_frexp(value prec, value x)
 	}
 	result = caml_alloc_tuple(2);
 	Store_field(result, 0, result_fraction);
-	Store_field(result, 1, result_exponent);
+	Store_field(result, 1, Val_long(exponent));
 	CAMLreturn(result);
 }
 
@@ -2016,8 +2005,7 @@ CAMLprim value mlgmp_random_create(value unit)
 	CAMLparam1(unit);
 	CAMLlocal1(result);
 	result = alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
-	__gmp_randstate_struct *result_value = Random_val(result);
-	gmp_randinit_default(result_value);
+	gmp_randinit_default(Random_val(result));
 	CAMLreturn(result);
 }
 
@@ -2026,8 +2014,11 @@ CAMLprim value mlgmp_random_create_lc_2exp(value a, value c, value m2exp)
 	CAMLparam3(a, c, m2exp);
 	CAMLlocal1(result);
 	result = alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
-	__gmp_randstate_struct *result_value = Random_val(result);
-	gmp_randinit_lc_2exp(result_value, Z_val(a), Long_val(c), Long_val(m2exp));
+	gmp_randinit_lc_2exp(
+		Random_val(result),
+		Z_val(a),
+		Long_val(c),
+		Long_val(m2exp));
 	CAMLreturn(result);
 }
 
@@ -2036,8 +2027,7 @@ CAMLprim value mlgmp_random_create_lc_2exp_size(value size)
 	CAMLparam1(size);
 	CAMLlocal1(result);
 	result = alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
-	__gmp_randstate_struct *result_value = Random_val(result);
-	gmp_randinit_lc_2exp_size(result_value, Long_val(size));
+	gmp_randinit_lc_2exp_size(Random_val(result), Long_val(size));
 	CAMLreturn(result);
 }
 
@@ -2046,8 +2036,7 @@ CAMLprim value mlgmp_random_create_mt(value unit)
 	CAMLparam1(unit);
 	CAMLlocal1(result);
 	result = alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
-	__gmp_randstate_struct *result_value = Random_val(result);
-	gmp_randinit_mt(result_value);
+	gmp_randinit_mt(Random_val(result));
 	CAMLreturn(result);
 }
 
@@ -2070,8 +2059,7 @@ CAMLprim value mlgmp_random_copy(value source)
 	CAMLparam1(source);
 	CAMLlocal1(result);
 	result = alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
-	__gmp_randstate_struct *result_value = Random_val(result);
-	gmp_randinit_set(result_value, Random_val(source));
+	gmp_randinit_set(Random_val(result), Random_val(source));
 	CAMLreturn(result);
 }
 

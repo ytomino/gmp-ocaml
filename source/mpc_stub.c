@@ -218,8 +218,9 @@ CAMLprim value mlmpc_c_int_pow_int(
 {
 	CAMLparam4(prec, mode, base, exponent);
 	CAMLlocal1(result);
-	mpfr_prec_t real_prec = Long_val(Field(prec, 0));
-	result = mlmpc_alloc_c_init3(real_prec, Long_val(Field(prec, 1)));
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
 	mpc_ptr result_value = C_val(result);
 	mpc_rnd_t m = Crnd_val(mode);
 	long b = Long_val(base);
