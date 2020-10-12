@@ -2088,15 +2088,28 @@ CAMLprim value mlgmp_random_int32(value state, value n)
 CAMLprim value mlgmp_random_int64(value state, value n)
 {
 	CAMLparam2(state, n);
-#if LONG_BIT >= 64
 	CAMLlocal1(result);
+#if LONG_BIT >= 64
 	result = caml_copy_int64(gmp_urandomm_ui(Random_val(state), Int64_val(n)));
 #elif LONG_BIT >= 32
-	CAMLextern value mlgmp_random_z(value state, value n); /* prototype */
-	CAMLlocal3(result, nz, rz);
-	nz = mlgmp_z_of_int64(n);
-	rz = mlgmp_random_z(state, nz);
-	result = mlgmp_int64_of_z(rz);
+	mpz_t nz;
+	mpz_init(nz);
+	int64_t n_value = Int64_val(n);
+	mpz_set_si(nz, n_value >> 32);
+	mpz_mul_2exp(nz, nz, 32);
+	mpz_add_ui(nz, nz, n_value & 0xffffffffUL);
+	mpz_t r;
+	mpz_init(r);
+	mpz_urandomm(r, Random_val(state), nz);
+	mpz_t lo;
+	mpz_init(lo);
+	mpz_init_set_ui(lo, 0xffffffffU);
+	mpz_and(lo, r, lo);
+	mpz_fdiv_q_2exp(r, r, 32);
+	result = caml_copy_int64(((int64_t)mpz_get_si(r) << 32) | mpz_get_ui(lo));
+	mpz_clear(lo);
+	mpz_clear(r);
+	mpz_clear(nz);
 #else
 #error "sizeof(long) < 4"
 #endif
