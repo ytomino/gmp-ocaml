@@ -354,14 +354,19 @@ CAMLprim value mlmpc_c_based_log(value prec, value mode, value base, value x)
 	result = mlmpc_alloc_c_init3(real_prec, imag_prec);
 	mpc_ptr result_value = C_val(result);
 	mpc_rnd_t m = Crnd_val(mode);
+	long b = Long_val(base);
 	mpc_ptr x_value = C_val(x);
-	mpc_log(result_value, x_value, m);
-	mpc_t base_value;
-	mpc_init3(base_value, real_prec, imag_prec);
-	mpc_set_si(base_value, Long_val(base), m);
-	mpc_log(base_value, base_value, m);
-	mpc_div(result_value, result_value, base_value, m);
-	mpc_clear(base_value);
+	if(b == 10){
+		mpc_log10(result_value, x_value, m);
+	}else{
+		mpc_log(result_value, x_value, m);
+		mpc_t base_value;
+		mpc_init3(base_value, real_prec, imag_prec);
+		mpc_set_si(base_value, b, m);
+		mpc_log(base_value, base_value, m);
+		mpc_div(result_value, result_value, base_value, m);
+		mpc_clear(base_value);
+	}
 	CAMLreturn(result);
 }
 
