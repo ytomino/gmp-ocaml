@@ -954,9 +954,9 @@ CAMLprim value mlgmp_z_of_int64(value x)
 	mpz_set_si(Z_val(result), Int64_val(x));
 #elif LONG_BIT >= 32
 	mpz_ptr result_value = Z_val(result);
-	long long x_value = Int64_val(x);
-	long hi = x_value >> 32; /* arithmetic right shift */
-	unsigned long lo = x_value & 0xffffffffL;
+	int64_t x_value = Int64_val(x);
+	int32_t hi = x_value >> 32; /* arithmetic right shift */
+	uint32_t lo = x_value & 0xffffffffL;
 	mpz_set_si(result_value, hi);
 	mpz_mul_2exp(result_value, result_value, 32);
 	mpz_add_ui(result_value, hi, lo);
@@ -980,7 +980,7 @@ CAMLprim value mlgmp_int64_of_z(value x)
 	mpz_t hi;
 	mpz_init(hi);
 	mpz_fdiv_q_2exp(hi, x_value, 32);
-	result = caml_copy_int64(((long long)mpz_get_si(hi) << 32LL) | mpz_get_ui(lo));
+	result = caml_copy_int64(((int64_t)mpz_get_si(hi) << 32LL) | mpz_get_ui(lo));
 	mpz_clear(hi);
 	mpz_clear(lo);
 #else
