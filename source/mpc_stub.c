@@ -363,7 +363,7 @@ CAMLprim value mlmpc_c_based_log(value prec, value mode, value base, value x)
 		mpc_log(result_value, x_value, m);
 		mpc_t base_value;
 		mpc_init3(base_value, real_prec, imag_prec);
-		mpc_set_si(base_value, b, m);
+		mpc_set_ui(base_value, b, m);
 		mpc_log(base_value, base_value, m);
 		mpc_div(result_value, result_value, base_value, m);
 		mpc_clear(base_value);
