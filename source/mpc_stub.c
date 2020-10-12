@@ -357,9 +357,11 @@ CAMLprim value mlmpc_c_based_log(value prec, value mode, value base, value x)
 	mpc_rnd_t m = Crnd_val(mode);
 	long b = Long_val(base);
 	mpc_ptr x_value = C_val(x);
+#if MPC_VERSION >= 0x010000
 	if(b == 10){
 		mpc_log10(result_value, x_value, m);
 	}else{
+#endif
 		mpc_log(result_value, x_value, m);
 		mpc_t base_value;
 		mpc_init3(base_value, real_prec, imag_prec);
@@ -367,7 +369,9 @@ CAMLprim value mlmpc_c_based_log(value prec, value mode, value base, value x)
 		mpc_log(base_value, base_value, m);
 		mpc_div(result_value, result_value, base_value, m);
 		mpc_clear(base_value);
+#if MPC_VERSION >= 0x010002
 	}
+#endif
 	CAMLreturn(result);
 }
 
