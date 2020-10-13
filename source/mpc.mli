@@ -49,7 +49,7 @@ module C (Prec: sig val prec: int * int end): sig
 	val scale: mode:rounding_mode -> t -> base:int -> exponent:int -> t
 	val root: mode:rounding_mode -> nth:int -> t -> t
 	val sqrt: mode:rounding_mode -> t -> t
-	(* floating-point operations *)
+	(* elementary functions *)
 	val log: mode:rounding_mode -> t -> t
 	val based_log: mode:rounding_mode -> base: int -> t -> t
 	(* complex functions *)
@@ -101,7 +101,7 @@ module C (Prec: sig val prec: int * int end): sig
 		val scale: t -> base:int -> exponent:int -> t
 		val root: nth:int -> t -> t
 		val sqrt: t -> t
-		(* floating-point operations *)
+		(* elementary functions *)
 		val log: t -> t
 		val based_log: base: int -> t -> t
 		(* complex functions *)

@@ -38,6 +38,12 @@ module type R = sig (* real *)
 	val of_float: float -> t
 end;;
 
+module type Elementary = sig (* elementary functions *)
+	type t
+	val log: t -> t
+	val based_log: base:int -> t -> t
+end;;
+
 module type F = sig (* float *)
 	include R
 	val nearly_equal: int -> t -> t -> bool
@@ -45,8 +51,12 @@ module type F = sig (* float *)
 	val trunc: t -> t
 	val ceil: t -> t
 	val floor: t -> t
-	val log: t -> t
-	val based_log: base:int -> t -> t
+	include Elementary with type t := t
+end;;
+
+module type C = sig (* complex *)
+	include N
+	include Elementary with type t := t
 end;;
 
 let (_: unit) = let module Check: S = Gmp.Z in ();;
@@ -64,6 +74,6 @@ let (_: unit) = let module Check: F = FR10D in ();;
 module C10 = Mpc.C (struct let prec = 10, 10 end);;
 module C10DD = C10.F (struct let rounding_mode = `D, `D end);;
 
-let (_: unit) = let module Check: N with type real := Mpfr.fr = C10DD in ();;
+let (_: unit) = let module Check: C with type real := Mpfr.fr = C10DD in ();;
 
 Printf.eprintf "ok\n";;

@@ -202,6 +202,7 @@ module F (Prec: sig val prec: int end): sig
 	val trunc: t -> t
 	val ceil: t -> t
 	val floor: t -> t
+	(* elementary functions *)
 	val log: t -> t
 	val based_log: base:int -> t -> t
 	(* conversions *)
