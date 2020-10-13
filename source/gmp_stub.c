@@ -498,20 +498,6 @@ CAMLprim value mlgmp_z_jacobi(value a, value p)
 	CAMLreturn(Val_int(result));
 }
 
-CAMLprim value mlgmp_z_legendre(value a, value p)
-{
-	CAMLparam2(a, p);
-	int result = mpz_legendre(Z_val(a), Z_val(p));
-	CAMLreturn(Val_int(result));
-}
-
-CAMLprim value mlgmp_z_kronecker(value a, value p)
-{
-	CAMLparam2(a, p);
-	int result = mpz_kronecker(Z_val(a), Z_val(p));
-	CAMLreturn(Val_int(result));
-}
-
 CAMLprim value mlgmp_z_remove(value x, value f)
 {
 	CAMLparam2(x, f);

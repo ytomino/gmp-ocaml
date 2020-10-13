@@ -59,8 +59,8 @@ module Z: sig
 	external lcm: t -> t -> t = "mlgmp_z_lcm"
 	external invert: t -> t -> t option = "mlgmp_z_invert"
 	external jacobi: t -> t -> int = "mlgmp_z_jacobi"
-	external legendre: t -> t -> int = "mlgmp_z_legendre"
-	external kronecker: t -> t -> int = "mlgmp_z_kronecker"
+	val legendre: t -> t -> int
+	val kronecker: t -> t -> int
 	external remove: t -> t -> t * int = "mlgmp_z_remove"
 	external fac_int: int -> t = "mlgmp_z_fac_int"
 	external dfac_int: int -> t = "mlgmp_z_dfac_int"
