@@ -42,6 +42,9 @@ external log: prec:int * int -> mode:rounding_mode -> c -> c = "mlmpc_c_log";;
 external based_log: prec:int * int -> mode:rounding_mode -> base:int -> c ->
 	c =
 	"mlmpc_c_based_log";;
+external pow: prec:int * int -> mode:rounding_mode -> c -> c -> c =
+	"mlmpc_c_pow";;
+external exp: prec:int * int -> mode:rounding_mode -> c -> c = "mlmpc_c_exp";;
 external conj: prec:int * int -> mode:rounding_mode -> c -> c =
 	"mlmpc_c_conj";;
 external norm: prec:int * int -> mode:Mpfr.rounding_mode -> c -> fr =
@@ -119,6 +122,8 @@ module C (Prec: sig val prec: int * int end) = struct
 	let sqrt = sqrt ~prec;;
 	let log = log ~prec;;
 	let based_log = based_log ~prec;;
+	let pow = pow ~prec;;
+	let exp = exp ~prec;;
 	let conj = conj ~prec;;
 	let norm = norm ~prec;;
 	let arg = arg ~prec;;
@@ -167,6 +172,8 @@ module C (Prec: sig val prec: int * int end) = struct
 		let sqrt = sqrt ~mode;;
 		let log = log ~mode;;
 		let based_log = based_log ~mode;;
+		let pow = pow ~mode;;
+		let exp = exp ~mode;;
 		let conj = conj ~mode;;
 		let norm = norm ~mode:(fst mode :> Mpfr.rounding_mode);;
 		let arg = arg ~mode:(fst mode :> Mpfr.rounding_mode);;

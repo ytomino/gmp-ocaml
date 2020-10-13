@@ -371,6 +371,28 @@ CAMLprim value mlmpc_c_based_log(value prec, value mode, value base, value x)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlmpc_c_pow(value prec, value mode, value base, value exponent)
+{
+	CAMLparam4(prec, mode, base, exponent);
+	CAMLlocal1(result);
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
+	mpc_pow(C_val(result), C_val(base), C_val(exponent), Crnd_val(mode));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlmpc_c_exp(value prec, value mode, value x)
+{
+	CAMLparam3(prec, mode, x);
+	CAMLlocal1(result);
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
+	mpc_exp(C_val(result), C_val(x), Crnd_val(mode));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlmpc_c_conj(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);

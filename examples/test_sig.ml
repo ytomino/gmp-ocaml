@@ -38,25 +38,37 @@ module type R = sig (* real *)
 	val of_float: float -> t
 end;;
 
-module type Elementary = sig (* elementary functions *)
+module type Elementary1 = sig (* basic elementary functions *)
 	type t
 	val log: t -> t
 	val based_log: base:int -> t -> t
 end;;
 
-module type F = sig (* float *)
+module type Elementary2 = sig (* additional elementary functions *)
+	type t
+	val pow: t ->t -> t
+	val exp: t -> t
+end;;
+
+module type F1 = sig (* float *)
 	include R
 	val nearly_equal: int -> t -> t -> bool
 	val frexp: t -> t * int
 	val trunc: t -> t
 	val ceil: t -> t
 	val floor: t -> t
-	include Elementary with type t := t
+	include Elementary1 with type t := t
 end;;
 
-module type C = sig (* complex *)
+module type F2 = sig (* float *)
+	include F1
+	include Elementary2 with type t := t
+end;;
+
+module type C2 = sig (* complex *)
 	include N
-	include Elementary with type t := t
+	include Elementary1 with type t := t
+	include Elementary2 with type t := t
 end;;
 
 let (_: unit) = let module Check: S = Gmp.Z in ();;
@@ -64,16 +76,16 @@ let (_: unit) = let module Check: R = Gmp.Q in ();;
 
 module F10 = Gmp.F (struct let prec = 10 end);;
 
-let (_: unit) = let module Check: F = F10 in ();;
+let (_: unit) = let module Check: F1 = F10 in ();;
 
 module FR10 = Mpfr.FR (struct let prec = 10 end);;
 module FR10D = FR10.F (struct let rounding_mode = `D end);;
 
-let (_: unit) = let module Check: F = FR10D in ();;
+let (_: unit) = let module Check: F2 = FR10D in ();;
 
 module C10 = Mpc.C (struct let prec = 10, 10 end);;
 module C10DD = C10.F (struct let rounding_mode = `D, `D end);;
 
-let (_: unit) = let module Check: C with type real := Mpfr.fr = C10DD in ();;
+let (_: unit) = let module Check: C2 with type real := Mpfr.fr = C10DD in ();;
 
 Printf.eprintf "ok\n";;

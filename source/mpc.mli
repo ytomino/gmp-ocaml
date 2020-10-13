@@ -52,6 +52,8 @@ module C (Prec: sig val prec: int * int end): sig
 	(* elementary functions *)
 	val log: mode:rounding_mode -> t -> t
 	val based_log: mode:rounding_mode -> base: int -> t -> t
+	val pow: mode:rounding_mode -> t -> t -> t
+	val exp: mode:rounding_mode -> t -> t
 	(* complex functions *)
 	val conj: mode:rounding_mode -> t -> t
 	val norm: mode:Mpfr.rounding_mode -> t -> fr
@@ -104,6 +106,8 @@ module C (Prec: sig val prec: int * int end): sig
 		(* elementary functions *)
 		val log: t -> t
 		val based_log: base: int -> t -> t
+		val pow: t -> t -> t
+		val exp: t -> t
 		(* complex functions *)
 		val conj: t -> t
 		val norm: t -> fr
