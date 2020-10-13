@@ -256,12 +256,13 @@ module Random = struct
 		in
 		loop a 0 Z.zero;;
 	external copy: t -> t = "mlgmp_random_copy";;
-	external bits: t -> int = "mlgmp_random_bits";;
+	external int_bits: t -> int -> int = "mlgmp_random_int_bits";;
+	let bits state = int_bits state 30;;
 	external int: t -> int -> int = "mlgmp_random_int";;
 	external int32: t -> int32 -> int32 = "mlgmp_random_int32";;
 	external int64: t -> int64 -> int64 = "mlgmp_random_int64";;
 	external nativeint: t -> nativeint -> nativeint = "mlgmp_random_nativeint";;
-	external bool: t -> bool = "mlgmp_random_bool";;
+	let bool state = int_bits state 1 <> 0;;
 	external z: t -> z -> z = "mlgmp_random_z";;
 	external f_bits: t -> int -> f = "mlgmp_random_f_bits";;
 	external f: t -> prec:int -> f -> f = "mlgmp_random_f";;

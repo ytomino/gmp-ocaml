@@ -2049,10 +2049,10 @@ CAMLprim value mlgmp_random_copy(value source)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlgmp_random_bits(value state)
+CAMLprim value mlgmp_random_int_bits(value state, value bits)
 {
-	CAMLparam1(state);
-	long result = gmp_urandomb_ui(Random_val(state), sizeof(value) * 8 - 2);
+	CAMLparam2(state, bits);
+	long result = gmp_urandomb_ui(Random_val(state), Long_val(bits));
 	CAMLreturn(Val_long(result));
 }
 
@@ -2109,13 +2109,6 @@ CAMLprim value mlgmp_random_nativeint(value state, value n)
 	result = caml_copy_nativeint(
 		gmp_urandomm_ui(Random_val(state), Nativeint_val(n)));
 	CAMLreturn(result);
-}
-
-CAMLprim value mlgmp_random_bool(value state)
-{
-	CAMLparam1(state);
-	bool result = gmp_urandomb_ui(Random_val(state), 1);
-	CAMLreturn(Val_bool(result));
 }
 
 CAMLprim value mlgmp_random_z(value state, value n)

@@ -230,12 +230,13 @@ module Random: sig
 	val make: int array -> t
 	external copy: t -> t = "mlgmp_random_copy"
 	(* generating *)
-	external bits: t -> int = "mlgmp_random_bits"
+	external int_bits: t -> int -> int = "mlgmp_random_int_bits"
+	val bits: t -> int
 	external int: t -> int -> int = "mlgmp_random_int"
 	external int32: t -> int32 -> int32 = "mlgmp_random_int32"
 	external int64: t -> int64 -> int64 = "mlgmp_random_int64"
 	external nativeint: t -> nativeint -> nativeint = "mlgmp_random_nativeint"
-	external bool: t -> bool = "mlgmp_random_bool"
+	val bool: t -> bool
 	val float: t -> float -> float
 	external z: t -> z -> z = "mlgmp_random_z"
 	external f_bits: t -> int -> f = "mlgmp_random_f_bits"
