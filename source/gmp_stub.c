@@ -811,7 +811,7 @@ CAMLprim value mlgmp_z_export(
 		mpz_clear(neg);
 	}
 	ssize_t remains = len_value - count;
-	uint8_t *d = (uint8_t *)String_val(buf) + pos_value;
+	uint8_t *d = Bytes_val(buf) + pos_value;
 	if(order_value > 0){
 		/* most significant first */
 		if(remains >= 0){
@@ -856,7 +856,7 @@ CAMLprim value mlgmp_z_import(
 	int order_value = Order_val(order);
 	result = mlgmp_alloc_z_init();
 	mpz_ptr result_value = Z_val(result);
-	uint8_t const *s = (uint8_t *)String_val(buf) + pos_value;
+	uint8_t const *s = Bytes_val(buf) + pos_value;
 	mpz_import(result_value, len_value, order_value, 1, 0, 0, s);
 	if(len_value > 0 && Bool_val(signed_)){
 		bool is_neg;
@@ -1323,7 +1323,7 @@ CAMLprim value mlgmp_q_of_based_string(value base, value x)
 	result = mlgmp_alloc_q_init();
 	mpq_ptr result_value = Q_val(result);
 	int b = Int_val(base);
-	char *x_value = String_val(x);
+	char const *x_value = String_val(x);
 	char *period = strchr(x_value, '.');
 	if(period == NULL){
 		int err = mpq_set_str(result_value, x_value, b);
