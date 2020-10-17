@@ -2081,6 +2081,19 @@ CAMLprim value mlgmp_random_nativeint(value state, value n)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlgmp_random_float_bits(value state, value bits)
+{
+	CAMLparam2(state, bits);
+	CAMLlocal1(result);
+	mp_bitcnt_t b = Long_val(bits);
+	mpf_t r;
+	mpf_init2(r, b);
+	mpf_urandomb(r, Random_val(state), b);
+	result = caml_copy_double(mpf_get_d(r));
+	mpf_clear(r);
+	CAMLreturn(result);
+}
+
 CAMLprim value mlgmp_random_z(value state, value n)
 {
 	CAMLparam2(state, n);

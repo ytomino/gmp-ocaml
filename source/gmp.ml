@@ -263,8 +263,9 @@ module Random = struct
 	external int64: t -> int64 -> int64 = "mlgmp_random_int64";;
 	external nativeint: t -> nativeint -> nativeint = "mlgmp_random_nativeint";;
 	let bool state = int_bits state 1 <> 0;;
+	external float_bits: t -> int -> float = "mlgmp_random_float_bits";;
+	let float state n = n *. float_bits state 53;;
 	external z: t -> z -> z = "mlgmp_random_z";;
 	external f_bits: t -> int -> f = "mlgmp_random_f_bits";;
 	external f: t -> prec:int -> f -> f = "mlgmp_random_f";;
-	let float state n = n *. float_of_f (f_bits state 53);;
 end;;
