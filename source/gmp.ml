@@ -266,5 +266,5 @@ module Random = struct
 	external z: t -> z -> z = "mlgmp_random_z";;
 	external f_bits: t -> int -> f = "mlgmp_random_f_bits";;
 	external f: t -> prec:int -> f -> f = "mlgmp_random_f";;
-	let float state n = n *. float_of_f (f_bits state 52);;
+	let float state n = n *. float_of_f (f_bits state 53);;
 end;;
