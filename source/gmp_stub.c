@@ -19,6 +19,12 @@
 	/* defined in caml/config.h */
 #endif
 
+/* for version < 5.1.0 */
+
+#if __GNU_MP_RELEASE < 50100
+#include "gmp_050100.h"
+#endif
+
 /**** Z ****/
 
 /* custom data */
@@ -524,17 +530,7 @@ CAMLprim value mlgmp_z_dfac_int(value x)
 	CAMLparam1(x);
 	CAMLlocal1(result);
 	result = mlgmp_alloc_z_init();
-#if __GNU_MP_RELEASE >= 50100
 	mpz_2fac_ui(Z_val(result), Long_val(x));
-#else
-	mpz_ptr result_value = Z_val(result);
-	mpz_set_ui(result_value, 1);
-	long i = Long_val(x);
-	while(i >= 2){
-		mpz_mul_ui(result_value, result_value, i);
-		i -= 2;
-	}
-#endif
 	CAMLreturn(result);
 }
 
@@ -543,18 +539,7 @@ CAMLprim value mlgmp_z_int_mfac_int(value step, value x)
 	CAMLparam2(step, x);
 	CAMLlocal1(result);
 	result = mlgmp_alloc_z_init();
-#if __GNU_MP_RELEASE >= 50100
 	mpz_mfac_uiui(Z_val(result), Long_val(x), Long_val(step));
-#else
-	mpz_ptr result_value = Z_val(result);
-	mpz_set_ui(result_value, 1);
-	long i = Long_val(x);
-	long s = Long_val(step);
-	while(i >= s){
-		mpz_mul_ui(result_value, result_value, i);
-		i -= s;
-	}
-#endif
 	CAMLreturn(result);
 }
 
@@ -563,22 +548,7 @@ CAMLprim value mlgmp_z_primorial_int(value x)
 	CAMLparam1(x);
 	CAMLlocal1(result);
 	result = mlgmp_alloc_z_init();
-#if __GNU_MP_RELEASE >= 50100
 	mpz_primorial_ui(Z_val(result), Long_val(x));
-#else
-	long n = Long_val(x);
-	mpz_ptr result_value = Z_val(result);
-	mpz_set_ui(result_value, 1);
-	if(n >= 2){
-		mpz_t a;
-		mpz_init_set_ui(a, 2);
-		while(mpz_cmp_ui(a, n) <= 0){
-			mpz_mul(result_value, result_value, a);
-			mpz_nextprime(a, a);
-		}
-		mpz_clear(a);
-	}
-#endif
 	CAMLreturn(result);
 }
 

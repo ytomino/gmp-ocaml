@@ -67,7 +67,7 @@ OCAMLMKLIBFLAGS=$(WLFLAGS) -lgmp
 CCLIB=$(addprefix -cclib ,$(WLFLAGS) -lgmp)
 LDFLAGS=$(WLFLAGS) $(call DEFAULTLIB,-lgmp)
 
-$(BUILDDIR)/gmp_stub.o: gmp_stub.h
+$(BUILDDIR)/gmp_stub.o: gmp_stub.h gmp_050100.h
 $(BUILDDIR)/gmp.cmo: $(BUILDDIR)/gmp.cmi
 $(BUILDDIR)/gmp.cmx: $(BUILDDIR)/gmp.cmi
 $(BUILDDIR)/gmp_pp.cmo: $(BUILDDIR)/gmp.cmi
