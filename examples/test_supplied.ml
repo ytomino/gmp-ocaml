@@ -33,7 +33,7 @@ assert (Z.int_pow_int 0 0 = Z.one);;
 assert (Z.int_pow_int (-3) 2 = Z.of_int 9);;
 assert (Z.int_pow_int (-3) 3 = Z.of_int (-27));;
 
-(* mpz_tdiv_q_si, mpz_tdiv_c_si, and mpz_tdiv_f_si are missing *)
+(* mpz_tdiv_q_si, mpz_cdiv_q_si, and mpz_fdiv_q_si are missing *)
 let table = [
 	(Z.tdiv, Z.tdiv_int, 't');
 	(Z.fdiv, Z.fdiv_int, 'f');
