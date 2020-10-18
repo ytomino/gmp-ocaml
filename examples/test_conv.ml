@@ -67,6 +67,16 @@ assert (
 	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N ~-.0.015625) = "-0.015625"
 );;
 
+let inf = fr_of_float ~prec:10 ~mode:`N infinity in
+let inf_str = string_of_float infinity in
+assert (fr_of_string ~prec:10 ~mode:`N inf_str = inf);
+assert (string_of_fr ~mode:`N inf = inf_str);;
+
+let neg_inf = fr_of_float ~prec:10 ~mode:`N neg_infinity in
+let neg_inf_str = string_of_float neg_infinity in
+assert (fr_of_string ~prec:10 ~mode:`N neg_inf_str = neg_inf);
+assert (string_of_fr ~mode:`N neg_inf = neg_inf_str);;
+
 let bit_eq (x: float) (y: float) = (
 	x = y || (classify_float x = FP_nan && classify_float y = FP_nan)
 );;

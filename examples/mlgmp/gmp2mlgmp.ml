@@ -160,7 +160,6 @@ module Gmp = struct
 		let to_string_base_digits ~mode ~base ~digits x =
 			let mantissa, exponent = to_string_exp_base_digits ~mode ~base ~digits x in
 			let i = (if sgn x < 0 then 1 else 0) in
-			if mantissa = "Inf" then "Inf" else
 			let lm = String.length mantissa in
 			(if lm > 1 then
 				let tmp = Bytes.create (succ lm) in
