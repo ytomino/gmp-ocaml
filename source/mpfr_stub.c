@@ -352,6 +352,15 @@ CAMLprim value mlmpfr_fr_is_infinite(value prec, value x)
 	CAMLreturn(Val_bool(result));
 }
 
+CAMLprim value mlmpfr_fr_pi(value prec, value mode)
+{
+	CAMLparam2(prec, mode);
+	CAMLlocal1(result);
+	result = mlmpfr_alloc_fr_init2(Long_val(prec));
+	mpfr_const_pi(FR_val(result), Rnd_val(mode));
+	CAMLreturn(result);
+}
+
 CAMLprim value mlmpfr_fr_log(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
@@ -386,15 +395,6 @@ CAMLprim value mlmpfr_fr_based_log(value prec, value mode, value base, value x)
 		mpfr_div(result_value, result_value, base_value, m);
 		mpfr_clear(base_value);
 	}
-	CAMLreturn(result);
-}
-
-CAMLprim value mlmpfr_fr_pi(value prec, value mode)
-{
-	CAMLparam2(prec, mode);
-	CAMLlocal1(result);
-	result = mlmpfr_alloc_fr_init2(Long_val(prec));
-	mpfr_const_pi(FR_val(result), Rnd_val(mode));
 	CAMLreturn(result);
 }
 
