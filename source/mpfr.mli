@@ -61,6 +61,7 @@ module FR (Prec: sig val prec: int end): sig
 	val trunc: t -> t
 	val ceil: t -> t
 	val floor: t -> t
+	external is_infinite: t -> bool = "mlmpfr_fr_is_infinite"
 	(* elementary functions *)
 	val pi: mode:rounding_mode -> t
 	val log: mode:rounding_mode -> t -> t
@@ -112,6 +113,7 @@ module FR (Prec: sig val prec: int end): sig
 		val trunc: t -> t
 		val ceil: t -> t
 		val floor: t -> t
+		external is_infinite: t -> bool = "mlmpfr_fr_is_infinite"
 		(* elementary functions *)
 		val pi: t
 		val log: t -> t

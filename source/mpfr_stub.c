@@ -345,6 +345,13 @@ CAMLprim value mlmpfr_fr_floor(value prec, value x)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlmpfr_fr_is_infinite(value prec, value x)
+{
+	CAMLparam2(prec, x);
+	bool result = mpfr_inf_p(FR_val(x));
+	CAMLreturn(Val_bool(result));
+}
+
 CAMLprim value mlmpfr_fr_log(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
