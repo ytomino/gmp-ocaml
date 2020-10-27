@@ -1,7 +1,11 @@
 HOST:=$(shell $(CC) -dumpmachine)
 TARGET=$(HOST)
 
-ifeq ($(TARGET),$(HOST))
+ifneq ($(TARGET),$(HOST))
+PROGRAMPREFIX=$(TARGET)-
+BINLN=
+else
+PROGRAMPREFIX=
 ifneq ($(findstring mingw,$(HOST))$(findstring msys,$(HOST)),)
 BINLN=
 else
@@ -10,78 +14,87 @@ endif
 ifneq ($(shell rlwrap --version),)
 RLWRAP=rlwrap
 endif
-else
-BINLN=
 endif
+
+OCAMLC=$(PROGRAMPREFIX)ocamlc
+OCAMLOPT=$(OCAMLC:c=opt)
 
 BUILDSUFFIX=.noindex
 BUILDDIR=$(TARGET)$(BUILDSUFFIX)
 GMP_BUILDDIR=$(BUILDDIR)/gmp$(BUILDSUFFIX)
 
-EXAMPLES=$(basename $(wildcard *.ml))
-TESTS=$(filter test_%,$(EXAMPLES))
+EXAMPLES1=$(basename $(wildcard *.ml))
+EXAMPLES=$(EXAMPLES1) essai test_creal test_mlgmp test_suite
+TESTS=$(filter test_%,$(EXAMPLES1))
 
 .PHONY: all check interacitve clean $(TESTS)
 
 all: \
 	$(patsubst %,$(BUILDDIR)/%.byte.exe,$(EXAMPLES)) \
-	$(patsubst %,$(BUILDDIR)/%.opt.exe,$(EXAMPLES)) \
-	$(BUILDDIR)/essai.byte.exe $(BUILDDIR)/essai.opt.exe \
-	$(BUILDDIR)/test_creal.byte.exe $(BUILDDIR)/test_creal.opt.exe \
-	$(BUILDDIR)/test_mlgmp.byte.exe $(BUILDDIR)/test_mlgmp.opt.exe \
-	$(BUILDDIR)/test_suite.byte.exe $(BUILDDIR)/test_suite.opt.exe \
+	$(if $(OCAMLOPT),$(patsubst %,$(BUILDDIR)/%.opt.exe,$(EXAMPLES))) \
 	$(BINLN)
 
 $(BUILDDIR)/%.byte.exe: %.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
-	ocamlc -c -o $(@:.byte.exe=.cmo) -I $(BUILDDIR) $(OCAMLCFLAGS) $<
-	ocamlc -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) gmp.cma mpfr.cma mpc.cma $(@:.byte.exe=.cmo)
+	$(OCAMLC) -c -o $(BUILDDIR)/$*.cmo -I $(BUILDDIR) $(OCAMLCFLAGS) $<
+	$(OCAMLC) -o $@ -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma $(BUILDDIR)/$*.cmo
 
+ifneq ($(OCAMLOPT),)
 $(BUILDDIR)/%.opt.exe: %.ml $(BUILDDIR)/gmp.cmxa $(BUILDDIR)/mpfr.cmxa $(BUILDDIR)/mpc.cmxa
-	ocamlopt -c -o $(@:.opt.exe=.cmx) -I $(BUILDDIR) $(OCAMLCFLAGS) $<
-	ocamlopt -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) gmp.cmxa mpfr.cmxa mpc.cmxa $(@:.opt.exe=.cmx)
+	$(OCAMLOPT) -c -o $(BUILDDIR)/$*.cmx -I $(BUILDDIR) $(OCAMLCFLAGS) $<
+	$(OCAMLOPT) -o $@ -I $(BUILDDIR) gmp.cmxa mpfr.cmxa mpc.cmxa $(BUILDDIR)/$*.cmx
+endif
 
 $(BUILDDIR)/gmp2mlgmp.cmo: mlgmp/gmp2mlgmp.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma
-	ocamlc -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<
+	$(OCAMLC) -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<
 
-$(BUILDDIR)/gmp2mlgmp.cmx: mlgmp/gmp2mlgmp.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma
-	ocamlopt -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<
+ifneq ($(OCAMLOPT),)
+$(BUILDDIR)/gmp2mlgmp.cmx: mlgmp/gmp2mlgmp.ml $(BUILDDIR)/gmp.cmxa $(BUILDDIR)/mpfr.cmxa
+	$(OCAMLOPT) -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<
+endif
 
-$(BUILDDIR)/creal.cmo: mlgmp/creal.ml $(BUILDDIR)/gmp2mlgmp.cmo
-	ocamlc -c -o $(@:.cmo=.cmi) -I $(BUILDDIR) $(OCAMLCFLAGS) $(<:.ml=.mli)
-	ocamlc -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<
+$(BUILDDIR)/creal.cmi: mlgmp/creal.mli $(BUILDDIR)/gmp.cma
+	$(OCAMLC) -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<
 
-$(BUILDDIR)/creal.cmx: mlgmp/creal.ml $(BUILDDIR)/gmp2mlgmp.cmx
-	ocamlopt -c -o $(@:.cmo=.cmi) -I $(BUILDDIR) $(OCAMLCFLAGS) $(<:.ml=.mli)
-	ocamlopt -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<
+$(BUILDDIR)/creal.cmo: mlgmp/creal.ml $(BUILDDIR)/creal.cmi $(BUILDDIR)/gmp2mlgmp.cmo
+	$(OCAMLC) -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<
+
+ifneq ($(OCAMLOPT),)
+$(BUILDDIR)/creal.cmx: mlgmp/creal.ml $(BUILDDIR)/creal.cmi $(BUILDDIR)/gmp2mlgmp.cmx
+	$(OCAMLOPT) -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<
+endif
 
 $(BUILDDIR)/%.byte.exe: mlgmp/%.ml $(BUILDDIR)/creal.cmo
-	ocamlc -c -o $(@:.byte.exe=.cmo) -I $(BUILDDIR) $(OCAMLCFLAGS) $<
-	ocamlc -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) gmp.cma mpfr.cma $(BUILDDIR)/gmp2mlgmp.cmo $(BUILDDIR)/creal.cmo $(@:.byte.exe=.cmo)
+	$(OCAMLC) -c -o $(BUILDDIR)/$*.cmo -I $(BUILDDIR) $(OCAMLCFLAGS) $<
+	$(OCAMLC) -o $@ -I $(BUILDDIR) gmp.cma mpfr.cma $(BUILDDIR)/gmp2mlgmp.cmo $(BUILDDIR)/creal.cmo $(BUILDDIR)/$*.cmo
 
+ifneq ($(OCAMLOPT),)
 $(BUILDDIR)/%.opt.exe: mlgmp/%.ml $(BUILDDIR)/creal.cmx
-	ocamlopt -c -o $(@:.opt.exe=.cmx) -I $(BUILDDIR) $(OCAMLCFLAGS) $<
-	ocamlopt -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) gmp.cmxa mpfr.cmxa $(BUILDDIR)/gmp2mlgmp.cmx $(BUILDDIR)/creal.cmx $(@:.opt.exe=.cmx)
+	$(OCAMLOPT) -c -o $(BUILDDIR)/$*.cmx -I $(BUILDDIR) $(OCAMLCFLAGS) $<
+	$(OCAMLOPT) -o $@ -I $(BUILDDIR) gmp.cmxa mpfr.cmxa $(BUILDDIR)/gmp2mlgmp.cmx $(BUILDDIR)/creal.cmx $(BUILDDIR)/$*.cmx
+endif
 
 check: all $(TESTS)
 
-$(TESTS): %: $(BUILDDIR)/%.byte.exe $(BUILDDIR)/%.opt.exe
+$(TESTS): %: $(BUILDDIR)/%.byte.exe $(if $(OCAMLOPT),$(BUILDDIR)/%.opt.exe)
 	$<
+ifneq ($(OCAMLOPT),)
 	$(patsubst %.byte.exe,%.opt.exe,$<)
+endif
 
 interactive: $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
 	$(RLWRAP) ocaml -I $(BUILDDIR) $(OCAMLCFLAGS) gmp.cma mpfr.cma mpc.cma
 
-$(BUILDDIR)/gmp.cma $(BUILDDIR)/gmp.cmxa: $(wildcard ../source/gmp*)
+$(BUILDDIR)/gmp.cma $(if $(OCAMLOPT),$(BUILDDIR)/gmp.cmxa): $(wildcard ../source/gmp*)
 	$(MAKE) -C ../source -f Makefile-gmp install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
 		INSTALLDIR=$(abspath $(BUILDDIR))
 
-$(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpfr.cmxa: $(wildcard ../source/mpfr*) $(BUILDDIR)/gmp.cma $(BUILDDIR)/gmp.cmxa
+$(BUILDDIR)/mpfr.cma $(if $(OCAMLOPT),$(BUILDDIR)/mpfr.cmxa): $(wildcard ../source/mpfr*) $(BUILDDIR)/gmp.cma $(BUILDDIR)/gmp.cmxa
 	$(MAKE) -C ../source -f Makefile-mpfr install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
 		INSTALLDIR=$(abspath $(BUILDDIR))
 
-$(BUILDDIR)/mpc.cma $(BUILDDIR)/mpc.cmxa: $(wildcard ../source/mpc*) $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpfr.cmxa
+$(BUILDDIR)/mpc.cma $(if $(OCAMLOPT),$(BUILDDIR)/mpc.cmxa): $(wildcard ../source/mpc*) $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpfr.cmxa
 	$(MAKE) -C ../source -f Makefile-mpc install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
 		INSTALLDIR=$(abspath $(BUILDDIR))
