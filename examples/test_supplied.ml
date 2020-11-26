@@ -4,10 +4,8 @@ open Mpc;;
 
 module F = Gmp.F (struct let prec = Gmp.default_prec () end);;
 module FRm = Mpfr.FR (struct let prec = Mpfr.default_prec () end);;
-module FR = FRm.F (
-	struct
-		let rounding_mode = Mpfr.default_rounding_mode ()
-	end);;
+module FR =
+	FRm.F (struct let rounding_mode = Mpfr.default_rounding_mode () end);;
 module Cm = Mpc.C (struct let prec = Mpc.default_prec () end);;
 module C = Cm.F (struct let rounding_mode = Mpc.default_rounding_mode () end);;
 

@@ -12,16 +12,17 @@ assert (Z.export_length (Z.of_int 128) = 2);;
 assert (Z.export_length (Z.of_int 32767) = 2);;
 assert (Z.export_length (Z.of_int 32768) = 3);;
 
-let expect_export_failure x buf pos len =
+let expect_export_failure x buf pos len = (
 	try
 		Z.export ~order:`N x buf pos len;
 		assert false
-	with Failure _ -> ();;
+	with Failure _ -> ()
+);;
 
 expect_export_failure Z.zero Bytes.empty 0 1;; (* overrun *)
 expect_export_failure Z.zero Bytes.empty 1 0;; (* overrun *)
 
-let expect_export order x buf pos len expect =
+let expect_export order x buf pos len expect = (
 	Z.export ~order:order x buf pos len;
 	if buf <> expect then (
 		Printf.printf "expect = \"%s\"; result = \"%s\"\n"
@@ -29,7 +30,8 @@ let expect_export order x buf pos len expect =
 			(String.escaped (Bytes.to_string buf));
 		flush stdout;
 		assert false
-	);;
+	)
+);;
 
 expect_export `N Z.zero (Bytes.create 0) 0 0 Bytes.empty;;
 
@@ -99,7 +101,7 @@ expect_export `L (Z.of_int 32768) (Bytes.make 2 'x') 0 2
 expect_export `L (Z.of_int 32768) (Bytes.make 3 'x') 0 3
 	(Bytes.of_string "\x00\x80\x00");;
 
-let test_export_and_import x =
+let test_export_and_import x = (
 	let len = Z.export_length x in
 	let buf = Bytes.create len in
 	Z.export ~order:`N x buf 0 len;
@@ -109,7 +111,8 @@ let test_export_and_import x =
 			(String.escaped (Bytes.to_string buf));
 		flush stdout;
 		assert false
-	);;
+	)
+);;
 
 test_export_and_import (Z.of_int (-32769));;
 test_export_and_import (Z.of_int (-32768));;
