@@ -58,6 +58,7 @@ module C (Prec: sig val prec: int * int end): sig
 	val conj: mode:rounding_mode -> t -> t
 	val norm: mode:Mpfr.rounding_mode -> t -> fr
 	val arg: mode:Mpfr.rounding_mode -> t -> fr
+	val polar: mode:rounding_mode -> fr -> fr -> t
 	val proj: mode:rounding_mode -> t -> t
 	(* partial access *)
 	external real: t -> fr = "mlmpc_c_real"
@@ -112,6 +113,7 @@ module C (Prec: sig val prec: int * int end): sig
 		val conj: t -> t
 		val norm: t -> fr
 		val arg: t -> fr
+		val polar: fr -> fr -> t
 		val proj: t -> t
 		(* partial access *)
 		external real: t -> fr = "mlmpc_c_real"

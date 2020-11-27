@@ -173,4 +173,28 @@ assert (C.root ~nth:1 (C.of_int 2) = C.of_int 2);;
 assert (C.root ~nth:2 (C.of_int 4) = C.of_int 2);;
 assert (C.root ~nth:3 (C.of_int 8) = C.of_int 2);;
 
+(* mpc_polar is missimg *)
+assert (C.polar (FR.of_int 2) FR.zero = C.make_int 2 0);;
+let d = 0x1.p-50 in
+assert (
+	let r = C.polar (FR.of_int 2) (FR.div FR.pi (FR.of_int 2)) in
+	FR.abs (C.real r) < FR.of_float d
+		&& FR.abs (FR.sub_int (C.imag r) 2) < FR.of_float d
+);
+assert (
+	let r = C.polar (FR.of_int 2) FR.pi in
+	FR.abs (FR.sub_int (C.real r) ~-2) < FR.of_float d
+		&& FR.abs (C.imag r) < FR.of_float d
+);
+assert (
+	let r = C.polar (FR.of_int 2) (FR.mul FR.pi (FR.of_float 1.5)) in
+	FR.abs (C.real r) < FR.of_float d
+		&& FR.abs (FR.sub_int (C.imag r) ~-2) < FR.of_float d
+);
+assert (
+	let r = C.polar (FR.of_int 2) (FR.mul FR.pi (FR.of_int 2)) in
+	FR.abs (FR.sub_int (C.real r) 2) < FR.of_float d
+		&& FR.abs (C.imag r) < FR.of_float d
+);;
+
 Printf.eprintf "ok\n";;

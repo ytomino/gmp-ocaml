@@ -422,6 +422,28 @@ CAMLprim value mlmpc_c_arg(value prec, value mode, value x)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlmpc_c_polar(value prec, value mode, value norm, value arg)
+{
+	CAMLparam4(prec, mode, norm, arg);
+	CAMLlocal1(result);
+	result = mlmpc_alloc_c_init3(
+		Long_val(Field(prec, 0)),
+		Long_val(Field(prec, 1)));
+	mpc_rnd_t m = Crnd_val(mode);
+	mpfr_rnd_t m_re = MPC_RND_RE(m);
+	mpfr_rnd_t m_im = MPC_RND_IM(m);
+	mpc_ptr r = C_val(result);
+	mpfr_ptr a = FR_val(arg);
+	if(m_re == m_im){
+		mpfr_sin_cos(mpc_imagref(r), mpc_realref(r), a, m_re);
+	}else{
+		mpfr_cos(mpc_realref(r), a, m_re);
+		mpfr_sin(mpc_imagref(r), a, m_im);
+	}
+	mpc_mul_fr(r, r, FR_val(norm), m);
+	CAMLreturn(result);
+}
+
 CAMLprim value mlmpc_c_proj(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
