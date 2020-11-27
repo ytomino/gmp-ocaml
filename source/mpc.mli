@@ -56,7 +56,7 @@ module C (Prec: sig val prec: int * int end): sig
 	val exp: mode:rounding_mode -> t -> t
 	(* complex functions *)
 	val conj: mode:rounding_mode -> t -> t
-	val norm: mode:Mpfr.rounding_mode -> t -> fr
+	val norm2: mode:Mpfr.rounding_mode -> t -> fr
 	val arg: mode:Mpfr.rounding_mode -> t -> fr
 	val polar: mode:rounding_mode -> fr -> fr -> t
 	val proj: mode:rounding_mode -> t -> t
@@ -111,7 +111,7 @@ module C (Prec: sig val prec: int * int end): sig
 		val exp: t -> t
 		(* complex functions *)
 		val conj: t -> t
-		val norm: t -> fr
+		val norm2: t -> fr
 		val arg: t -> fr
 		val polar: fr -> fr -> t
 		val proj: t -> t

@@ -47,8 +47,8 @@ external pow: prec:int * int -> mode:rounding_mode -> c -> c -> c =
 external exp: prec:int * int -> mode:rounding_mode -> c -> c = "mlmpc_c_exp";;
 external conj: prec:int * int -> mode:rounding_mode -> c -> c =
 	"mlmpc_c_conj";;
-external norm: prec:int * int -> mode:Mpfr.rounding_mode -> c -> fr =
-	"mlmpc_c_norm";;
+external norm2: prec:int * int -> mode:Mpfr.rounding_mode -> c -> fr =
+	"mlmpc_c_norm2";;
 external arg: prec:int * int -> mode:Mpfr.rounding_mode -> c -> fr =
 	"mlmpc_c_arg";;
 external polar: prec:int * int -> mode:rounding_mode -> fr -> fr -> c =
@@ -127,7 +127,7 @@ module C (Prec: sig val prec: int * int end) = struct
 	let pow = pow ~prec;;
 	let exp = exp ~prec;;
 	let conj = conj ~prec;;
-	let norm = norm ~prec;;
+	let norm2 = norm2 ~prec;;
 	let arg = arg ~prec;;
 	let polar = polar ~prec;;
 	let proj = proj ~prec;;
@@ -178,7 +178,7 @@ module C (Prec: sig val prec: int * int end) = struct
 		let pow = pow ~mode;;
 		let exp = exp ~mode;;
 		let conj = conj ~mode;;
-		let norm = norm ~mode:(fst mode :> Mpfr.rounding_mode);;
+		let norm2 = norm2 ~mode:(fst mode :> Mpfr.rounding_mode);;
 		let arg = arg ~mode:(fst mode :> Mpfr.rounding_mode);;
 		let polar = polar ~mode;;
 		let proj = proj ~mode;;

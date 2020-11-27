@@ -404,7 +404,7 @@ CAMLprim value mlmpc_c_conj(value prec, value mode, value x)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlmpc_c_norm(value prec, value mode, value x)
+CAMLprim value mlmpc_c_norm2(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
 	CAMLlocal1(result);
