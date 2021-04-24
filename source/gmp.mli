@@ -175,7 +175,7 @@ external f_of_f: prec:int -> f -> f = "mlgmp_f_of_f"
 
 external default_prec: unit -> int = "mlgmp_f_get_default_prec"
 
-module F (Prec: sig val prec: int end): sig
+module F (_: sig val prec: int end): sig
 	type t = f
 	val zero: t
 	val one: t

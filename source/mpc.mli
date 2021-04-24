@@ -27,7 +27,7 @@ external c_of_fr: prec:int * int -> mode:rounding_mode -> fr -> c =
 val default_prec: unit -> int * int
 val default_rounding_mode: unit -> rounding_mode
 
-module C (Prec: sig val prec: int * int end): sig
+module C (_: sig val prec: int * int end): sig
 	type t = c
 	val zero: t
 	val one: t
@@ -82,7 +82,7 @@ module C (Prec: sig val prec: int * int end): sig
 	val make_f: mode:rounding_mode -> f -> f -> t
 	val make_fr: mode:rounding_mode -> fr -> fr -> t
 	(* make the signature like F *)
-	module F (Mode: sig val rounding_mode: rounding_mode end): sig
+	module F (_: sig val rounding_mode: rounding_mode end): sig
 		type t = c
 		val zero: t
 		val one: t

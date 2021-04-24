@@ -34,7 +34,7 @@ external default_prec: unit -> int = "mlmpfr_fr_get_default_prec"
 external default_rounding_mode: unit -> rounding_mode =
 	"mlmpfr_fr_get_default_rounding_mode"
 
-module FR (Prec: sig val prec: int end): sig
+module FR (_: sig val prec: int end): sig
 	type t = fr
 	val zero: t
 	val one: t
@@ -86,7 +86,7 @@ module FR (Prec: sig val prec: int end): sig
 	val of_z: mode:rounding_mode -> z -> t
 	external to_z: mode:rounding_mode -> t -> z = "mlmpfr_z_of_fr"
 	(* make the signature like F *)
-	module F (Mode: sig val rounding_mode: rounding_mode end): sig
+	module F (_: sig val rounding_mode: rounding_mode end): sig
 		type t = fr
 		val zero: t
 		val one: t
