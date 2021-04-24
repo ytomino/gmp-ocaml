@@ -7,14 +7,16 @@ What's this?
 Objective-Caml binding to the multiple precision arithmetic libraries GMP, MPFR
 and MPC.
 
-Depending tools and libraries
------------------------------
+Prerequisites
+-------------
 
-GMP
+OCaml >= 4.08
+ https://ocaml.org/
+GMP >= 4.3
  http://gmplib.org/
-MPFR
+MPFR >= 2.4
  http://www.mpfr.org/
-MPC
+MPC >= 0.9
  http://www.multiprecision.org/
 
 How to make
