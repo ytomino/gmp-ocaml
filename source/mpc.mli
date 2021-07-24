@@ -27,62 +27,99 @@ external c_of_fr: prec:int * int -> mode:rounding_mode -> fr -> c =
 val default_prec: unit -> int * int
 val default_rounding_mode: unit -> rounding_mode
 
-module C (_: sig val prec: int * int end): sig
+module C: sig
 	type t = c
-	val zero: t
-	val one: t
-	val minus_one: t
-	val i: t
+	val zero: prec:int * int -> t
+	val one: prec:int * int -> t
+	val minus_one: prec:int * int -> t
+	val i: prec:int * int -> t
 	external compare: t -> t -> int = "mlmpc_c_compare"
 	external compare_int: t -> int -> int = "mlmpc_c_compare_int"
-	val neg: mode:rounding_mode -> t -> t
-	val abs: mode:Mpfr.rounding_mode -> t -> fr
-	val add: mode:rounding_mode -> t -> t -> t
-	val add_int: mode:rounding_mode -> t -> int -> t
-	val sub: mode:rounding_mode -> t -> t -> t
-	val sub_int: mode:rounding_mode -> t -> int -> t
-	val mul: mode:rounding_mode -> t -> t -> t
-	val mul_int: mode:rounding_mode -> t -> int -> t
-	val div: mode:rounding_mode -> t -> t -> t
-	val pow_int: mode:rounding_mode -> base:t -> exponent:int -> t
-	val int_pow_int: mode:rounding_mode -> base:int -> exponent:int -> t
-	val scale: mode:rounding_mode -> t -> base:int -> exponent:int -> t
-	val root: mode:rounding_mode -> nth:int -> t -> t
-	val sqrt: mode:rounding_mode -> t -> t
+	external neg: prec:int * int -> mode:rounding_mode -> t -> t = "mlmpc_c_neg"
+	external abs: prec:int * int -> mode:Mpfr.rounding_mode -> t -> fr =
+		"mlmpc_c_abs"
+	external add: prec:int * int -> mode:rounding_mode -> t -> t -> t =
+		"mlmpc_c_add"
+	external add_int: prec:int * int -> mode:rounding_mode -> t -> int -> t =
+		"mlmpc_c_add_int"
+	external sub: prec:int * int -> mode:rounding_mode -> t -> t -> t =
+		"mlmpc_c_sub"
+	external sub_int: prec:int * int -> mode:rounding_mode -> t -> int -> t =
+		"mlmpc_c_sub_int"
+	external mul: prec:int * int -> mode:rounding_mode -> t -> t -> t =
+		"mlmpc_c_mul"
+	external mul_int: prec:int * int -> mode:rounding_mode -> t -> int -> t =
+		"mlmpc_c_mul_int"
+	external div: prec:int * int -> mode:rounding_mode -> t -> t -> t =
+		"mlmpc_c_div"
+	external pow_int: prec:int * int -> mode:rounding_mode -> base:t ->
+		exponent:int -> t =
+		"mlmpc_c_pow_int"
+	external int_pow_int: prec:int * int -> mode:rounding_mode -> base:int ->
+		exponent:int -> t =
+		"mlmpc_c_int_pow_int"
+	external scale: prec:int * int -> mode:rounding_mode -> t -> base:int ->
+		exponent:int -> t =
+		"mlmpc_c_scale"
+	external root: prec:int * int -> mode:rounding_mode -> nth:int -> t -> t =
+		"mlmpc_c_root"
+	external sqrt: prec:int * int -> mode:rounding_mode -> t -> t = "mlmpc_c_sqrt"
 	(* elementary functions *)
-	val log: mode:rounding_mode -> t -> t
-	val based_log: mode:rounding_mode -> base:int -> t -> t
-	val pow: mode:rounding_mode -> t -> t -> t
-	val exp: mode:rounding_mode -> t -> t
+	external log: prec:int * int -> mode:rounding_mode -> t -> t = "mlmpc_c_log"
+	external based_log: prec:int * int -> mode:rounding_mode -> base:int -> t ->
+		t =
+		"mlmpc_c_based_log"
+	external pow: prec:int * int -> mode:rounding_mode -> t -> t -> t =
+		"mlmpc_c_pow"
+	external exp: prec:int * int -> mode:rounding_mode -> t -> t = "mlmpc_c_exp"
 	(* complex functions *)
-	val conj: mode:rounding_mode -> t -> t
-	val norm2: mode:Mpfr.rounding_mode -> t -> fr
-	val arg: mode:Mpfr.rounding_mode -> t -> fr
-	val polar: mode:rounding_mode -> fr -> fr -> t
-	val proj: mode:rounding_mode -> t -> t
+	external conj: prec:int * int -> mode:rounding_mode -> t -> t = "mlmpc_c_conj"
+	external norm2: prec:int * int -> mode:Mpfr.rounding_mode -> t -> fr =
+		"mlmpc_c_norm2"
+	external arg: prec:int * int -> mode:Mpfr.rounding_mode -> t -> fr =
+		"mlmpc_c_arg"
+	external polar: prec:int * int -> mode:rounding_mode -> fr -> fr -> t =
+		"mlmpc_c_polar"
+	external proj: prec:int * int -> mode:rounding_mode -> t -> t = "mlmpc_c_proj"
 	(* partial access *)
 	external real: t -> fr = "mlmpc_c_real"
 	external imag: t -> fr = "mlmpc_c_imag"
 	(* conversions *)
-	val of_based_string: mode:rounding_mode -> base:int -> string -> t
-	val of_string: mode:rounding_mode -> string -> t
+	external of_based_string: prec:int * int -> mode:rounding_mode -> base:int ->
+		string -> t =
+		"mlmpc_c_of_based_string"
+	val of_string: prec:int * int -> mode:rounding_mode -> string -> t
 	external to_based_string: mode:rounding_mode -> base:int -> t -> string =
 		"mlmpc_based_string_of_c"
 	val to_string: mode:rounding_mode -> t -> string
-	val of_int: mode:rounding_mode -> int -> t
-	val of_float: mode:rounding_mode -> float -> t
-	val of_z: mode:rounding_mode -> z -> t
-	val of_q: mode:rounding_mode -> q -> t
-	val of_f: mode:rounding_mode -> f -> t
-	val of_fr: mode:rounding_mode -> fr -> t
-	val make_int: mode:rounding_mode -> int -> int -> t
-	val make_float: mode:rounding_mode -> float -> float -> t
-	val make_z: mode:rounding_mode -> z -> z -> t
-	val make_q: mode:rounding_mode -> q -> q -> t
-	val make_f: mode:rounding_mode -> f -> f -> t
-	val make_fr: mode:rounding_mode -> fr -> fr -> t
-	(* make the signature like F *)
-	module F (_: sig val rounding_mode: rounding_mode end): sig
+	external of_int: prec:int * int -> mode:rounding_mode -> int -> t =
+		"mlmpc_c_of_int"
+	external of_float: prec:int * int -> mode:rounding_mode -> float -> t =
+		"mlmpc_c_of_float"
+	external of_z: prec:int * int -> mode:rounding_mode -> z -> t = "mlmpc_c_of_z"
+	external of_q: prec:int * int -> mode:rounding_mode -> q -> t = "mlmpc_c_of_q"
+	external of_f: prec:int * int -> mode:rounding_mode -> f -> t = "mlmpc_c_of_f"
+	external of_fr: prec:int * int -> mode:rounding_mode -> fr -> t =
+		"mlmpc_c_of_fr"
+	external make_int: prec:int * int -> mode:rounding_mode -> int -> int -> t =
+		"mlmpc_c_make_int"
+	external make_float: prec:int * int -> mode:rounding_mode -> float -> float ->
+		t =
+		"mlmpc_c_make_float"
+	external make_z: prec:int * int -> mode:rounding_mode -> z -> z -> t =
+		"mlmpc_c_make_z"
+	external make_q: prec:int * int -> mode:rounding_mode -> q -> q -> t =
+		"mlmpc_c_make_q"
+	external make_f: prec:int * int -> mode:rounding_mode -> f -> f -> t =
+		"mlmpc_c_make_f"
+	external make_fr: prec:int * int -> mode:rounding_mode -> fr -> fr -> t =
+		"mlmpc_c_make_fr"
+	(* make the signature like Float *)
+	module type Param = sig
+		val prec: int * int
+		val rounding_mode: rounding_mode
+	end
+	module Make (_: Param): sig
 		type t = c
 		val zero: t
 		val one: t

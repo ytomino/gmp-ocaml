@@ -32,7 +32,10 @@ assert (check_marshal (Q.make_int 2 3, Q.make_int ~-3 ~-4));;
 
 if log then (Printf.eprintf "F\n"; flush stderr);;
 
-module Fd = F (struct let prec = Gmp.default_prec () end);;
+module Fd =
+	F.Make (struct
+		let prec = Gmp.default_prec ();;
+	end);;
 
 assert (check_marshal Fd.zero);;
 assert (check_marshal Fd.one);;
@@ -40,9 +43,11 @@ assert (check_marshal (Fd.of_float 1.41421356, Fd.of_float ~-.2.3620679));;
 
 if log then (Printf.eprintf "FR\n"; flush stderr);;
 
-module FRdp = FR (struct let prec = Mpfr.default_prec () end);;
 module FRd =
-	FRdp.F (struct let rounding_mode = Mpfr.default_rounding_mode () end);;
+	FR.Make (struct
+		let prec = Mpfr.default_prec ();;
+		let rounding_mode = Mpfr.default_rounding_mode ();;
+	end);;
 
 assert (check_marshal FRd.zero);;
 assert (check_marshal FRd.one);;
@@ -53,9 +58,11 @@ assert (classify_float (FRd.to_float (marshal (FRd.of_float nan))) = FP_nan);;
 
 if log then (Printf.eprintf "C\n"; flush stderr);;
 
-module Cdp = C (struct let prec = Mpc.default_prec () end);;
 module Cd =
-	Cdp.F (struct let rounding_mode = Mpc.default_rounding_mode () end);;
+	C.Make (struct
+		let prec = Mpc.default_prec ();;
+		let rounding_mode = Mpc.default_rounding_mode ();;
+	end);;
 
 assert (check_marshal Cd.zero);;
 assert (check_marshal Cd.one);;

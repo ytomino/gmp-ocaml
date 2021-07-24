@@ -158,28 +158,6 @@ end;;
 
 type f;;
 
-external neg: prec:int -> f -> f = "mlgmp_f_neg";;
-external abs: prec:int -> f -> f = "mlgmp_f_abs";;
-external add: prec:int -> f -> f -> f = "mlgmp_f_add";;
-external add_int: prec:int -> f -> int -> f = "mlgmp_f_add_int";;
-external sub: prec:int -> f -> f -> f = "mlgmp_f_sub";;
-external sub_int: prec:int -> f -> int -> f = "mlgmp_f_sub_int";;
-external mul: prec:int -> f -> f -> f = "mlgmp_f_mul";;
-external mul_int: prec:int -> f -> int -> f = "mlgmp_f_mul_int";;
-external div: prec:int -> f -> f -> f = "mlgmp_f_div";;
-external pow_int: prec:int -> base:f -> exponent:int -> f = "mlgmp_f_pow_int";;
-external int_pow_int: prec:int -> base:int -> exponent:int -> f =
-	"mlgmp_f_int_pow_int";;
-external scale: prec:int -> f -> base:int -> exponent:int -> f =
-	"mlgmp_f_scale";;
-external root: prec:int -> nth:int -> f -> f = "mlgmp_f_root";;
-external sqrt: prec:int -> f -> f = "mlgmp_f_sqrt";;
-external frexp: prec:int -> f -> f * int = "mlgmp_f_frexp";;
-external trunc: prec:int -> f -> f = "mlgmp_f_trunc";;
-external ceil: prec:int -> f -> f = "mlgmp_f_ceil";;
-external floor: prec:int -> f -> f = "mlgmp_f_floor";;
-external log: prec:int -> f -> f = "mlgmp_f_log";;
-external based_log: prec:int -> base:int -> f -> f = "mlgmp_f_based_log";;
 external f_of_based_string: prec:int -> base:int -> string -> f =
 	"mlgmp_f_of_based_string";;
 let f_of_string = f_of_based_string ~base:10;;
@@ -196,43 +174,86 @@ external f_of_f: prec:int -> f -> f = "mlgmp_f_of_f";;
 
 external default_prec: unit -> int = "mlgmp_f_get_default_prec";;
 
-module F (Prec: sig val prec: int end) = struct
-	let prec = Prec.prec;;
+module F = struct
 	type t = f;;
-	let zero = f_of_int ~prec 0;;
-	let one = f_of_int ~prec 1;;
-	let minus_one = f_of_int ~prec ~-1;;
+	let zero ~prec = f_of_int ~prec 0;;
+	let one ~prec = f_of_int ~prec 1;;
+	let minus_one ~prec = f_of_int ~prec ~-1;;
 	external compare: t -> t -> int = "mlgmp_f_compare";;
 	external compare_int: t -> int -> int = "mlgmp_f_compare_int";;
-	let neg = neg ~prec;;
-	let abs = abs ~prec;;
-	let add = add ~prec;;
-	let add_int = add_int ~prec;;
-	let sub = sub ~prec;;
-	let sub_int = sub_int ~prec;;
-	let mul = mul ~prec;;
-	let mul_int = mul_int ~prec;;
-	let div = div ~prec;;
-	let pow_int = pow_int ~prec;;
-	let int_pow_int = int_pow_int ~prec;;
-	let scale = scale ~prec;;
-	let root = root ~prec;;
-	let sqrt = sqrt ~prec;;
+	external neg: prec:int -> t -> t = "mlgmp_f_neg";;
+	external abs: prec:int -> t -> t = "mlgmp_f_abs";;
+	external add: prec:int -> t -> t -> t = "mlgmp_f_add";;
+	external add_int: prec:int -> t -> int -> t = "mlgmp_f_add_int";;
+	external sub: prec:int -> t -> t -> t = "mlgmp_f_sub";;
+	external sub_int: prec:int -> t -> int -> t = "mlgmp_f_sub_int";;
+	external mul: prec:int -> t -> t -> t = "mlgmp_f_mul";;
+	external mul_int: prec:int -> t -> int -> t = "mlgmp_f_mul_int";;
+	external div: prec:int -> t -> t -> t = "mlgmp_f_div";;
+	external pow_int: prec:int -> base:t -> exponent:int -> t = "mlgmp_f_pow_int";;
+	external int_pow_int: prec:int -> base:int -> exponent:int -> t =
+		"mlgmp_f_int_pow_int";;
+	external scale: prec:int -> t -> base:int -> exponent:int -> t =
+		"mlgmp_f_scale";;
+	external root: prec:int -> nth:int -> t -> t = "mlgmp_f_root";;
+	external sqrt: prec:int -> t -> t = "mlgmp_f_sqrt";;
 	external nearly_equal: int -> t -> t -> bool = "mlgmp_f_nearly_equal";;
-	let frexp = frexp ~prec;;
-	let trunc = trunc ~prec;;
-	let ceil = ceil ~prec;;
-	let floor = floor ~prec;;
-	let log = log ~prec;;
-	let based_log = based_log ~prec;;
-	let of_based_string = f_of_based_string ~prec;;
-	let of_string = of_based_string ~base:10;;
+	external frexp: prec:int -> t -> t * int = "mlgmp_f_frexp";;
+	external trunc: prec:int -> t -> t = "mlgmp_f_trunc";;
+	external ceil: prec:int -> t -> t = "mlgmp_f_ceil";;
+	external floor: prec:int -> t -> t = "mlgmp_f_floor";;
+	external log: prec:int -> t -> t = "mlgmp_f_log";;
+	external based_log: prec:int -> base:int -> t -> t = "mlgmp_f_based_log";;
+	external of_based_string: prec:int -> base:int -> string -> t =
+		"mlgmp_f_of_based_string";;
+	let of_string = f_of_string;;
 	external to_based_string: base:int -> t -> string = "mlgmp_based_string_of_f";;
 	let to_string = string_of_f;;
-	let of_int = f_of_int ~prec;;
-	let of_float = f_of_float ~prec;;
+	external of_int: prec:int -> int -> t = "mlgmp_f_of_int";;
+	external of_float: prec:int -> float -> t = "mlgmp_f_of_float";;
 	external to_float: t -> float = "mlgmp_float_of_f";;
-	let of_z = f_of_z ~prec;;
+	external of_z: prec:int -> z -> t = "mlgmp_f_of_z";;
+	module type Param = sig
+		val prec: int
+	end;;
+	module Make (Param: Param) = struct
+		open Param;;
+		type t = f;;
+		let zero = zero ~prec;;
+		let one = one ~prec;;
+		let minus_one = minus_one ~prec;;
+		external compare: t -> t -> int = "mlgmp_f_compare";;
+		external compare_int: t -> int -> int = "mlgmp_f_compare_int";;
+		let neg = neg ~prec;;
+		let abs = abs ~prec;;
+		let add = add ~prec;;
+		let add_int = add_int ~prec;;
+		let sub = sub ~prec;;
+		let sub_int = sub_int ~prec;;
+		let mul = mul ~prec;;
+		let mul_int = mul_int ~prec;;
+		let div = div ~prec;;
+		let pow_int = pow_int ~prec;;
+		let int_pow_int = int_pow_int ~prec;;
+		let scale = scale ~prec;;
+		let root = root ~prec;;
+		let sqrt = sqrt ~prec;;
+		external nearly_equal: int -> t -> t -> bool = "mlgmp_f_nearly_equal";;
+		let frexp = frexp ~prec;;
+		let trunc = trunc ~prec;;
+		let ceil = ceil ~prec;;
+		let floor = floor ~prec;;
+		let log = log ~prec;;
+		let based_log = based_log ~prec;;
+		let of_based_string = of_based_string ~prec;;
+		let of_string = of_string ~prec;;
+		external to_based_string: base:int -> t -> string = "mlgmp_based_string_of_f";;
+		let to_string = to_string;;
+		let of_int = of_int ~prec;;
+		let of_float = of_float ~prec;;
+		external to_float: t -> float = "mlgmp_float_of_f";;
+		let of_z = of_z ~prec;;
+	end;;
 end;;
 
 external random_seed: unit -> int = "caml_sys_random_seed";;

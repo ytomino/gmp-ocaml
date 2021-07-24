@@ -175,45 +175,92 @@ external f_of_f: prec:int -> f -> f = "mlgmp_f_of_f"
 
 external default_prec: unit -> int = "mlgmp_f_get_default_prec"
 
-module F (_: sig val prec: int end): sig
+module F: sig
 	type t = f
-	val zero: t
-	val one: t
-	val minus_one: t
+	val zero: prec:int -> t
+	val one: prec:int -> t
+	val minus_one: prec:int -> t
 	external compare: t -> t -> int = "mlgmp_f_compare"
 	external compare_int: t -> int -> int = "mlgmp_f_compare_int"
-	val neg: t -> t
-	val abs: t -> t
-	val add: t -> t -> t
-	val add_int: t -> int -> t
-	val sub: t -> t -> t
-	val sub_int: t -> int -> t
-	val mul: t -> t -> t
-	val mul_int: t -> int -> t
-	val div: t -> t -> t
-	val pow_int: base:t -> exponent:int -> t
-	val int_pow_int: base:int -> exponent:int -> t
-	val scale: t -> base:int -> exponent:int -> t
-	val root: nth:int -> t -> t
-	val sqrt: t -> t
+	external neg: prec:int -> t -> t = "mlgmp_f_neg"
+	external abs: prec:int -> t -> t = "mlgmp_f_abs"
+	external add: prec:int -> t -> t -> t = "mlgmp_f_add"
+	external add_int: prec:int -> t -> int -> t = "mlgmp_f_add_int"
+	external sub: prec:int -> t -> t -> t = "mlgmp_f_sub"
+	external sub_int: prec:int -> t -> int -> t = "mlgmp_f_sub_int"
+	external mul: prec:int -> t -> t -> t = "mlgmp_f_mul"
+	external mul_int: prec:int -> t -> int -> t = "mlgmp_f_mul_int"
+	external div: prec:int -> t -> t -> t = "mlgmp_f_div"
+	external pow_int: prec:int -> base:t -> exponent:int -> t = "mlgmp_f_pow_int"
+	external int_pow_int: prec:int -> base:int -> exponent:int -> t =
+		"mlgmp_f_int_pow_int"
+	external scale: prec:int -> t -> base:int -> exponent:int -> t =
+		"mlgmp_f_scale"
+	external root: prec:int -> nth:int -> t -> t = "mlgmp_f_root"
+	external sqrt: prec:int -> t -> t = "mlgmp_f_sqrt"
 	(* floating-point operations *)
 	external nearly_equal: int -> t -> t -> bool = "mlgmp_f_nearly_equal"
-	val frexp: t -> t * int
-	val trunc: t -> t
-	val ceil: t -> t
-	val floor: t -> t
+	external frexp: prec:int -> t -> t * int = "mlgmp_f_frexp"
+	external trunc: prec:int -> t -> t = "mlgmp_f_trunc"
+	external ceil: prec:int -> t -> t = "mlgmp_f_ceil"
+	external floor: prec:int -> t -> t = "mlgmp_f_floor"
 	(* elementary functions *)
-	val log: t -> t
-	val based_log: base:int -> t -> t
+	external log: prec:int -> t -> t = "mlgmp_f_log"
+	external based_log: prec:int -> base:int -> t -> t = "mlgmp_f_based_log"
 	(* conversions *)
-	val of_based_string: base:int -> string -> t
-	val of_string: string -> t
+	external of_based_string: prec:int -> base:int -> string -> t =
+		"mlgmp_f_of_based_string"
+	val of_string: prec:int -> string -> t
 	external to_based_string: base:int -> t -> string = "mlgmp_based_string_of_f"
 	val to_string: t -> string
-	val of_int: int -> t
-	val of_float: float -> t
+	external of_int: prec:int -> int -> t = "mlgmp_f_of_int"
+	external of_float: prec:int -> float -> t = "mlgmp_f_of_float"
 	external to_float: t -> float = "mlgmp_float_of_f"
-	val of_z: z -> t
+	external of_z: prec:int -> z -> t = "mlgmp_f_of_z"
+	(* make the signature like Float *)
+	module type Param = sig
+		val prec: int
+	end
+	module Make (_: Param): sig
+		type t = f
+		val zero: t
+		val one: t
+		val minus_one: t
+		external compare: t -> t -> int = "mlgmp_f_compare"
+		external compare_int: t -> int -> int = "mlgmp_f_compare_int"
+		val neg: t -> t
+		val abs: t -> t
+		val add: t -> t -> t
+		val add_int: t -> int -> t
+		val sub: t -> t -> t
+		val sub_int: t -> int -> t
+		val mul: t -> t -> t
+		val mul_int: t -> int -> t
+		val div: t -> t -> t
+		val pow_int: base:t -> exponent:int -> t
+		val int_pow_int: base:int -> exponent:int -> t
+		val scale: t -> base:int -> exponent:int -> t
+		val root: nth:int -> t -> t
+		val sqrt: t -> t
+		(* floating-point operations *)
+		external nearly_equal: int -> t -> t -> bool = "mlgmp_f_nearly_equal"
+		val frexp: t -> t * int
+		val trunc: t -> t
+		val ceil: t -> t
+		val floor: t -> t
+		(* elementary functions *)
+		val log: t -> t
+		val based_log: base:int -> t -> t
+		(* conversions *)
+		val of_based_string: base:int -> string -> t
+		val of_string: string -> t
+		external to_based_string: base:int -> t -> string = "mlgmp_based_string_of_f"
+		val to_string: t -> string
+		val of_int: int -> t
+		val of_float: float -> t
+		external to_float: t -> float = "mlgmp_float_of_f"
+		val of_z: z -> t
+	end
 end
 
 module Random: sig

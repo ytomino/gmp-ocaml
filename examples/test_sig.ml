@@ -1,11 +1,15 @@
+module type N0 = sig (* numeric *)
+	type t
+	val compare: t -> t -> int
+	val compare_int: t -> int -> int
+end;;
+
 module type N = sig (* numeric *)
 	type real
-	type t
+	include N0
 	val zero: t
 	val one: t
 	val minus_one: t
-	val compare: t -> t -> int
-	val compare_int: t -> int -> int
 	val neg: t -> t
 	val abs: t -> real
 	val add: t -> t -> t
@@ -27,11 +31,15 @@ module type N = sig (* numeric *)
 	val of_int: int -> t
 end;;
 
+module type S0 = N0;; (* scalar *)
+
 module type S = sig (* scalar *)
 	type t
 	include N with type real := t and type t := t
 	val to_float: t -> float
 end;;
+
+module type R0 = S0;; (* real *)
 
 module type R = sig (* real *)
 	include S
@@ -50,9 +58,14 @@ module type Elementary2 = sig (* additional elementary functions *)
 	val exp: t -> t
 end;;
 
+module type F0 = sig (* float *)
+	include R0
+	val nearly_equal: int -> t -> t -> bool
+end;;
+
 module type F1 = sig (* float *)
 	include R
-	val nearly_equal: int -> t -> t -> bool
+	include F0 with type t := t
 	val frexp: t -> t * int
 	val trunc: t -> t
 	val ceil: t -> t
@@ -72,20 +85,33 @@ module type C2 = sig (* complex *)
 end;;
 
 let (_: unit) = let module Check: S = Gmp.Z in ();;
+
 let (_: unit) = let module Check: R = Gmp.Q in ();;
 
-module F10 = Gmp.F (struct let prec = 10 end);;
+let (_: unit) = let module Check: F0 = Gmp.F in ();;
+let (_: unit) =
+	let module Check: F1 =
+		Gmp.F.Make (struct
+			let prec = 10;;
+		end)
+	in ();;
 
-let (_: unit) = let module Check: F1 = F10 in ();;
+let (_: unit) = let module Check: F0 = Mpfr.FR in ();;
+let (_: unit) =
+	let module Check: F2 =
+		Mpfr.FR.Make (struct
+			let prec = 10;;
+			let rounding_mode = `D;;
+		end)
+	in ();;
 
-module FR10 = Mpfr.FR (struct let prec = 10 end);;
-module FR10D = FR10.F (struct let rounding_mode = `D end);;
-
-let (_: unit) = let module Check: F2 = FR10D in ();;
-
-module C10 = Mpc.C (struct let prec = 10, 10 end);;
-module C10DD = C10.F (struct let rounding_mode = `D, `D end);;
-
-let (_: unit) = let module Check: C2 with type real := Mpfr.fr = C10DD in ();;
+let (_: unit) = let module Check: S0 = Mpc.C in ();;
+let (_: unit) =
+	let module Check: C2 with type real := Mpfr.fr =
+		Mpc.C.Make (struct
+			let prec = 10, 10;;
+			let rounding_mode = `D, `D;;
+		end)
+	in ();;
 
 Printf.eprintf "ok\n";;

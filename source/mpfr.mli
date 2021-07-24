@@ -34,59 +34,80 @@ external default_prec: unit -> int = "mlmpfr_fr_get_default_prec"
 external default_rounding_mode: unit -> rounding_mode =
 	"mlmpfr_fr_get_default_rounding_mode"
 
-module FR (_: sig val prec: int end): sig
+module FR: sig
 	type t = fr
-	val zero: t
-	val one: t
-	val minus_one: t
+	val zero: prec:int -> t
+	val one: prec:int -> t
+	val minus_one: prec:int -> t
 	external compare: t -> t -> int = "mlmpfr_fr_compare"
 	external compare_int: t -> int -> int = "mlmpfr_fr_compare_int"
-	val neg: mode:rounding_mode -> t -> t
-	val abs: mode:rounding_mode -> t -> t
-	val add: mode:rounding_mode -> t -> t -> t
-	val add_int: mode:rounding_mode -> t -> int -> t
-	val sub: mode:rounding_mode -> t -> t -> t
-	val sub_int: mode:rounding_mode -> t -> int -> t
-	val mul: mode:rounding_mode -> t -> t -> t
-	val mul_int: mode:rounding_mode -> t -> int -> t
-	val div: mode:rounding_mode -> t -> t -> t
-	val pow_int: mode:rounding_mode -> base:t -> exponent:int -> t
-	val int_pow_int: mode:rounding_mode -> base:int -> exponent:int -> t
-	val scale: mode:rounding_mode -> t -> base:int -> exponent:int -> t
-	val root: mode:rounding_mode -> nth:int -> t -> t
-	val sqrt: mode:rounding_mode -> t -> t
+	external neg: prec:int -> mode:rounding_mode -> t -> t = "mlmpfr_fr_neg"
+	external abs: prec:int -> mode:rounding_mode -> t -> t = "mlmpfr_fr_abs"
+	external add: prec:int -> mode:rounding_mode -> t -> t -> t = "mlmpfr_fr_add"
+	external add_int: prec:int -> mode:rounding_mode -> t -> int -> t =
+		"mlmpfr_fr_add_int"
+	external sub: prec:int -> mode:rounding_mode -> t -> t -> t = "mlmpfr_fr_sub"
+	external sub_int: prec:int -> mode:rounding_mode -> t -> int -> t =
+		"mlmpfr_fr_sub_int"
+	external mul: prec:int -> mode:rounding_mode -> t -> t -> t = "mlmpfr_fr_mul"
+	external mul_int: prec:int -> mode:rounding_mode -> t -> int -> t =
+		"mlmpfr_fr_mul_int"
+	external div: prec:int -> mode:rounding_mode -> t -> t -> t = "mlmpfr_fr_div"
+	external pow_int: prec:int -> mode:rounding_mode -> base:t -> exponent:int ->
+		t =
+		"mlmpfr_fr_pow_int"
+	external int_pow_int: prec:int -> mode:rounding_mode -> base:int ->
+		exponent:int -> t =
+		"mlmpfr_fr_int_pow_int"
+	external scale: prec:int -> mode:rounding_mode -> t -> base:int ->
+		exponent:int -> t =
+		"mlmpfr_fr_scale"
+	external root: prec:int -> mode:rounding_mode -> nth:int -> t -> t =
+		"mlmpfr_fr_root"
+	external sqrt: prec:int -> mode:rounding_mode -> t -> t = "mlmpfr_fr_sqrt"
 	(* floating-point operations *)
 	external nearly_equal: int -> t -> t -> bool = "mlmpfr_fr_nearly_equal"
-	val frexp: mode:rounding_mode -> t -> t * int
-	val trunc: t -> t
-	val ceil: t -> t
-	val floor: t -> t
+	external frexp: prec:int -> mode:rounding_mode -> t -> t * int =
+		"mlmpfr_fr_frexp"
+	external trunc: prec:int -> t -> t = "mlmpfr_fr_trunc"
+	external ceil: prec:int -> t -> t = "mlmpfr_fr_ceil"
+	external floor: prec:int -> t -> t = "mlmpfr_fr_floor"
 	external is_infinite: t -> bool = "mlmpfr_fr_is_infinite"
 	(* elementary functions *)
-	val pi: mode:rounding_mode -> t
-	val log: mode:rounding_mode -> t -> t
-	val based_log: mode:rounding_mode -> base:int -> t -> t
-	val pow: mode:rounding_mode -> t -> t -> t
-	val exp: mode:rounding_mode -> t -> t
-	val sin: mode:rounding_mode -> t -> t
-	val cos: mode:rounding_mode -> t -> t
-	val tan: mode:rounding_mode -> t -> t
-	val atan: mode:rounding_mode -> t -> t
-	val atan2: mode:rounding_mode -> t -> t -> t
-	val acosh: mode:rounding_mode -> t -> t
+	external pi: prec:int -> mode:rounding_mode -> t = "mlmpfr_fr_pi"
+	external log: prec:int -> mode:rounding_mode -> t -> t = "mlmpfr_fr_log"
+	external based_log: prec:int -> mode:rounding_mode -> base:int -> t -> t =
+		"mlmpfr_fr_based_log"
+	external pow: prec:int -> mode:rounding_mode -> t -> t -> t = "mlmpfr_fr_pow"
+	external exp: prec:int -> mode:rounding_mode -> t -> t = "mlmpfr_fr_exp"
+	external sin: prec:int -> mode:rounding_mode -> t -> t = "mlmpfr_fr_sin"
+	external cos: prec:int -> mode:rounding_mode -> t -> t = "mlmpfr_fr_cos"
+	external tan: prec:int -> mode:rounding_mode -> t -> t = "mlmpfr_fr_tan"
+	external atan: prec:int -> mode:rounding_mode -> t -> t = "mlmpfr_fr_atan"
+	external atan2: prec:int -> mode:rounding_mode -> t -> t -> t =
+		"mlmpfr_fr_atan2"
+	external acosh: prec:int -> mode:rounding_mode -> t -> t = "mlmpfr_fr_acosh"
 	(* conversions *)
-	val of_based_string: mode:rounding_mode -> base:int -> string -> t
-	val of_string: mode:rounding_mode -> string -> t
+	external of_based_string: prec:int -> mode:rounding_mode -> base:int ->
+		string -> t =
+		"mlmpfr_fr_of_based_string"
+	val of_string: prec:int -> mode:rounding_mode -> string -> t
 	external to_based_string: mode:rounding_mode -> base:int -> t -> string =
 		"mlmpfr_based_string_of_fr"
 	val to_string: mode:rounding_mode -> t -> string
-	val of_int: mode:rounding_mode -> int -> t
-	val of_float: mode:rounding_mode -> float -> t
+	external of_int: prec:int -> mode:rounding_mode -> int -> t =
+		"mlmpfr_fr_of_int"
+	external of_float: prec:int -> mode:rounding_mode -> float -> t =
+		"mlmpfr_fr_of_float"
 	external to_float: mode:rounding_mode -> t -> float = "mlmpfr_float_of_fr"
-	val of_z: mode:rounding_mode -> z -> t
+	external of_z: prec:int -> mode:rounding_mode -> z -> t = "mlmpfr_fr_of_z"
 	external to_z: mode:rounding_mode -> t -> z = "mlmpfr_z_of_fr"
-	(* make the signature like F *)
-	module F (_: sig val rounding_mode: rounding_mode end): sig
+	(* make the signature like Float *)
+	module type Param = sig
+		val prec: int
+		val rounding_mode: rounding_mode
+	end
+	module Make (_: Param): sig
 		type t = fr
 		val zero: t
 		val one: t

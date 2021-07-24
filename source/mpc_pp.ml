@@ -8,7 +8,6 @@ let pp_c (f: formatter) (x: c) = (
 
 (* like Complex.t for the toplevel *)
 let pp_complex_of_c (f: formatter) (x: c) = (
-	let module C = C (struct let prec = default_prec () end) in
 	pp_print_char f '{';
 	pp_open_box f 0;
 	pp_open_box f 0;

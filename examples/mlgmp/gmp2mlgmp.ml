@@ -99,12 +99,15 @@ module Gmp = struct
 	end;;
 	module F = struct
 		let default_prec = 120;;
-		module Default_F = Gmp.F (struct let prec = default_prec end);;
+		module Default_F =
+			Gmp.F.Make (struct
+				let prec = default_prec;;
+			end);;
 		let zero = Default_F.zero;;
-		let compare = Default_F.compare;;
-		let equal x y = Default_F.nearly_equal 90 x y;;
-		let eq ~prec x y = Default_F.nearly_equal prec x y;;
-		let sgn x = Default_F.compare x Default_F.zero;;
+		let compare = Gmp.F.compare;;
+		let equal x y = Gmp.F.nearly_equal 90 x y;;
+		let eq ~prec x y = Gmp.F.nearly_equal prec x y;;
+		let sgn x = Gmp.F.compare x Default_F.zero;;
 		let neg = Default_F.neg;;
 		let abs = Default_F.abs;;
 		let add = Default_F.add;;
@@ -118,36 +121,40 @@ module Gmp = struct
 		let from_float = Default_F.of_float;;
 		let from_string_base = Default_F.of_based_string;;
 		let from_string = Default_F.of_string;;
-		let to_float = Default_F.to_float;;
-		let to_string = Default_F.to_string;;
+		let to_float = Gmp.F.to_float;;
+		let to_string = Gmp.F.to_string;;
 		let urandomb ~state ~nbits = Gmp.Random.f_bits state nbits;;
 	end;;
 	module FR = struct
 		let default_prec = 120;;
-		module Default_FR = Mpfr.FR (struct let prec = default_prec end);;
-		let compare = Default_FR.compare;;
-		let eq ~prec x y = Default_FR.nearly_equal prec x y;;
-		let sgn x = Default_FR.compare x Default_FR.zero;;
-		let neg = Default_FR.neg ~mode:`N;;
-		let abs = Default_FR.abs ~mode:`N;;
-		let add = Default_FR.add ~mode:`N;;
-		let add_ui = Default_FR.add_int ~mode:`N;;
-		let sub = Default_FR.sub ~mode:`N;;
-		let sub_ui = Default_FR.sub_int ~mode:`N;;
-		let mul = Default_FR.mul ~mode:`N;;
-		let mul_ui = Default_FR.mul_int ~mode:`N;;
-		let pow_ui = Default_FR.pow_int ~mode:`N;;
-		let sqrt = Default_FR.sqrt ~mode:`N;;
-		let exp = Default_FR.exp ~mode:`N;;
-		let exp2 x = Default_FR.pow ~mode:`N (Default_FR.of_int ~mode:`N 2) x;;
+		module Default_FR =
+			Mpfr.FR.Make (struct
+				let prec = default_prec;;
+				let rounding_mode = `N;;
+			end);;
+		let compare = Mpfr.FR.compare;;
+		let eq ~prec x y = Mpfr.FR.nearly_equal prec x y;;
+		let sgn x = Mpfr.FR.compare x Default_FR.zero;;
+		let neg = Default_FR.neg;;
+		let abs = Default_FR.abs;;
+		let add = Default_FR.add;;
+		let add_ui = Default_FR.add_int;;
+		let sub = Default_FR.sub;;
+		let sub_ui = Default_FR.sub_int;;
+		let mul = Default_FR.mul;;
+		let mul_ui = Default_FR.mul_int;;
+		let pow_ui = Default_FR.pow_int;;
+		let sqrt = Default_FR.sqrt;;
+		let exp = Default_FR.exp;;
+		let exp2 x = Default_FR.pow (Default_FR.of_int 2) x;;
 		let floor = Default_FR.floor;;
-		let sin = Default_FR.sin ~mode:`N;;
-		let acosh = Default_FR.acosh ~mode:`N;;
-		let from_int = Default_FR.of_int ~mode:`N;;
-		let from_float = Default_FR.of_float ~mode:`N;;
-		let from_string_base = Default_FR.of_based_string ~mode:`N;;
-		let from_string = Default_FR.of_string ~mode:`N;;
-		let to_float = Default_FR.to_float ~mode:`N;;
+		let sin = Default_FR.sin;;
+		let acosh = Default_FR.acosh;;
+		let from_int = Default_FR.of_int;;
+		let from_float = Default_FR.of_float;;
+		let from_string_base = Default_FR.of_based_string;;
+		let from_string = Default_FR.of_string;;
+		let to_float = Default_FR.to_float;;
 		let to_string_exp_base_digits ~mode ~base ~digits x =
 			let mode =
 				match mode with

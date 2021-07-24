@@ -2,12 +2,20 @@ open Gmp;;
 open Mpfr;;
 open Mpc;;
 
-module F = Gmp.F (struct let prec = Gmp.default_prec () end);;
-module FRm = Mpfr.FR (struct let prec = Mpfr.default_prec () end);;
+module F =
+	F.Make (struct
+		let prec = Gmp.default_prec ();;
+	end);;
 module FR =
-	FRm.F (struct let rounding_mode = Mpfr.default_rounding_mode () end);;
-module Cm = Mpc.C (struct let prec = Mpc.default_prec () end);;
-module C = Cm.F (struct let rounding_mode = Mpc.default_rounding_mode () end);;
+	FR.Make (struct
+		let prec = Mpfr.default_prec ();;
+		let rounding_mode = Mpfr.default_rounding_mode ();;
+	end);;
+module C =
+	C.Make (struct
+		let prec = Mpc.default_prec ();;
+		let rounding_mode = Mpc.default_rounding_mode ();;
+	end);;
 
 (* mpz_add_si is missing *)
 assert (Z.add_int (Z.of_int 4) (+1) = Z.of_int 5);;
