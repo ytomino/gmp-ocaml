@@ -33,8 +33,7 @@ module C: sig
 	external compare: t -> t -> int = "mlmpc_c_compare"
 	external compare_int: t -> int -> int = "mlmpc_c_compare_int"
 	external neg: prec:int * int -> mode:rounding_mode -> t -> t = "mlmpc_c_neg"
-	external abs: prec:int * int -> mode:Mpfr.rounding_mode -> t -> fr =
-		"mlmpc_c_abs"
+	external abs: prec:int -> mode:Mpfr.rounding_mode -> t -> fr = "mlmpc_c_abs"
 	external add: prec:int * int -> mode:rounding_mode -> t -> t -> t =
 		"mlmpc_c_add"
 	external add_int: prec:int * int -> mode:rounding_mode -> t -> int -> t =
@@ -71,10 +70,9 @@ module C: sig
 	external exp: prec:int * int -> mode:rounding_mode -> t -> t = "mlmpc_c_exp"
 	(* complex functions *)
 	external conj: prec:int * int -> mode:rounding_mode -> t -> t = "mlmpc_c_conj"
-	external norm2: prec:int * int -> mode:Mpfr.rounding_mode -> t -> fr =
+	external norm2: prec:int -> mode:Mpfr.rounding_mode -> t -> fr =
 		"mlmpc_c_norm2"
-	external arg: prec:int * int -> mode:Mpfr.rounding_mode -> t -> fr =
-		"mlmpc_c_arg"
+	external arg: prec:int -> mode:Mpfr.rounding_mode -> t -> fr = "mlmpc_c_arg"
 	external polar: prec:int * int -> mode:rounding_mode -> fr -> fr -> t =
 		"mlmpc_c_polar"
 	external proj: prec:int * int -> mode:rounding_mode -> t -> t = "mlmpc_c_proj"

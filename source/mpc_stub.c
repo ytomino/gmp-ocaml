@@ -105,7 +105,7 @@ CAMLprim value mlmpc_c_abs(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
 	CAMLlocal1(result);
-	result = mlmpfr_alloc_fr_init2(Long_val(Field(prec, 0)));
+	result = mlmpfr_alloc_fr_init2(Long_val(prec));
 	mpc_abs(FR_val(result), C_val(x), Rnd_val(mode));
 	CAMLreturn(result);
 }
@@ -408,7 +408,7 @@ CAMLprim value mlmpc_c_norm2(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
 	CAMLlocal1(result);
-	result = mlmpfr_alloc_fr_init2(Long_val(Field(prec, 0)));
+	result = mlmpfr_alloc_fr_init2(Long_val(prec));
 	mpc_norm(FR_val(result), C_val(x), Rnd_val(mode));
 	CAMLreturn(result);
 }
@@ -417,7 +417,7 @@ CAMLprim value mlmpc_c_arg(value prec, value mode, value x)
 {
 	CAMLparam3(prec, mode, x);
 	CAMLlocal1(result);
-	result = mlmpfr_alloc_fr_init2(Long_val(Field(prec, 0)));
+	result = mlmpfr_alloc_fr_init2(Long_val(prec));
 	mpc_arg(FR_val(result), C_val(x), Rnd_val(mode));
 	CAMLreturn(result);
 }

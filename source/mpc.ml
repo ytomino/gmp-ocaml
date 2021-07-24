@@ -41,8 +41,7 @@ module C = struct
 	external compare: t -> t -> int = "mlmpc_c_compare";;
 	external compare_int: t -> int -> int = "mlmpc_c_compare_int";;
 	external neg: prec:int * int -> mode:rounding_mode -> t -> t = "mlmpc_c_neg";;
-	external abs: prec:int * int -> mode:Mpfr.rounding_mode -> t -> fr =
-		"mlmpc_c_abs";;
+	external abs: prec:int -> mode:Mpfr.rounding_mode -> t -> fr = "mlmpc_c_abs";;
 	external add: prec:int * int -> mode:rounding_mode -> t -> t -> t =
 		"mlmpc_c_add";;
 	external add_int: prec:int * int -> mode:rounding_mode -> t -> int -> t =
@@ -79,10 +78,9 @@ module C = struct
 	external exp: prec:int * int -> mode:rounding_mode -> t -> t = "mlmpc_c_exp";;
 	external conj: prec:int * int -> mode:rounding_mode -> t -> t =
 		"mlmpc_c_conj";;
-	external norm2: prec:int * int -> mode:Mpfr.rounding_mode -> t -> fr =
+	external norm2: prec:int -> mode:Mpfr.rounding_mode -> t -> fr =
 		"mlmpc_c_norm2";;
-	external arg: prec:int * int -> mode:Mpfr.rounding_mode -> t -> fr =
-		"mlmpc_c_arg";;
+	external arg: prec:int -> mode:Mpfr.rounding_mode -> t -> fr = "mlmpc_c_arg";;
 	external polar: prec:int * int -> mode:rounding_mode -> fr -> fr -> t =
 		"mlmpc_c_polar";;
 	external proj: prec:int * int -> mode:rounding_mode -> t -> t =
@@ -136,7 +134,7 @@ module C = struct
 		external compare: t -> t -> int = "mlmpc_c_compare";;
 		external compare_int: t -> int -> int = "mlmpc_c_compare_int";;
 		let neg = neg ~prec ~mode;;
-		let abs = abs ~prec ~mode:(fst mode :> Mpfr.rounding_mode);;
+		let abs = abs ~prec:(fst prec) ~mode:(fst mode :> Mpfr.rounding_mode);;
 		let add = add ~prec ~mode;;
 		let add_int = add_int ~prec ~mode;;
 		let sub = sub ~prec ~mode;;
@@ -154,8 +152,8 @@ module C = struct
 		let pow = pow ~prec ~mode;;
 		let exp = exp ~prec ~mode;;
 		let conj = conj ~prec ~mode;;
-		let norm2 = norm2 ~prec ~mode:(fst mode :> Mpfr.rounding_mode);;
-		let arg = arg ~prec ~mode:(fst mode :> Mpfr.rounding_mode);;
+		let norm2 = norm2 ~prec:(fst prec) ~mode:(fst mode :> Mpfr.rounding_mode);;
+		let arg = arg ~prec:(fst prec) ~mode:(fst mode :> Mpfr.rounding_mode);;
 		let polar = polar ~prec ~mode;;
 		let proj = proj ~prec ~mode;;
 		external real: t -> fr = "mlmpc_c_real";;
