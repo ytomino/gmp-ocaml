@@ -130,7 +130,7 @@ module Gmp = struct
 		module Default_FR =
 			Mpfr.FR.Make (struct
 				let prec = default_prec;;
-				let rounding_mode = `N;;
+				let mode = `N;;
 			end);;
 		let compare = Mpfr.FR.compare;;
 		let eq ~prec x y = Mpfr.FR.nearly_equal prec x y;;

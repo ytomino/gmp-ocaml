@@ -121,11 +121,10 @@ module C = struct
 		"mlmpc_c_make_fr";;
 	module type Param = sig
 		val prec: int * int
-		val rounding_mode: rounding_mode
+		val mode: rounding_mode
 	end;;
 	module Make (Param: Param) = struct
-		let prec = Param.prec;;
-		let mode = Param.rounding_mode;;
+		open Param
 		type t = c;;
 		let zero = zero ~prec;;
 		let one = one ~prec;;
@@ -185,7 +184,7 @@ module C = struct
 	let default () =
 		let module Default: Param = struct
 			let prec = default_prec ();;
-			let rounding_mode = default_rounding_mode ();;
+			let mode = default_rounding_mode ();;
 		end in
 		(module Default: Param);;
 end;;

@@ -101,7 +101,7 @@ let (_: unit) =
 	let module Check: F2 =
 		Mpfr.FR.Make (struct
 			let prec = 10;;
-			let rounding_mode = `D;;
+			let mode = `D;;
 		end)
 	in ();;
 
@@ -110,7 +110,7 @@ let (_: unit) =
 	let module Check: C2 with type real := Mpfr.fr =
 		Mpc.C.Make (struct
 			let prec = 10, 10;;
-			let rounding_mode = `D, `D;;
+			let mode = `D, `D;;
 		end)
 	in ();;
 

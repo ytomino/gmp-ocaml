@@ -101,7 +101,7 @@ module FR: sig
 	(* make the signature like Float *)
 	module type Param = sig
 		val prec: int
-		val rounding_mode: rounding_mode
+		val mode: rounding_mode
 	end
 	module Make (_: Param): sig
 		type t = fr

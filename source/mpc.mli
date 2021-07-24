@@ -112,7 +112,7 @@ module C: sig
 	(* make the signature like Float *)
 	module type Param = sig
 		val prec: int * int
-		val rounding_mode: rounding_mode
+		val mode: rounding_mode
 	end
 	module Make (_: Param): sig
 		type t = c
