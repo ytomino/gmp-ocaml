@@ -148,10 +148,10 @@ assert (
 		= c_of_string ~prec:(4, 4) ~mode:(`N, `N) "10"
 );;
 
-assert (Gmp.default_prec () = 64);;
-assert (Mpfr.default_prec () = 53);;
-assert (Mpfr.default_rounding_mode () = `N);;
-assert (Mpc.default_prec () = (53, 53));;
-assert (Mpc.default_rounding_mode () = (`N, `N));;
+assert (F.default_prec () = 64);;
+assert (FR.default_prec () = 53);;
+assert (FR.default_rounding_mode () = `N);;
+assert (C.default_prec () = (53, 53));;
+assert (C.default_rounding_mode () = (`N, `N));;
 
 Printf.eprintf "ok\n";;

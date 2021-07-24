@@ -24,9 +24,6 @@ external c_of_f: prec:int * int -> mode:rounding_mode -> f -> c =
 external c_of_fr: prec:int * int -> mode:rounding_mode -> fr -> c =
 	"mlmpc_c_of_fr"
 
-val default_prec: unit -> int * int
-val default_rounding_mode: unit -> rounding_mode
-
 module C: sig
 	type t = c
 	val zero: prec:int * int -> t
@@ -173,5 +170,7 @@ module C: sig
 		val make_f: f -> f -> t
 		val make_fr: fr -> fr -> t
 	end
+	val default_prec: unit -> int * int
+	val default_rounding_mode: unit -> rounding_mode
 	val default: unit -> (module Param)
 end

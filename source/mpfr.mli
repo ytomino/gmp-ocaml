@@ -30,10 +30,6 @@ external single_of_bits: int32 -> fr = "mlmpfr_fr_single_of_bits"
 external double_of_bits: int64 -> fr = "mlmpfr_fr_double_of_bits"
 external extended_of_bits: int64 * int -> fr = "mlmpfr_fr_extended_of_bits"
 
-external default_prec: unit -> int = "mlmpfr_fr_get_default_prec"
-external default_rounding_mode: unit -> rounding_mode =
-	"mlmpfr_fr_get_default_rounding_mode"
-
 module FR: sig
 	type t = fr
 	val zero: prec:int -> t
@@ -158,5 +154,8 @@ module FR: sig
 		val of_z: z -> t
 		val to_z: t -> z
 	end
+	external default_prec: unit -> int = "mlmpfr_fr_get_default_prec"
+	external default_rounding_mode: unit -> rounding_mode =
+		"mlmpfr_fr_get_default_rounding_mode"
 	val default: unit -> (module Param)
 end

@@ -172,8 +172,6 @@ external f_of_z: prec:int -> z -> f = "mlgmp_f_of_z";;
 external z_of_truncated_f: f -> z = "mlgmp_z_of_truncated_f";;
 external f_of_f: prec:int -> f -> f = "mlgmp_f_of_f";;
 
-external default_prec: unit -> int = "mlgmp_f_get_default_prec";;
-
 module F = struct
 	type t = f;;
 	let zero ~prec = f_of_int ~prec 0;;
@@ -254,6 +252,7 @@ module F = struct
 		external to_float: t -> float = "mlgmp_float_of_f";;
 		let of_z = of_z ~prec;;
 	end;;
+	external default_prec: unit -> int = "mlgmp_f_get_default_prec";;
 	let default () =
 		let module Default: Param = struct
 			let prec = default_prec ();;

@@ -173,8 +173,6 @@ external f_of_z: prec:int -> z -> f = "mlgmp_f_of_z"
 external z_of_truncated_f: f -> z = "mlgmp_z_of_truncated_f"
 external f_of_f: prec:int -> f -> f = "mlgmp_f_of_f"
 
-external default_prec: unit -> int = "mlgmp_f_get_default_prec"
-
 module F: sig
 	type t = f
 	val zero: prec:int -> t
@@ -261,6 +259,7 @@ module F: sig
 		external to_float: t -> float = "mlgmp_float_of_f"
 		val of_z: z -> t
 	end
+	external default_prec: unit -> int = "mlgmp_f_get_default_prec"
 	val default: unit -> (module Param)
 end
 

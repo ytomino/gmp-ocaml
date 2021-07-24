@@ -30,16 +30,7 @@ external c_of_fr: prec:int * int -> mode:rounding_mode -> fr -> c =
 external make_int: prec:int * int -> mode:rounding_mode -> int -> int -> c =
 	"mlmpc_c_make_int";;
 
-let default_prec () =
-	let mpfr_prec = Mpfr.default_prec () in
-	mpfr_prec, mpfr_prec;;
-
 let nn = (`N, `N);;
-
-let default_rounding_mode () =
-	match default_rounding_mode () with
-	| #rounding_mode_elem as mpfr_rnd -> mpfr_rnd, mpfr_rnd
-	| `A | `F | `NA -> nn;;
 
 module C = struct
 	type t = c;;
@@ -186,6 +177,13 @@ module C = struct
 		let make_f = make_f ~prec ~mode;;
 		let make_fr = make_fr ~prec ~mode;;
 	end;;
+	let default_prec () =
+		let fr_prec = FR.default_prec () in
+		fr_prec, fr_prec;;
+	let default_rounding_mode () =
+		match FR.default_rounding_mode () with
+		| #rounding_mode_elem as fr_rnd -> fr_rnd, fr_rnd
+		| `A | `F | `NA -> nn;;
 	let default () =
 		let module Default: Param = struct
 			let prec = default_prec ();;
