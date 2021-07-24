@@ -158,4 +158,5 @@ module FR: sig
 		val of_z: z -> t
 		val to_z: t -> z
 	end
+	val default: unit -> (module Param)
 end

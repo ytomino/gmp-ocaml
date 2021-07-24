@@ -186,4 +186,10 @@ module C = struct
 		let make_f = make_f ~prec ~mode;;
 		let make_fr = make_fr ~prec ~mode;;
 	end;;
+	let default () =
+		let module Default: Param = struct
+			let prec = default_prec ();;
+			let rounding_mode = default_rounding_mode ();;
+		end in
+		(module Default: Param);;
 end;;

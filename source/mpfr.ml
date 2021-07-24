@@ -158,4 +158,10 @@ module FR = struct
 		let of_z = of_z ~prec ~mode;;
 		let to_z = to_z ~mode;;
 	end;;
+	let default () =
+		let module Default: Param = struct
+			let prec = default_prec ();;
+			let rounding_mode = default_rounding_mode ();;
+		end in
+		(module Default: Param);;
 end;;

@@ -173,4 +173,5 @@ module C: sig
 		val make_f: f -> f -> t
 		val make_fr: fr -> fr -> t
 	end
+	val default: unit -> (module Param)
 end

@@ -261,6 +261,7 @@ module F: sig
 		external to_float: t -> float = "mlgmp_float_of_f"
 		val of_z: z -> t
 	end
+	val default: unit -> (module Param)
 end
 
 module Random: sig
