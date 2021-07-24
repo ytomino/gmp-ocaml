@@ -135,7 +135,7 @@ module C (Prec: sig val prec: int * int end) = struct
 	external imag: t -> fr = "mlmpc_c_imag";;
 	let of_based_string = c_of_based_string ~prec;;
 	let of_string = of_based_string ~base:10;;
-	external to_based_string: mode:rounding_mode -> base:int -> c -> string =
+	external to_based_string: mode:rounding_mode -> base:int -> t -> string =
 		"mlmpc_based_string_of_c";;
 	let to_string = string_of_c;;
 	let of_int = c_of_int ~prec;;

@@ -66,7 +66,7 @@ module C (_: sig val prec: int * int end): sig
 	(* conversions *)
 	val of_based_string: mode:rounding_mode -> base:int -> string -> t
 	val of_string: mode:rounding_mode -> string -> t
-	external to_based_string: mode:rounding_mode -> base:int -> c -> string =
+	external to_based_string: mode:rounding_mode -> base:int -> t -> string =
 		"mlmpc_based_string_of_c"
 	val to_string: mode:rounding_mode -> t -> string
 	val of_int: mode:rounding_mode -> int -> t

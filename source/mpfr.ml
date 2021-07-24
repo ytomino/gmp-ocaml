@@ -128,12 +128,12 @@ module FR (Prec: sig val prec: int end) = struct
 	let acosh = acosh ~prec;;
 	let of_based_string = fr_of_based_string ~prec;;
 	let of_string = of_based_string ~base:10;;
-	external to_based_string: mode:rounding_mode -> base:int -> fr -> string =
+	external to_based_string: mode:rounding_mode -> base:int -> t -> string =
 		"mlmpfr_based_string_of_fr";;
 	let to_string = string_of_fr;;
 	let of_int = fr_of_int ~prec;;
 	let of_float = fr_of_float ~prec;;
-	external to_float: mode:rounding_mode -> fr -> float = "mlmpfr_float_of_fr";;
+	external to_float: mode:rounding_mode -> t -> float = "mlmpfr_float_of_fr";;
 	let of_z = fr_of_z ~prec;;
 	external to_z: mode:rounding_mode -> t -> z = "mlmpfr_z_of_fr";;
 	module F (Mode: sig val rounding_mode: rounding_mode end) = struct

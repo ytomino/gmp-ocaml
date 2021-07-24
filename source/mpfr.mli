@@ -77,12 +77,12 @@ module FR (_: sig val prec: int end): sig
 	(* conversions *)
 	val of_based_string: mode:rounding_mode -> base:int -> string -> t
 	val of_string: mode:rounding_mode -> string -> t
-	external to_based_string: mode:rounding_mode -> base:int -> fr -> string =
+	external to_based_string: mode:rounding_mode -> base:int -> t -> string =
 		"mlmpfr_based_string_of_fr"
 	val to_string: mode:rounding_mode -> t -> string
 	val of_int: mode:rounding_mode -> int -> t
 	val of_float: mode:rounding_mode -> float -> t
-	external to_float: mode:rounding_mode -> fr -> float = "mlmpfr_float_of_fr"
+	external to_float: mode:rounding_mode -> t -> float = "mlmpfr_float_of_fr"
 	val of_z: mode:rounding_mode -> z -> t
 	external to_z: mode:rounding_mode -> t -> z = "mlmpfr_z_of_fr"
 	(* make the signature like F *)
