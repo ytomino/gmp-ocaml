@@ -52,10 +52,12 @@ $(BUILDDIR)/mpfr_stub.o: gmp_stub.h mpfr_stub.h mpfr_030000.h mpfr_030100.h mpfr
 $(BUILDDIR)/mpfr.cmi: gmp.mli
 $(BUILDDIR)/mpfr.cmo: $(BUILDDIR)/mpfr.cmi
 $(BUILDDIR)/mpfr.cmx: $(BUILDDIR)/mpfr.cmi
+$(BUILDDIR)/mpfr_pp.cmo: override OCAMLCFLAGS+=-w -70
 $(BUILDDIR)/mpfr_pp.cmo: $(BUILDDIR)/mpfr.cmi
+$(BUILDDIR)/mpfr_pp.cmx: override OCAMLCFLAGS+=-w -70
 $(BUILDDIR)/mpfr_pp.cmx: $(BUILDDIR)/mpfr.cmx
 $(BUILDDIR)/mpfr_pp.cmi: $(BUILDDIR)/mpfr_pp.cmo
-$(BUILDDIR)/mpfr_pp_install.cmo: override OCAMLCFLAGS+=-I $(OCAMLLIBDIR)/compiler-libs
+$(BUILDDIR)/mpfr_pp_install.cmo: override OCAMLCFLAGS+=-I $(OCAMLLIBDIR)/compiler-libs -w -70
 $(BUILDDIR)/mpfr_pp_install.cmo: $(BUILDDIR)/mpfr_pp.cmo
 $(BUILDDIR)/mpfr_pp_install.cmi: $(BUILDDIR)/mpfr_pp_install.cmo
 ########
