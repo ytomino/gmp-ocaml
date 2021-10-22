@@ -500,7 +500,7 @@ CAMLprim value mlmpfr_based_string_of_fr(value mode, value base, value x)
 	if(mpfr_nan_p(x_value)){
 		result = caml_copy_string("nan");
 	}else if(mpfr_inf_p(x_value)){
-		result = caml_copy_string("-inf" + 1 - mpfr_signbit(x_value));
+		result = caml_copy_string((char const *)"-inf" + 1 - mpfr_signbit(x_value));
 	}else{
 		mp_exp_t exponent;
 		char *image = mpfr_get_str(
