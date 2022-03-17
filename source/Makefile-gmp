@@ -42,7 +42,8 @@ OCAMLCFLAGS=-w +a
 CFLAGS=$(WIFLAGS) -std=gnu99 -Wall -Wextra
 
 CCLIB=$(addprefix -cclib ,$(WLFLAGS) -lgmp)
-LDFLAGS=$(WLFLAGS) -lgmp
+LDFLAGS=$(WLFLAGS)
+LDLIB=-lgmp
 
 $(BUILDDIR)/gmp_stub.o: gmp_stub.h gmp_050100.h
 $(BUILDDIR)/gmp.cmo: $(BUILDDIR)/gmp.cmi
@@ -113,7 +114,7 @@ $(BUILDDIR)/$(LIBNAME).cmxa: $(MLCMI) $(MLCMX) $(CSLL)
 
 ifneq ($(STUBLIBNAME),)
 $(BUILDDIR)/dll$(STUBLIBNAME)$(EXT_DLL): $(COBJ)
-	$(MKDLL) -o $@ $<
+	$(MKDLL) -o $@ $< $(LDLIB)
 
 ifneq ($(OCAMLOPT),)
 $(BUILDDIR)/lib$(STUBLIBNAME).a: $(COBJ)
