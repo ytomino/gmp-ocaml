@@ -31,7 +31,7 @@ $(BUILDDIR)/gmp_pp.cmo: override OCAMLCFLAGS+=-w -70
 $(BUILDDIR)/gmp_pp.cmo: $(BUILDDIR)/gmp.cmi
 $(BUILDDIR)/gmp_pp.cmx: override OCAMLCFLAGS+=-w -70
 $(BUILDDIR)/gmp_pp.cmx: $(BUILDDIR)/gmp.cmx
-$(BUILDDIR)/gmp_pp.cmi: $(BUILDDIR)/gmp_pp.cmo
+$(BUILDDIR)/gmp_pp.cmi: $(if $(OCAMLC),$(BUILDDIR)/gmp_pp.cmo,$(BUILDDIR)/gmp_pp.cmx)
 $(BUILDDIR)/gmp_pp_install.cmo: override OCAMLCFLAGS+=-I $(OCAMLLIBDIR)/compiler-libs -w -70
 $(BUILDDIR)/gmp_pp_install.cmo: $(BUILDDIR)/gmp_pp.cmo
 $(BUILDDIR)/gmp_pp_install.cmi: $(BUILDDIR)/gmp_pp_install.cmo
