@@ -34,15 +34,10 @@ LDLIB=-lmpc -lmpfr -lgmp
 
 $(BUILDDIR)/mpc_stub.o: gmp_stub.h mpfr_stub.h mpc_stub.h mpc_010000.h
 $(BUILDDIR)/mpc.cmi: gmp.mli mpfr.mli
-$(BUILDDIR)/mpc.cmo: $(BUILDDIR)/mpc.cmi
-$(BUILDDIR)/mpc.cmx: $(BUILDDIR)/mpc.cmi
-$(BUILDDIR)/mpc_pp.cmo: override OCAMLCFLAGS+=-w -70
 $(BUILDDIR)/mpc_pp.cmo: $(BUILDDIR)/mpc.cmi mpfr_pp.ml
-$(BUILDDIR)/mpc_pp.cmx: override OCAMLCFLAGS+=-w -70
 $(BUILDDIR)/mpc_pp.cmx: $(BUILDDIR)/mpc.cmx mpfr_pp.ml
-$(BUILDDIR)/mpc_pp.cmi: $(if $(OCAMLC),$(BUILDDIR)/mpc_pp.cmo,$(BUILDDIR)/mpc_pp.cmx)
-$(BUILDDIR)/mpc_pp_install.cmo: override OCAMLCFLAGS+=-I $(OCAMLLIBDIR)/compiler-libs -w -70
-$(BUILDDIR)/mpc_pp_install.cmo: $(BUILDDIR)/mpc_pp.cmo
-$(BUILDDIR)/mpc_pp_install.cmi: $(BUILDDIR)/mpc_pp_install.cmo
+$(BUILDDIR)/mpc_pp_install.cmo $(BUILDDIR)/mpc_pp_install.cmi: \
+	override OCAMLCFLAGS+=-I $(OCAMLLIBDIR)/compiler-libs
+$(BUILDDIR)/mpc_pp_install.cmo: $(BUILDDIR)/mpc_pp.cmi
 
 include Makefile.rules
