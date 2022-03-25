@@ -37,7 +37,7 @@ $(BUILDDIR)/mpc.cmi: gmp.mli mpfr.mli
 $(BUILDDIR)/mpc_pp.cmo: $(BUILDDIR)/mpc.cmi mpfr_pp.ml
 $(BUILDDIR)/mpc_pp.cmx: $(BUILDDIR)/mpc.cmx mpfr_pp.ml
 $(BUILDDIR)/mpc_pp_install.cmo $(BUILDDIR)/mpc_pp_install.cmi: \
-	override OCAMLCFLAGS+=-I $(OCAMLLIBDIR)/compiler-libs
+	private override OCAMLCFLAGS+=-I $(OCAMLLIBDIR)/compiler-libs
 $(BUILDDIR)/mpc_pp_install.cmo: $(BUILDDIR)/mpc_pp.cmi
 
 include Makefile.rules
