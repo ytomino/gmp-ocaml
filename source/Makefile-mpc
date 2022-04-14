@@ -13,16 +13,16 @@ STUBLIBNAME=ml$(LIBNAME)
 WIFLAGS=
 WLFLAGS=
 ifneq ($(WITH_GMP),)
-WIFLAGS+=-I$(WITH_GMP)/include
-WLFLAGS+=-L$(WITH_GMP)/lib
+ WIFLAGS+=-I$(WITH_GMP)/include
+ WLFLAGS+=-L$(WITH_GMP)/lib
 endif
 ifneq ($(WITH_MPFR),)
-WIFLAGS+=-I$(WITH_MPFR)/include
-WLFLAGS+=-L$(WITH_MPFR)/lib
+ WIFLAGS+=-I$(WITH_MPFR)/include
+ WLFLAGS+=-L$(WITH_MPFR)/lib
 endif
 ifneq ($(WITH_MPC),)
-WIFLAGS+=-I$(WITH_MPC)/include
-WLFLAGS+=-L$(WITH_MPC)/lib
+ WIFLAGS+=-I$(WITH_MPC)/include
+ WLFLAGS+=-L$(WITH_MPC)/lib
 endif
 
 OCAMLCFLAGS=-w +a
