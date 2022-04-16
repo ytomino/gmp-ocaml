@@ -103,10 +103,10 @@ $(BINLN):
 	ln -s $(BUILDDIR) $@
 
 clean:
+	-$(if $(BINLN),[ -h "$(BINLN)" ] && rm "$(BINLN)")
 	-$(MAKE) -C ../source clean uninstall \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
 		INSTALLDIR=$(abspath $(BUILDDIR))
 	-rm $(BUILDDIR)/*.exe $(BUILDDIR)/*.cm? $(BUILDDIR)/*.o
-	-[ -h "$(BINLN)" ] && rm "$(BINLN)"
 	-rmdir $(BUILDDIR)/stublibs
 	-rmdir $(BUILDDIR)
