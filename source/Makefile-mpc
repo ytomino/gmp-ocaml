@@ -1,7 +1,5 @@
 include Makefile.variables
 
-all:
-
 MLI=mpc.mli
 MLSRC=mpc.ml mpc_pp.ml
 MLINIT=mpc_pp_install.ml
@@ -32,6 +30,8 @@ CCLIB=$(addprefix -cclib ,$(WLFLAGS) -lmpc)
 LDFLAGS=$(WLFLAGS)
 LDLIB=-lmpc -lmpfr -lgmp
 
+include Makefile.rules
+
 $(BUILDDIR)/mpc_stub.o: gmp_stub.h mpfr_stub.h mpc_stub.h mpc_010000.h
 $(BUILDDIR)/mpc.cmi: gmp.mli mpfr.mli
 $(BUILDDIR)/mpc_pp.cmo: $(BUILDDIR)/mpc.cmi mpfr_pp.ml
@@ -39,5 +39,3 @@ $(BUILDDIR)/mpc_pp.cmx: $(BUILDDIR)/mpc.cmx mpfr_pp.ml
 $(BUILDDIR)/mpc_pp_install.cmo $(BUILDDIR)/mpc_pp_install.cmi: \
 	private override OCAMLCFLAGS+=-I $(OCAMLLIBDIR)/compiler-libs
 $(BUILDDIR)/mpc_pp_install.cmo: $(BUILDDIR)/mpc_pp.cmi
-
-include Makefile.rules
