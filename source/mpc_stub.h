@@ -18,9 +18,9 @@ static inline mpc_ptr C_val(value x)
 
 static inline mpc_rnd_t Crnd_val(value x)
 {
-	int re = Rnd_val(Field(x, 0));
-	int im = Rnd_val(Field(x, 1));
-	return MPC_RND(re, im);
+	mpfr_rnd_t real_rnd = Rnd_val(Field(x, 0));
+	mpfr_rnd_t imag_rnd = Rnd_val(Field(x, 1));
+	return MPC_RND(real_rnd, imag_rnd);
 }
 
 /* hash */

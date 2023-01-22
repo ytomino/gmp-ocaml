@@ -224,8 +224,8 @@ CAMLprim value mlmpc_c_int_pow_int(
 	mpc_rnd_t m = Crnd_val(mode);
 	long b = Long_val(base);
 	long e = Long_val(exponent);
-	mpfr_rnd_t real_rounding = MPC_RND_RE(m);
-	mpfr_rnd_t imag_rounding = MPC_RND_IM(m);
+	mpfr_rnd_t real_rnd = MPC_RND_RE(m);
+	mpfr_rnd_t imag_rnd = MPC_RND_IM(m);
 	if(e < 0){
 		long n;
 		mpfr_ptr result_real = mpc_realref(result_value);
@@ -235,26 +235,26 @@ CAMLprim value mlmpc_c_int_pow_int(
 			}else{
 				n = 1;
 			}
-			mpfr_ui_pow_ui(result_real, -b, -e, real_rounding);
+			mpfr_ui_pow_ui(result_real, -b, -e, real_rnd);
 		}else{
 			n = 1;
-			mpfr_ui_pow_ui(result_real, b, -e, real_rounding);
+			mpfr_ui_pow_ui(result_real, b, -e, real_rnd);
 		}
-		mpfr_si_div(result_real, n, result_real, real_rounding);
+		mpfr_si_div(result_real, n, result_real, real_rnd);
 	}else{
 		if(b < 0){
 			if(e % 2 != 0){
 				mpfr_ptr result_real = mpc_realref(result_value);
-				mpfr_ui_pow_ui(result_real, -b, e, real_rounding);
-				mpfr_neg(result_real, result_real, real_rounding);
+				mpfr_ui_pow_ui(result_real, -b, e, real_rnd);
+				mpfr_neg(result_real, result_real, real_rnd);
 			}else{
-				mpfr_ui_pow_ui(mpc_realref(result_value), -b, e, real_rounding);
+				mpfr_ui_pow_ui(mpc_realref(result_value), -b, e, real_rnd);
 			}
 		}else{
-			mpfr_ui_pow_ui(mpc_realref(result_value), b, e, real_rounding);
+			mpfr_ui_pow_ui(mpc_realref(result_value), b, e, real_rnd);
 		}
 	}
-	mpfr_set_ui(mpc_imagref(result_value), 0, imag_rounding);
+	mpfr_set_ui(mpc_imagref(result_value), 0, imag_rnd);
 	CAMLreturn(result);
 }
 
@@ -281,14 +281,14 @@ CAMLprim value mlmpc_c_scale(
 			mpc_div_2ui(result_value, f, -e, m);
 		}
 	}else{
-		mpfr_rnd_t real_rounding = MPC_RND_RE(m);
+		mpfr_rnd_t real_rnd = MPC_RND_RE(m);
 		mpfr_t a;
 		mpfr_init2(a, real_prec);
 		if(e >= 0){
-			mpfr_ui_pow_ui(a, b, e, real_rounding);
+			mpfr_ui_pow_ui(a, b, e, real_rnd);
 			mpc_mul_fr(result_value, f, a, m);
 		}else{
-			mpfr_ui_pow_ui(a, b, -e, real_rounding);
+			mpfr_ui_pow_ui(a, b, -e, real_rnd);
 			mpc_div_fr(result_value, f, a, m);
 		}
 		mpfr_clear(a);
@@ -312,11 +312,11 @@ CAMLprim value mlmpc_c_root(value prec, value mode, value nth, value x)
 		mpc_sqrt(result_value, x_value, m);
 	}else{
 		/* x^(1/nth) */
-		mpfr_rnd_t real_rounding = MPC_RND_RE(m);
+		mpfr_rnd_t real_rnd = MPC_RND_RE(m);
 		mpfr_t a; /* 1/n */
 		mpfr_init2(a, real_prec);
-		mpfr_set_ui(a, 1, real_rounding);
-		mpfr_div_ui(a, a, n, real_rounding);
+		mpfr_set_ui(a, 1, real_rnd);
+		mpfr_div_ui(a, a, n, real_rnd);
 		mpc_pow_fr(result_value, x_value, a, m);
 		mpfr_clear(a);
 	}
@@ -360,11 +360,11 @@ CAMLprim value mlmpc_c_based_log(value prec, value mode, value base, value x)
 		mpc_log10(result_value, x_value, m);
 	}else{
 		mpc_log(result_value, x_value, m);
-		mpfr_rnd_t real_rounding = MPC_RND_RE(m);
+		mpfr_rnd_t real_rnd = MPC_RND_RE(m);
 		mpfr_t base_value;
 		mpfr_init2(base_value, real_prec);
-		mpfr_set_ui(base_value, b, real_rounding);
-		mpfr_log(base_value, base_value, real_rounding);
+		mpfr_set_ui(base_value, b, real_rnd);
+		mpfr_log(base_value, base_value, real_rnd);
 		mpc_div_fr(result_value, result_value, base_value, m);
 		mpfr_clear(base_value);
 	}
@@ -430,15 +430,15 @@ CAMLprim value mlmpc_c_polar(value prec, value mode, value norm, value arg)
 		Long_val(Field(prec, 0)),
 		Long_val(Field(prec, 1)));
 	mpc_rnd_t m = Crnd_val(mode);
-	mpfr_rnd_t m_re = MPC_RND_RE(m);
-	mpfr_rnd_t m_im = MPC_RND_IM(m);
+	mpfr_rnd_t real_rnd = MPC_RND_RE(m);
+	mpfr_rnd_t imag_rnd = MPC_RND_IM(m);
 	mpc_ptr r = C_val(result);
 	mpfr_ptr a = FR_val(arg);
-	if(m_re == m_im){
-		mpfr_sin_cos(mpc_imagref(r), mpc_realref(r), a, m_re);
+	if(real_rnd == imag_rnd){
+		mpfr_sin_cos(mpc_imagref(r), mpc_realref(r), a, real_rnd);
 	}else{
-		mpfr_cos(mpc_realref(r), a, m_re);
-		mpfr_sin(mpc_imagref(r), a, m_im);
+		mpfr_cos(mpc_realref(r), a, real_rnd);
+		mpfr_sin(mpc_imagref(r), a, imag_rnd);
 	}
 	mpc_mul_fr(r, r, FR_val(norm), m);
 	CAMLreturn(result);
