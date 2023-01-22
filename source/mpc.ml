@@ -5,7 +5,7 @@ external setup: unit -> unit = "mlmpc_setup";;
 setup ();;
 
 type c;;
-type rounding_mode_elem = [`N | `Z | `U | `D];;
+type rounding_mode_elem = [`N | `Z | `U | `D | `A];;
 type rounding_mode = rounding_mode_elem * rounding_mode_elem;;
 
 external c_of_based_string: prec:int * int -> mode:rounding_mode -> base:int ->
@@ -177,10 +177,8 @@ module C = struct
 	let default_prec () =
 		let fr_prec = FR.default_prec () in
 		fr_prec, fr_prec;;
-	let default_rounding_mode () =
-		match FR.default_rounding_mode () with
-		| #rounding_mode_elem as fr_rnd -> fr_rnd, fr_rnd
-		| `A | `F | `NA -> nn;;
+	external default_rounding_mode: unit -> rounding_mode =
+		"mlmpc_c_get_default_rounding_mode";;
 	let default () =
 		let module Default: Param = struct
 			let prec = default_prec ();;

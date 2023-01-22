@@ -639,6 +639,19 @@ CAMLprim value mlmpc_c_make_fr(value prec, value mode, value r, value i)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlmpc_c_get_default_rounding_mode(value unit)
+{
+	CAMLparam1(unit);
+	CAMLlocal2(result, real_m);
+	mpfr_rnd_t real_rnd = mpfr_get_default_rounding_mode();
+	c_check_fr_rnd(real_rnd);
+	real_m = Val_rnd(real_rnd);
+	result = caml_alloc_tuple(2);
+	Store_field(result, 0, real_m);
+	Store_field(result, 1, real_m);
+	CAMLreturn(result);
+}
+
 /* setup */
 
 CAMLprim value mlmpc_setup(value unit)

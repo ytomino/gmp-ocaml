@@ -2,7 +2,7 @@ open Gmp
 open Mpfr
 
 type c
-type rounding_mode = [`N | `Z | `U | `D] * [`N | `Z | `U | `D]
+type rounding_mode = [`N | `Z | `U | `D | `A] * [`N | `Z | `U | `D | `A]
 
 external c_of_based_string: prec:int * int -> mode:rounding_mode -> base:int ->
 	string -> c =
@@ -169,6 +169,7 @@ module C: sig
 		val make_fr: fr -> fr -> t
 	end
 	val default_prec: unit -> int * int
-	val default_rounding_mode: unit -> rounding_mode
+	external default_rounding_mode: unit -> rounding_mode =
+		"mlmpc_c_get_default_rounding_mode"
 	val default: unit -> (module Param)
 end
