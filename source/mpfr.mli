@@ -1,5 +1,11 @@
 open Gmp
 
+external mpfr_compiled_version: unit -> int * int * int =
+	"mlmpfr_compiled_version"
+external mpfr_compiled_version_string: unit -> string =
+	"mlmpfr_compiled_version_string"
+external mpfr_get_version_string: unit -> string = "mlmpfr_get_version_string"
+
 type fr
 type rounding_mode = [`N | `Z | `U | `D | `A | `F | `NA]
 

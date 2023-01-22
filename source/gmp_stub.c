@@ -25,6 +25,43 @@
 #include "gmp_050100.h"
 #endif
 
+/* version functions */
+
+CAMLprim value mlgmp_compiled_version(value unit)
+{
+	CAMLparam1(unit);
+	CAMLlocal1(result);
+	result = caml_alloc_tuple(3);
+	Store_field(result, 0, Val_int(__GNU_MP_VERSION));
+	Store_field(result, 1, Val_int(__GNU_MP_VERSION_MINOR));
+	Store_field(result, 2, Val_int(__GNU_MP_VERSION_PATCHLEVEL));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_compiled_version_string(value unit)
+{
+	CAMLparam1(unit);
+	CAMLlocal1(result);
+#define S_(s) #s
+#define S(s) S_(s)
+#define MP_VERSION_STRING \
+	S(__GNU_MP_VERSION) "." S(__GNU_MP_VERSION_MINOR) "." \
+	S(__GNU_MP_VERSION_PATCHLEVEL)
+	result = caml_copy_string(MP_VERSION_STRING);
+#undef MP_VERSION_STRING
+#undef S
+#undef S_
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_get_version_string(value unit)
+{
+	CAMLparam1(unit);
+	CAMLlocal1(result);
+	result = caml_copy_string(gmp_version);
+	CAMLreturn(result);
+}
+
 /**** Z ****/
 
 /* custom data */

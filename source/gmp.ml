@@ -1,6 +1,12 @@
 external setup: unit -> unit = "mlgmp_setup";;
 setup ();;
 
+external gmp_compiled_version: unit -> int * int * int =
+	"mlgmp_compiled_version";;
+external gmp_compiled_version_string: unit -> string =
+	"mlgmp_compiled_version_string";;
+external gmp_get_version_string: unit -> string = "mlgmp_get_version_string";;
+
 type z;;
 type byte_order = [`B | `L | `N];;
 

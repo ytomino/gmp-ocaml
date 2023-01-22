@@ -25,6 +25,35 @@
 #include "mpfr_040000.h"
 #endif
 
+/* version functions */
+
+CAMLprim value mlmpfr_compiled_version(value unit)
+{
+	CAMLparam1(unit);
+	CAMLlocal1(result);
+	result = caml_alloc_tuple(3);
+	Store_field(result, 0, Val_int(MPFR_VERSION_MAJOR));
+	Store_field(result, 1, Val_int(MPFR_VERSION_MINOR));
+	Store_field(result, 2, Val_int(MPFR_VERSION_PATCHLEVEL));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlmpfr_compiled_version_string(value unit)
+{
+	CAMLparam1(unit);
+	CAMLlocal1(result);
+	result = caml_copy_string(MPFR_VERSION_STRING);
+	CAMLreturn(result);
+}
+
+CAMLprim value mlmpfr_get_version_string(value unit)
+{
+	CAMLparam1(unit);
+	CAMLlocal1(result);
+	result = caml_copy_string(mpfr_get_version());
+	CAMLreturn(result);
+}
+
 /**** FR ****/
 
 /* custom data */

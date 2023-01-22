@@ -4,6 +4,12 @@ open Mpfr;;
 external setup: unit -> unit = "mlmpc_setup";;
 setup ();;
 
+external mpc_compiled_version: unit -> int * int * int =
+	"mlmpc_compiled_version";;
+external mpc_compiled_version_string: unit -> string =
+	"mlmpc_compiled_version_string";;
+external mpc_get_version_string: unit -> string = "mlmpc_get_version_string";;
+
 type c;;
 type rounding_mode_elem = [`N | `Z | `U | `D | `A];;
 type rounding_mode = rounding_mode_elem * rounding_mode_elem;;

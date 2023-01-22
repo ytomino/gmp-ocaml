@@ -1,3 +1,9 @@
+external gmp_compiled_version: unit -> int * int * int =
+	"mlgmp_compiled_version"
+external gmp_compiled_version_string: unit -> string =
+	"mlgmp_compiled_version_string"
+external gmp_get_version_string: unit -> string = "mlgmp_get_version_string"
+
 type z
 type byte_order = [`B | `L | `N] (* Big, Little and Native endianness *)
 
