@@ -79,7 +79,7 @@ interactive: $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
 	$(RLWRAP) ocaml -I $(BUILDDIR) $(OCAMLCFLAGS) gmp.cma mpfr.cma mpc.cma
 
 $(BUILDDIR)/gmp.cma $(BUILDDIR)/gmp.cmxa&: $(wildcard ../source/gmp*)
-	$(MAKE) -C ../source -f Makefile-gmp install \
+	$(MAKE) -C ../source -f Makefile.gmp install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
 		INSTALLDIR=$(abspath $(BUILDDIR))
 
@@ -87,7 +87,7 @@ $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpfr.cmxa&: \
 		$(wildcard ../source/mpfr*) \
 		$(if $(OCAMLC),$(BUILDDIR)/gmp.cma) \
 		$(if $(OCAMLOPT),$(BUILDDIR)/gmp.cmxa)
-	$(MAKE) -C ../source -f Makefile-mpfr install \
+	$(MAKE) -C ../source -f Makefile.mpfr install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
 		INSTALLDIR=$(abspath $(BUILDDIR))
 
@@ -95,7 +95,7 @@ $(BUILDDIR)/mpc.cma $(BUILDDIR)/mpc.cmxa&: \
 		$(wildcard ../source/mpc*) \
 		$(if $(OCAMLC),$(BUILDDIR)/mpfr.cma) \
 		$(if $(OCAMLOPT),$(BUILDDIR)/mpfr.cmxa)
-	$(MAKE) -C ../source -f Makefile-mpc install \
+	$(MAKE) -C ../source -f Makefile.mpc install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
 		INSTALLDIR=$(abspath $(BUILDDIR))
 
