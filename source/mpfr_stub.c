@@ -106,7 +106,7 @@ CAMLexport value mlmpfr_alloc_fr_init2(mpfr_prec_t prec)
 {
 	CAMLparam0();
 	CAMLlocal1(result);
-	result = alloc_custom(&mlmpfr_fr_ops, sizeof(mpfr_t), 0, 1);
+	result = caml_alloc_custom(&mlmpfr_fr_ops, sizeof(mpfr_t), 0, 1);
 	mpfr_init2(FR_val(result), prec);
 	CAMLreturn(result);
 }
@@ -588,7 +588,7 @@ value mlmpfr_fr_get_str(value mode, value base, value digits, value x)
 		Long_val(digits),
 		FR_val(x),
 		Rnd_val(mode));
-	result = alloc_tuple(2);
+	result = caml_alloc_tuple(2);
 	Store_field(result, 0, caml_copy_string(image));
 	Store_field(result, 1, Val_long(exponent));
 	mpfr_free_str(image);
@@ -924,6 +924,6 @@ CAMLprim value mlmpfr_fr_get_default_rounding_mode(value unit)
 CAMLprim value mlmpfr_setup(value unit)
 {
 	CAMLparam1(unit);
-	register_custom_operations(&mlmpfr_fr_ops);
+	caml_register_custom_operations(&mlmpfr_fr_ops);
 	CAMLreturn(Val_unit);
 }

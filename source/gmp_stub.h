@@ -85,16 +85,16 @@ static inline void z_serialize(mpz_ptr x)
 {
 	char *image = mpz_get_str (NULL, 16, x);
 	size_t length = strlen(image);
-	serialize_int_4(length);
-	serialize_block_1(image, length);
+	caml_serialize_int_4(length);
+	caml_serialize_block_1(image, length);
 	free(image);
 }
 
 static inline void z_deserialize(mpz_ptr x)
 {
-	size_t length = deserialize_uint_4();
+	size_t length = caml_deserialize_uint_4();
 	char image[length + 1];
-	deserialize_block_1(image, length);
+	caml_deserialize_block_1(image, length);
 	image[length] = '\0';
 	int err = mpz_init_set_str(x, image, 16);
 	if(err < 0) caml_failwith(__FUNCTION__);
@@ -119,29 +119,29 @@ static inline void f_serialize(mpf_ptr x)
 	mp_exp_t exponent;
 	char *image = mpf_get_str (NULL, &exponent, 16, 0, x);
 	size_t i_length = strlen(image);
-	serialize_int_4(prec);
+	caml_serialize_int_4(prec);
 	char exponent_buf[sizeof(mp_exp_t) * 2 + 1];
 	size_t e_length = gmp_sprintf(exponent_buf, "%lx", (long)exponent);
-	serialize_int_4(i_length + e_length + 3);
+	caml_serialize_int_4(i_length + e_length + 3);
 	char *p = image;
 	if(*p == '-'){
-		serialize_block_1(p, 1);
+		caml_serialize_block_1(p, 1);
 		++ p;
 		-- i_length;
 	}
-	serialize_block_1("0.", 2);
-	serialize_block_1(p, i_length);
-	serialize_block_1("@", 1);
-	serialize_block_1(exponent_buf, e_length);
+	caml_serialize_block_1("0.", 2);
+	caml_serialize_block_1(p, i_length);
+	caml_serialize_block_1("@", 1);
+	caml_serialize_block_1(exponent_buf, e_length);
 	free(image);
 }
 
 static inline void f_deserialize(mpf_ptr x)
 {
-	mp_bitcnt_t prec = deserialize_uint_4();
-	size_t length = deserialize_uint_4();
+	mp_bitcnt_t prec = caml_deserialize_uint_4();
+	size_t length = caml_deserialize_uint_4();
 	char image[length + 1];
-	deserialize_block_1(image, length);
+	caml_deserialize_block_1(image, length);
 	image[length] = '\0';
 	mpf_init2(x, prec);
 	int err = mpf_set_str(x, image, 16);

@@ -98,7 +98,7 @@ CAMLexport value mlmpc_alloc_c_init3(mpfr_prec_t prec_r, mpfr_prec_t prec_i)
 {
 	CAMLparam0();
 	CAMLlocal1(result);
-	result = alloc_custom(&mlmpc_c_ops, sizeof(mpc_t), 0, 1);
+	result = caml_alloc_custom(&mlmpc_c_ops, sizeof(mpc_t), 0, 1);
 	mpc_init3(C_val(result), prec_r, prec_i);
 	CAMLreturn(result);
 }
@@ -490,7 +490,7 @@ CAMLprim value mlmpc_c_real(value x)
 	CAMLlocal1(result);
 	mpfr_ptr real = mpc_realref(C_val(x));
 	result = mlmpfr_alloc_fr_init2(mpfr_get_prec(real));
-	real = mpc_realref(C_val(x)); /* moved if gc was invoked by alloc_custom */
+	real = mpc_realref(C_val(x)); /* moved if gc was invoked by caml_alloc_... */
 	mpfr_set(FR_val(result), real, GMP_RNDN);
 	CAMLreturn(result);
 }
@@ -501,7 +501,7 @@ CAMLprim value mlmpc_c_imag(value x)
 	CAMLlocal1(result);
 	mpfr_ptr imag = mpc_imagref(C_val(x));
 	result = mlmpfr_alloc_fr_init2(mpfr_get_prec(imag));
-	imag = mpc_imagref(C_val(x)); /* moved if gc was invoked by alloc_custom */
+	imag = mpc_imagref(C_val(x)); /* moved if gc was invoked by caml_alloc_... */
 	mpfr_set(FR_val(result), imag, GMP_RNDN);
 	CAMLreturn(result);
 }
@@ -686,6 +686,6 @@ CAMLprim value mlmpc_c_get_default_rounding_mode(value unit)
 CAMLprim value mlmpc_setup(value unit)
 {
 	CAMLparam1(unit);
-	register_custom_operations(&mlmpc_c_ops);
+	caml_register_custom_operations(&mlmpc_c_ops);
 	CAMLreturn(Val_unit);
 }

@@ -66,34 +66,34 @@ static inline void fr_serialize(mpfr_ptr x)
 	mp_exp_t exponent;
 	char *image = mpfr_get_str (NULL, &exponent, 16, 0, x, GMP_RNDN);
 	size_t i_length = strlen(image);
-	serialize_int_4(prec);
+	caml_serialize_int_4(prec);
 	if(mpfr_number_p(x)){
 		char exponent_buf[sizeof(mp_exp_t) * 2 + 1];
 		size_t e_length = gmp_sprintf(exponent_buf, "%lx", (long)exponent);
-		serialize_int_4(i_length + e_length + 3);
+		caml_serialize_int_4(i_length + e_length + 3);
 		char *p = image;
 		if(*p == '-'){
-			serialize_block_1(p, 1);
+			caml_serialize_block_1(p, 1);
 			++ p;
 			-- i_length;
 		}
-		serialize_block_1("0.", 2);
-		serialize_block_1(p, i_length);
-		serialize_block_1("@", 1);
-		serialize_block_1(exponent_buf, e_length);
+		caml_serialize_block_1("0.", 2);
+		caml_serialize_block_1(p, i_length);
+		caml_serialize_block_1("@", 1);
+		caml_serialize_block_1(exponent_buf, e_length);
 	}else{
-		serialize_int_4(i_length);
-		serialize_block_1(image, i_length);
+		caml_serialize_int_4(i_length);
+		caml_serialize_block_1(image, i_length);
 	}
 	free(image);
 }
 
 static inline void fr_deserialize(mpfr_ptr x)
 {
-	mp_prec_t prec = deserialize_uint_4();
-	size_t length = deserialize_uint_4();
+	mp_prec_t prec = caml_deserialize_uint_4();
+	size_t length = caml_deserialize_uint_4();
 	char image[length + 1];
-	deserialize_block_1(image, length);
+	caml_deserialize_block_1(image, length);
 	image[length] = '\0';
 	mpfr_init2(x, prec);
 	int err = mpfr_set_str(x, image, 16, GMP_RNDN);

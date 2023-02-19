@@ -114,7 +114,7 @@ CAMLexport value mlgmp_alloc_z_init(void)
 {
 	CAMLparam0();
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
+	result = caml_alloc_custom(&mlgmp_z_ops, sizeof(mpz_t), 0, 1);
 	mpz_init(Z_val(result));
 	CAMLreturn(result);
 }
@@ -547,7 +547,7 @@ CAMLprim value mlgmp_z_remove(value x, value f)
 	CAMLlocal2(result, rop);
 	rop = mlgmp_alloc_z_init();
 	mp_bitcnt_t removed = mpz_remove(Z_val(rop), Z_val(x), Z_val(f));
-	result = alloc_tuple(2);
+	result = caml_alloc_tuple(2);
 	Store_field(result, 0, rop);
 	Store_field(result, 1, Val_long(removed));
 	CAMLreturn(result);
@@ -1068,7 +1068,7 @@ CAMLexport value mlgmp_alloc_q_init(void)
 {
 	CAMLparam0();
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
+	result = caml_alloc_custom(&mlgmp_q_ops, sizeof(mpq_t), 0, 1);
 	mpq_init(Q_val(result));
 	CAMLreturn(result);
 }
@@ -1492,7 +1492,7 @@ CAMLexport value mlgmp_alloc_f_init2(mp_bitcnt_t prec)
 {
 	CAMLparam0();
 	CAMLlocal1(result);
-	result = alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
+	result = caml_alloc_custom(&mlgmp_f_ops, sizeof(mpf_t), 0, 1);
 	mpf_init2(F_val(result), prec);
 	CAMLreturn(result);
 }
@@ -1755,7 +1755,7 @@ CAMLprim value mlgmp_f_frexp(value prec, value x)
 	}else{
 		result_fraction = mlgmp_alloc_f_init2(Long_val(prec));
 		mpf_ptr rf_value = F_val(result_fraction);
-		x_value = F_val(x); /* if gc was invoked by alloc_custom */
+		x_value = F_val(x); /* moved if gc was invoked by caml_alloc_... */
 		if(exponent > 0){
 			mpf_div_2exp(rf_value, x_value, exponent);
 		}else{
@@ -1903,7 +1903,7 @@ value mlgmp_f_get_str(value base, value digits, value x)
 		Int_val(base),
 		Long_val(digits),
 		F_val(x));
-	result = alloc_tuple(2);
+	result = caml_alloc_tuple(2);
 	Store_field(result, 0, caml_copy_string(image));
 	Store_field(result, 1, Val_long(exponent));
 	free(image);
@@ -1997,7 +1997,7 @@ CAMLprim value mlgmp_random_create(value unit)
 {
 	CAMLparam1(unit);
 	CAMLlocal1(result);
-	result = alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
+	result = caml_alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
 	gmp_randinit_default(Random_val(result));
 	CAMLreturn(result);
 }
@@ -2006,7 +2006,7 @@ CAMLprim value mlgmp_random_create_lc_2exp(value a, value c, value m2exp)
 {
 	CAMLparam3(a, c, m2exp);
 	CAMLlocal1(result);
-	result = alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
+	result = caml_alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
 	gmp_randinit_lc_2exp(
 		Random_val(result),
 		Z_val(a),
@@ -2019,7 +2019,7 @@ CAMLprim value mlgmp_random_create_lc_2exp_size(value size)
 {
 	CAMLparam1(size);
 	CAMLlocal1(result);
-	result = alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
+	result = caml_alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
 	gmp_randinit_lc_2exp_size(Random_val(result), Long_val(size));
 	CAMLreturn(result);
 }
@@ -2028,7 +2028,7 @@ CAMLprim value mlgmp_random_create_mt(value unit)
 {
 	CAMLparam1(unit);
 	CAMLlocal1(result);
-	result = alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
+	result = caml_alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
 	gmp_randinit_mt(Random_val(result));
 	CAMLreturn(result);
 }
@@ -2051,7 +2051,7 @@ CAMLprim value mlgmp_random_copy(value source)
 {
 	CAMLparam1(source);
 	CAMLlocal1(result);
-	result = alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
+	result = caml_alloc_custom(&random_ops, sizeof(gmp_randstate_t), 0, 1);
 	gmp_randinit_set(Random_val(result), Random_val(source));
 	CAMLreturn(result);
 }
@@ -2167,8 +2167,8 @@ CAMLprim value mlgmp_random_f(value state, value prec, value n)
 CAMLprim value mlgmp_setup(value unit)
 {
 	CAMLparam1(unit);
-	register_custom_operations(&mlgmp_z_ops);
-	register_custom_operations(&mlgmp_q_ops);
-	register_custom_operations(&mlgmp_f_ops);
+	caml_register_custom_operations(&mlgmp_z_ops);
+	caml_register_custom_operations(&mlgmp_q_ops);
+	caml_register_custom_operations(&mlgmp_f_ops);
 	CAMLreturn(Val_unit);
 }
