@@ -535,7 +535,7 @@ CAMLprim value mlgmp_z_invert(value x, value y)
 	i = mlgmp_alloc_z_init();
 	mpz_ptr i_value = Z_val(i);
 	if(mpz_invert(i_value, Z_val(x), Z_val(y))){
-		result = caml_alloc(1, Tag_some);
+		result = caml_alloc_small(1, Tag_some);
 		Store_field(result, 0, i);
 	}else{
 		result = Val_none;
