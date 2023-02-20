@@ -19,6 +19,15 @@
 	/* defined in caml/config.h */
 #endif
 
+/* Tag_some/Val_none are added since OCaml 4.12 */
+
+#if !defined(Tag_some)
+#define Tag_some 0
+#endif
+#if !defined(Val_none)
+#define Val_none Val_int(0)
+#endif
+
 /* for version < 5.1.0 */
 
 #if __GNU_MP_RELEASE < 50100
@@ -526,10 +535,10 @@ CAMLprim value mlgmp_z_invert(value x, value y)
 	i = mlgmp_alloc_z_init();
 	mpz_ptr i_value = Z_val(i);
 	if(mpz_invert(i_value, Z_val(x), Z_val(y))){
-		result = caml_alloc(1, Int_val(Val_true)); /* Some i */
+		result = caml_alloc(1, Tag_some);
 		Store_field(result, 0, i);
 	}else{
-		result = Val_false; /* None */
+		result = Val_none;
 	}
 	CAMLreturn(result);
 }
