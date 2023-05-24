@@ -1,15 +1,11 @@
+#include "mpc_stub.h"
+
 #include <caml/alloc.h>
 #include <caml/custom.h>
-#include <caml/fail.h>
-#include <caml/intext.h>
 #include <caml/memory.h>
 #include <caml/mlvalues.h>
 #include <limits.h>
-#include <string.h>
-#include <mpc.h>
 #include "gmp_stub.h"
-#include "mpfr_stub.h"
-#include "mpc_stub.h"
 
 /* for version < 1.0.0 */
 

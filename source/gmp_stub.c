@@ -1,8 +1,8 @@
+#include "gmp_stub.h"
+
 #include <caml/alloc.h>
 #include <caml/config.h>
 #include <caml/custom.h>
-#include <caml/fail.h>
-#include <caml/intext.h>
 #include <caml/memory.h>
 #include <caml/mlvalues.h>
 #include <sys/types.h>
@@ -10,9 +10,6 @@
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <string.h>
-#include <gmp.h>
-#include "gmp_stub.h"
 
 #ifndef LONG_BIT
 #define LONG_BIT (SIZEOF_LONG * 8)

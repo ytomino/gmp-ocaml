@@ -1,3 +1,6 @@
+#include <mpc.h>
+#include "mpfr_stub.h"
+
 /* for version < 1.0.0 */
 
 #if !defined(MPC_RND)

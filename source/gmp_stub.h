@@ -1,3 +1,8 @@
+#include <caml/fail.h>
+#include <caml/intext.h>
+#include <string.h>
+#include <gmp.h>
+
 /* word size */
 
 #define WSIZE_32_Z 12
