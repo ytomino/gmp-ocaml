@@ -231,15 +231,6 @@ CAMLprim value mlgmp_z_div(value left, value right)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlgmp_z_rem(value left, value right)
-{
-	CAMLparam2(left, right);
-	CAMLlocal1(result);
-	result = mlgmp_alloc_z_init();
-	mpz_tdiv_r(Z_val(result), Z_val(left), Z_val(right));
-	CAMLreturn(result);
-}
-
 CAMLprim value mlgmp_z_pow_int(value base, value exponent)
 {
 	CAMLparam2(base, exponent);
@@ -320,6 +311,33 @@ CAMLprim value mlgmp_z_sqrt(value x)
 	CAMLlocal1(result);
 	result = mlgmp_alloc_z_init();
 	mpz_sqrt(Z_val(result), Z_val(x));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_rem(value left, value right)
+{
+	CAMLparam2(left, right);
+	CAMLlocal1(result);
+	result = mlgmp_alloc_z_init();
+	mpz_tdiv_r(Z_val(result), Z_val(left), Z_val(right));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_modulo(value left, value right)
+{
+	CAMLparam2(left, right);
+	CAMLlocal1(result);
+	result = mlgmp_alloc_z_init();
+	mpz_mod(Z_val(result), Z_val(left), Z_val(right));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_pow_mod(value base, value exponent, value mod)
+{
+	CAMLparam3(base, exponent, mod);
+	CAMLlocal1(result);
+	result = mlgmp_alloc_z_init();
+	mpz_powm(Z_val(result), Z_val(base), Z_val(exponent), Z_val(mod));
 	CAMLreturn(result);
 }
 
@@ -423,24 +441,6 @@ CAMLprim value mlgmp_z_fdiv_int(value left, value right)
 	result = caml_alloc_tuple(2);
 	Store_field(result, 0, q);
 	Store_field(result, 1, Val_long(r));
-	CAMLreturn(result);
-}
-
-CAMLprim value mlgmp_z_modulo(value left, value right)
-{
-	CAMLparam2(left, right);
-	CAMLlocal1(result);
-	result = mlgmp_alloc_z_init();
-	mpz_mod(Z_val(result), Z_val(left), Z_val(right));
-	CAMLreturn(result);
-}
-
-CAMLprim value mlgmp_z_pow_mod(value base, value exponent, value mod)
-{
-	CAMLparam3(base, exponent, mod);
-	CAMLlocal1(result);
-	result = mlgmp_alloc_z_init();
-	mpz_powm(Z_val(result), Z_val(base), Z_val(exponent), Z_val(mod));
 	CAMLreturn(result);
 }
 
