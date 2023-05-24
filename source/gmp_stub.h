@@ -3,6 +3,13 @@
 #include <string.h>
 #include <gmp.h>
 
+/* limits.h */
+
+#ifndef LONG_BIT
+#define LONG_BIT (SIZEOF_LONG * 8)
+	/* defined in caml/config.h */
+#endif
+
 /* word size */
 
 #define WSIZE_32_Z 12
