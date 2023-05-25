@@ -217,6 +217,25 @@ CAMLprim value mlmpfr_fr_div(value prec, value mode, value left, value right)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlmpfr_fr_fma(
+	value val_prec,
+	value val_mode,
+	value val_x,
+	value val_y,
+	value val_z)
+{
+	CAMLparam5(val_prec, val_mode, val_x, val_y, val_z);
+	CAMLlocal1(val_result);
+	val_result = mlmpfr_alloc_fr_init2(Long_val(val_prec));
+	mpfr_fma(
+		FR_val(val_result),
+		FR_val(val_x),
+		FR_val(val_y),
+		FR_val(val_z),
+		Rnd_val(val_mode));
+	CAMLreturn(val_result);
+}
+
 CAMLprim value mlmpfr_fr_pow_int(
 	value prec,
 	value mode,

@@ -55,6 +55,8 @@ module FR: sig
 	external mul_int: prec:int -> mode:rounding_mode -> t -> int -> t =
 		"mlmpfr_fr_mul_int"
 	external div: prec:int -> mode:rounding_mode -> t -> t -> t = "mlmpfr_fr_div"
+	external fma: prec:int -> mode:rounding_mode -> t -> t -> t -> t =
+		"mlmpfr_fr_fma"
 	external pow_int: prec:int -> mode:rounding_mode -> base:t -> exponent:int ->
 		t =
 		"mlmpfr_fr_pow_int"
@@ -125,6 +127,7 @@ module FR: sig
 		val mul: t -> t -> t
 		val mul_int: t -> int -> t
 		val div: t -> t -> t
+		val fma: t -> t -> t -> t
 		val pow_int: base:t -> exponent:int -> t
 		val int_pow_int: base:int -> exponent:int -> t
 		val scale: t -> base:int -> exponent:int -> t

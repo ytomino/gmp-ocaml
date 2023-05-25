@@ -14,6 +14,9 @@ assert (Z.add_int (Z.of_int 4) (-1) = Z.of_int 3);;
 assert (Z.sub_int (Z.of_int 4) (+1) = Z.of_int 3);;
 assert (Z.sub_int (Z.of_int 4) (-1) = Z.of_int 5);;
 
+(* mpz_fma is missing *)
+assert (Z.fma (Z.of_int 2) (Z.of_int 3) (Z.of_int 5) = Z.of_int 11);;
+
 (* mpz_pow_si is missing *)
 assert (Z.pow_int ~base:(Z.of_int 3) ~exponent:3 = Z.of_int 27);;
 assert (Z.pow_int ~base:(Z.of_int 3) ~exponent:(-3) = Z.zero);;
@@ -75,6 +78,9 @@ assert (Q.sub_int (Q.of_int 4) (-1) = Q.of_int 5);;
 assert (Q.mul_int (Q.of_int 4) (+2) = Q.of_int 8);;
 assert (Q.mul_int (Q.of_int 4) (-2) = Q.of_int (-8));;
 
+(* mpq_fma is missing *)
+assert (Q.fma (Q.of_int 2) (Q.of_int 3) (Q.of_int 5) = Q.of_int 11);;
+
 (* mpq_pow_si is missing *)
 assert (Q.pow_int ~base:(Q.make_int 2 3) ~exponent:3 = Q.make_int 8 27);;
 assert (Q.pow_int ~base:(Q.make_int 2 3) ~exponent:0 = Q.one);;
@@ -113,6 +119,9 @@ assert (F.sub_int (F.of_int 4) (-1) = F.of_int 5);;
 (* mpf_mul_si is missing *)
 assert (F.mul_int (F.of_int 4) (+2) = F.of_int 8);;
 assert (F.mul_int (F.of_int 4) (-2) = F.of_int (-8));;
+
+(* mpf_fma is missing *)
+assert (F.fma (F.of_int 2) (F.of_int 3) (F.of_int 5) = F.of_int 11);;
 
 (* mpf_pow_si is missing *)
 assert (F.pow_int ~base:(F.of_int 2) ~exponent:3 = F.of_int 8);;

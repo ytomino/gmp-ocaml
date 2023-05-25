@@ -61,6 +61,8 @@ module FR = struct
 	external mul_int: prec:int -> mode:rounding_mode -> t -> int -> t =
 		"mlmpfr_fr_mul_int";;
 	external div: prec:int -> mode:rounding_mode -> t -> t -> t = "mlmpfr_fr_div";;
+	external fma: prec:int -> mode:rounding_mode -> t -> t -> t -> t =
+		"mlmpfr_fr_fma";;
 	external pow_int: prec:int -> mode:rounding_mode -> base:t -> exponent:int ->
 		t =
 		"mlmpfr_fr_pow_int";;
@@ -128,6 +130,7 @@ module FR = struct
 		let mul = mul ~prec ~mode;;
 		let mul_int = mul_int ~prec ~mode;;
 		let div = div ~prec ~mode;;
+		let fma = fma ~prec ~mode;;
 		let pow_int = pow_int ~prec ~mode;;
 		let int_pow_int = int_pow_int ~prec ~mode;;
 		let scale = scale ~prec ~mode;;

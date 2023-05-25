@@ -62,6 +62,8 @@ module C = struct
 		"mlmpc_c_mul_int";;
 	external div: prec:int * int -> mode:rounding_mode -> t -> t -> t =
 		"mlmpc_c_div";;
+	external fma: prec:int * int -> mode:rounding_mode -> t -> t -> t -> t =
+		"mlmpc_c_fma";;
 	external pow_int: prec:int * int -> mode:rounding_mode -> base:t ->
 		exponent:int -> t =
 		"mlmpc_c_pow_int";;
@@ -147,6 +149,7 @@ module C = struct
 		let mul = mul ~prec ~mode;;
 		let mul_int = mul_int ~prec ~mode;;
 		let div = div ~prec ~mode;;
+		let fma = fma ~prec ~mode;;
 		let pow_int = pow_int ~prec ~mode;;
 		let int_pow_int = int_pow_int ~prec ~mode;;
 		let scale = scale ~prec ~mode;;

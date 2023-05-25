@@ -231,6 +231,17 @@ CAMLprim value mlgmp_z_div(value left, value right)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlgmp_z_fma(value val_x, value val_y, value val_z)
+{
+	CAMLparam3(val_x, val_y, val_z);
+	CAMLlocal1(val_result);
+	val_result = mlgmp_alloc_z_init();
+	mpz_ptr result = Z_val(val_result);
+	mpz_set(result, Z_val(val_z));
+	mpz_addmul(result, Z_val(val_x), Z_val(val_y));
+	CAMLreturn(val_result);
+}
+
 CAMLprim value mlgmp_z_pow_int(value base, value exponent)
 {
 	CAMLparam2(base, exponent);
@@ -1180,6 +1191,17 @@ CAMLprim value mlgmp_q_div(value left, value right)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlgmp_q_fma(value val_x, value val_y, value val_z)
+{
+	CAMLparam3(val_x, val_y, val_z);
+	CAMLlocal1(val_result);
+	val_result = mlgmp_alloc_q_init();
+	mpq_ptr result = Q_val(val_result);
+	mpq_mul(result, Q_val(val_x), Q_val(val_y));
+	mpq_add(result, result, Q_val(val_z));
+	CAMLreturn(val_result);
+}
+
 CAMLprim value mlgmp_q_pow_int(value base, value exponent)
 {
 	CAMLparam2(base, exponent);
@@ -1615,6 +1637,21 @@ CAMLprim value mlgmp_f_div(value prec, value left, value right)
 	result = mlgmp_alloc_f_init2(Long_val(prec));
 	mpf_div(F_val(result), F_val(left), F_val(right));
 	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_f_fma(
+	value val_prec,
+	value val_x,
+	value val_y,
+	value val_z)
+{
+	CAMLparam4(val_prec, val_x, val_y, val_z);
+	CAMLlocal1(val_result);
+	val_result = mlgmp_alloc_f_init2(Long_val(val_prec));
+	mpf_ptr result = F_val(val_result);
+	mpf_mul(result, F_val(val_x), F_val(val_y));
+	mpf_add(result, result, F_val(val_z));
+	CAMLreturn(val_result);
 }
 
 CAMLprim value mlgmp_f_pow_int(value prec, value base, value exponent)

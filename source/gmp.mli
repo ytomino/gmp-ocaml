@@ -38,6 +38,7 @@ module Z: sig
 	external mul: t -> t -> t = "mlgmp_z_mul"
 	external mul_int: t -> int -> t = "mlgmp_z_mul_int"
 	external div: t -> t -> t = "mlgmp_z_div" (* div x y = fst (tdiv x y) *)
+	external fma: t -> t -> t -> t = "mlgmp_z_fma"
 	external pow_int: base:t -> exponent:int -> t = "mlgmp_z_pow_int"
 	external int_pow_int: base:int -> exponent:int -> t = "mlgmp_z_int_pow_int"
 	external scale: t -> base:int -> exponent:int -> t = "mlgmp_z_scale"
@@ -143,6 +144,7 @@ module Q: sig
 	external mul: t -> t -> t = "mlgmp_q_mul"
 	external mul_int: t -> int -> t = "mlgmp_q_mul_int"
 	external div: t -> t -> t = "mlgmp_q_div"
+	external fma: t -> t -> t -> t = "mlgmp_q_fma"
 	external pow_int: base:t -> exponent:int -> t = "mlgmp_q_pow_int"
 	external int_pow_int: base:int -> exponent:int -> t = "mlgmp_q_int_pow_int"
 	external scale: t -> base:int -> exponent:int -> t = "mlgmp_q_scale"
@@ -195,6 +197,7 @@ module F: sig
 	external mul: prec:int -> t -> t -> t = "mlgmp_f_mul"
 	external mul_int: prec:int -> t -> int -> t = "mlgmp_f_mul_int"
 	external div: prec:int -> t -> t -> t = "mlgmp_f_div"
+	external fma: prec:int -> t -> t -> t -> t = "mlgmp_f_fma"
 	external pow_int: prec:int -> base:t -> exponent:int -> t = "mlgmp_f_pow_int"
 	external int_pow_int: prec:int -> base:int -> exponent:int -> t =
 		"mlgmp_f_int_pow_int"
@@ -241,6 +244,7 @@ module F: sig
 		val mul: t -> t -> t
 		val mul_int: t -> int -> t
 		val div: t -> t -> t
+		val fma: t -> t -> t -> t
 		val pow_int: base:t -> exponent:int -> t
 		val int_pow_int: base:int -> exponent:int -> t
 		val scale: t -> base:int -> exponent:int -> t

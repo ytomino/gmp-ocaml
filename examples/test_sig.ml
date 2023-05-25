@@ -19,6 +19,7 @@ module type N = sig (* numeric *)
 	val mul: t -> t -> t
 	val mul_int: t -> int -> t
 	val div: t -> t -> t
+	val fma: t -> t -> t -> t
 	val pow_int: base:t -> exponent:int -> t
 	val int_pow_int: base:int -> exponent:int -> t
 	val scale: t -> base:int -> exponent:int -> t

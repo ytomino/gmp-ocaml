@@ -54,6 +54,8 @@ module C: sig
 		"mlmpc_c_mul_int"
 	external div: prec:int * int -> mode:rounding_mode -> t -> t -> t =
 		"mlmpc_c_div"
+	external fma: prec:int * int -> mode:rounding_mode -> t -> t -> t -> t =
+		"mlmpc_c_fma"
 	external pow_int: prec:int * int -> mode:rounding_mode -> base:t ->
 		exponent:int -> t =
 		"mlmpc_c_pow_int"
@@ -137,6 +139,7 @@ module C: sig
 		val mul: t -> t -> t
 		val mul_int: t -> int -> t
 		val div: t -> t -> t
+		val fma: t -> t -> t -> t
 		val pow_int: base:t -> exponent:int -> t
 		val int_pow_int: base:int -> exponent:int -> t
 		val scale: t -> base:int -> exponent:int -> t
