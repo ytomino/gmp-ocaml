@@ -709,7 +709,7 @@ let of_string s base =
     end
   with Invalid_argument _ -> invalid_arg "Creal.of_string"
 
-let flog = Pervasives.log
+let flog = Stdlib.log
 
 let to_string_aux x p = 
   if p < 0 then invalid_arg "Creal.to_string";

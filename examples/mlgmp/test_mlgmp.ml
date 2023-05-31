@@ -5,7 +5,7 @@ open Format
 let rng=RNG.randinit (RNG.GMP_RAND_ALG_LC 100);;
 
 let random_matrix l c =
-  let a = Array.create_matrix l c F.zero in
+  let a = Array.make_matrix l c F.zero in
   for i=0 to pred l
   do
     for j=0 to pred c
@@ -21,7 +21,7 @@ let matrix_mul a b =
   and l' = Array.length b
   and n = Array.length b.(0) in
   assert (l = l');
-  let c = Array.create_matrix m n F.zero in
+  let c = Array.make_matrix m n F.zero in
   for i=0 to pred m
   do
     for j=0 to pred n
