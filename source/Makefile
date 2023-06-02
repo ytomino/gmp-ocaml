@@ -1,22 +1,15 @@
 .PHONY: all clean install uninstall
 
+define DO=
+@echo "**** $1 ****"
+$(MAKE) -f $2 $@
+endef
+
 WITH=gmp,mpfr,mpc
 
 all clean install uninstall:
-
-ifneq ($(findstring gmp,$(WITH)),)
-	@echo "**** GMP ****"
-	$(MAKE) -f Makefile.gmp $@
-endif
-ifneq ($(findstring mpfr,$(WITH)),)
-ifneq ($(wildcard Makefile.mpfr),)
-	@echo "**** MPFR ****"
-	$(MAKE) -f Makefile.mpfr $@
-endif
-endif
-ifneq ($(findstring mpc,$(WITH)),)
-ifneq ($(wildcard Makefile.mpc),)
-	@echo "**** MPC ****"
-	$(MAKE) -f Makefile.mpc $@
-endif
-endif
+	$(and $(findstring gmp,$(WITH)),$(call DO,GMP,Makefile.gmp))
+	$(and $(findstring mpfr,$(WITH)),$(wildcard Makefile.mpfr), \
+		$(call DO,GMP,Makefile.mpfr))
+	$(and $(findstring mpc,$(WITH)),$(wildcard Makefile.mpc), \
+		$(call DO,GMP,Makefile.mpc))

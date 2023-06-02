@@ -2,20 +2,10 @@ BUILD:=$(shell $(CC) -dumpmachine)
 HOST=$(BUILD)
 TARGET=$(HOST)
 
-ifneq ($(TARGET),$(BUILD))
- PROGRAMPREFIX=$(TARGET)-
- BINLN=
-else
- PROGRAMPREFIX=
- ifneq ($(findstring mingw,$(BUILD))$(findstring msys,$(BUILD)),)
-  BINLN=
- else
-  BINLN=bin
- endif
-endif
+PROGRAMPREFIX=$(addsuffix -,$(filter-out $(BUILD),$(TARGET)))
 
 OCAMLC=$(PROGRAMPREFIX)ocamlc
-OCAMLOPT=$(if $(OCAMLC),$(OCAMLC:c=opt),$(PROGRAMPREFIX)ocamlopt)
+OCAMLOPT=$(or $(OCAMLC:c=opt),$(PROGRAMPREFIX)ocamlopt)
 RLWRAP?=
 
 OCAMLCFLAGS=
@@ -25,6 +15,9 @@ BUILDSUFFIX=.noindex
 BUILDDIR=$(TARGET)$(BUILDSUFFIX)
 GMP_BUILDDIR=$(BUILDDIR)/gmp$(BUILDSUFFIX)
 
+BINLN=$(and $(filter $(BUILD),$(TARGET)), \
+        $(if $(findstring mingw,$(BUILD))$(findstring msys,$(BUILD)),,bin))
+
 EXAMPLES1=$(basename $(wildcard *.ml))
 EXAMPLES=$(EXAMPLES1) essai test_creal test_mlgmp test_suite
 TESTS=$(filter test_%,$(EXAMPLES1))
@@ -32,8 +25,8 @@ TESTS=$(filter test_%,$(EXAMPLES1))
 .PHONY: all check interacitve clean $(TESTS)
 
 all: \
-	$(if $(OCAMLC),$(patsubst %,$(BUILDDIR)/%.byte.exe,$(EXAMPLES))) \
-	$(if $(OCAMLOPT),$(patsubst %,$(BUILDDIR)/%.opt.exe,$(EXAMPLES))) \
+	$(and $(OCAMLC),$(patsubst %,$(BUILDDIR)/%.byte.exe,$(EXAMPLES))) \
+	$(and $(OCAMLOPT),$(patsubst %,$(BUILDDIR)/%.opt.exe,$(EXAMPLES))) \
 	$(BINLN)
 
 $(BUILDDIR)/%.byte.exe: %.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
@@ -51,10 +44,13 @@ $(BUILDDIR)/gmp2mlgmp.cmx: mlgmp/gmp2mlgmp.ml $(BUILDDIR)/gmp.cmxa $(BUILDDIR)/m
 	$(OCAMLOPT) -c -o $@ -I $(BUILDDIR) $(OCAMLOPTFLAGS) $<
 
 $(BUILDDIR)/creal.cmi: \
-		mlgmp/creal.mli $(if $(OCAMLC),$(BUILDDIR)/gmp.cma,$(BUILDDIR)/gmp.cmxa)
+		mlgmp/creal.mli \
+		$(or \
+			$(and $(OCAMLC),$(BUILDDIR)/gmp.cma), \
+			$(and $(OCAMLOPT),$(BUILDDIR)/gmp.cmxa))
 	$(or \
-		$(if $(OCAMLC),$(OCAMLC) -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<), \
-		$(if $(OCAMLOPT),$(OCAMLOPT) -c -o $@ -I $(BUILDDIR) $(OCAMLOPTFLAGS) $<))
+		$(and $(OCAMLC),$(OCAMLC) -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<), \
+		$(and $(OCAMLOPT),$(OCAMLOPT) -c -o $@ -I $(BUILDDIR) $(OCAMLOPTFLAGS) $<))
 
 $(BUILDDIR)/creal.cmo: mlgmp/creal.ml $(BUILDDIR)/creal.cmi $(BUILDDIR)/gmp2mlgmp.cmo
 	$(OCAMLC) -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<
@@ -73,36 +69,35 @@ $(BUILDDIR)/%.opt.exe: mlgmp/%.ml $(BUILDDIR)/creal.cmx
 check: all $(TESTS)
 
 $(TESTS): %: \
-		$(if $(OCAMLC),$(BUILDDIR)/%.byte.exe) $(if $(OCAMLOPT),$(BUILDDIR)/%.opt.exe)
-ifneq ($(OCAMLC),)
-	$<
-endif
-ifneq ($(OCAMLOPT),)
-	$(BUILDDIR)/$*.opt.exe
-endif
+		$(and $(OCAMLC),$(BUILDDIR)/%.byte.exe) \
+		$(and $(OCAMLOPT),$(BUILDDIR)/%.opt.exe)
+	$(and $(OCAMLC),$<)
+	$(and $(OCAMLOPT),$(BUILDDIR)/$*.opt.exe)
 
 interactive: $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
 	$(RLWRAP) ocaml -I $(BUILDDIR) $(OCAMLCFLAGS) gmp.cma mpfr.cma mpc.cma
 
-$(if $(OCAMLC),$(BUILDDIR)/gmp.cma) $(if $(OCAMLOPT),$(BUILDDIR)/gmp.cmxa)&: \
+$(and $(OCAMLC),$(BUILDDIR)/gmp.cma) \
+$(and $(OCAMLOPT),$(BUILDDIR)/gmp.cmxa)&: \
 		../source/gmp*
 	$(MAKE) -C ../source -f Makefile.gmp install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
 		INSTALLDIR=$(abspath $(BUILDDIR))
 
-$(if $(OCAMLC),$(BUILDDIR)/mpfr.cma) \
-$(if $(OCAMLOPT),$(BUILDDIR)/mpfr.cmxa)&: \
+$(and $(OCAMLC),$(BUILDDIR)/mpfr.cma) \
+$(and $(OCAMLOPT),$(BUILDDIR)/mpfr.cmxa)&: \
 		../source/mpfr* \
-		$(if $(OCAMLC),$(BUILDDIR)/gmp.cma) \
-		$(if $(OCAMLOPT),$(BUILDDIR)/gmp.cmxa)
+		$(and $(OCAMLC),$(BUILDDIR)/gmp.cma) \
+		$(and $(OCAMLOPT),$(BUILDDIR)/gmp.cmxa)
 	$(MAKE) -C ../source -f Makefile.mpfr install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
 		INSTALLDIR=$(abspath $(BUILDDIR))
 
-$(if $(OCAMLC),$(BUILDDIR)/mpc.cma) $(if $(OCAMLOPT),$(BUILDDIR)/mpc.cmxa)&: \
+$(and $(OCAMLC),$(BUILDDIR)/mpc.cma) \
+$(and $(OCAMLOPT),$(BUILDDIR)/mpc.cmxa)&: \
 		../source/mpc* \
-		$(if $(OCAMLC),$(BUILDDIR)/mpfr.cma) \
-		$(if $(OCAMLOPT),$(BUILDDIR)/mpfr.cmxa)
+		$(and $(OCAMLC),$(BUILDDIR)/mpfr.cma) \
+		$(and $(OCAMLOPT),$(BUILDDIR)/mpfr.cmxa)
 	$(MAKE) -C ../source -f Makefile.mpc install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
 		INSTALLDIR=$(abspath $(BUILDDIR))
@@ -111,7 +106,7 @@ $(BINLN):
 	ln -s $(BUILDDIR) $@
 
 clean:
-	-$(if $(BINLN),[ -h "$(BINLN)" ] && rm "$(BINLN)")
+	-$(and $(BINLN),[ -h "$(BINLN)" ] && rm "$(BINLN)")
 	-$(MAKE) -C ../source clean uninstall \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
 		INSTALLDIR=$(abspath $(BUILDDIR))

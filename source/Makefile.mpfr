@@ -10,16 +10,10 @@ STUBLIBNAME=ml$(LIBNAME)
 
 WITH_GMP?=
 WITH_MPFR?=
-WIFLAGS=
-WLFLAGS=
-ifneq ($(WITH_GMP),)
- WIFLAGS+=-I$(WITH_GMP)/include
- WLFLAGS+=-L$(WITH_GMP)/lib
-endif
-ifneq ($(WITH_MPFR),)
- WIFLAGS+=-I$(WITH_MPFR)/include
- WLFLAGS+=-L$(WITH_MPFR)/lib
-endif
+WIFLAGS=$(and $(WITH_GMP),-I$(WITH_GMP)/include) \
+        $(and $(WITH_MPFR),-I$(WITH_MPFR)/include)
+WLFLAGS=$(and $(WITH_GMP),-L$(WITH_GMP)/lib) \
+        $(and $(WITH_MPFR),-L$(WITH_MPFR)/lib)
 
 OCAMLCFLAGS=-w +a
 OCAMLOPTFLAGS=$(OCAMLCFLAGS)
