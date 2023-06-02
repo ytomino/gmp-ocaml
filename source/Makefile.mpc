@@ -36,6 +36,6 @@ $(BUILDDIR)/mpc_stub.o: gmp_stub.h mpfr_stub.h mpc_stub.h mpc_010000.h
 $(BUILDDIR)/mpc.cmi: gmp.mli mpfr.mli
 $(BUILDDIR)/mpc_pp.cmo: $(BUILDDIR)/mpc.cmi mpfr_pp.ml
 $(BUILDDIR)/mpc_pp.cmx: $(BUILDDIR)/mpc.cmx mpfr_pp.ml
-$(BUILDDIR)/mpc_pp_install.cmo $(BUILDDIR)/mpc_pp_install.cmi: \
+$(BUILDDIR)/mpc_pp_install.cmo: \
 	private override OCAMLCFLAGS+=-I $(OCAMLLIBDIR)/compiler-libs
-$(BUILDDIR)/mpc_pp_install.cmo: $(BUILDDIR)/mpc_pp.cmi
+$(BUILDDIR)/mpc_pp_install.cmo: $(BUILDDIR)/mpc_pp.cmo
