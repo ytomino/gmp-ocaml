@@ -18,6 +18,9 @@ OCAMLC=$(PROGRAMPREFIX)ocamlc
 OCAMLOPT=$(if $(OCAMLC),$(OCAMLC:c=opt),$(PROGRAMPREFIX)ocamlopt)
 RLWRAP?=
 
+OCAMLCFLAGS=
+OCAMLOPTFLAGS=$(OCAMLCFLAGS)
+
 BUILDSUFFIX=.noindex
 BUILDDIR=$(TARGET)$(BUILDSUFFIX)
 GMP_BUILDDIR=$(BUILDDIR)/gmp$(BUILDSUFFIX)
@@ -38,31 +41,33 @@ $(BUILDDIR)/%.byte.exe: %.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR
 	$(OCAMLC) -o $@ -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma $(BUILDDIR)/$*.cmo
 
 $(BUILDDIR)/%.opt.exe: %.ml $(BUILDDIR)/gmp.cmxa $(BUILDDIR)/mpfr.cmxa $(BUILDDIR)/mpc.cmxa
-	$(OCAMLOPT) -c -o $(BUILDDIR)/$*.cmx -I $(BUILDDIR) $(OCAMLCFLAGS) $<
+	$(OCAMLOPT) -c -o $(BUILDDIR)/$*.cmx -I $(BUILDDIR) $(OCAMLOPTFLAGS) $<
 	$(OCAMLOPT) -o $@ -I $(BUILDDIR) gmp.cmxa mpfr.cmxa mpc.cmxa $(BUILDDIR)/$*.cmx
 
 $(BUILDDIR)/gmp2mlgmp.cmo: mlgmp/gmp2mlgmp.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma
 	$(OCAMLC) -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<
 
 $(BUILDDIR)/gmp2mlgmp.cmx: mlgmp/gmp2mlgmp.ml $(BUILDDIR)/gmp.cmxa $(BUILDDIR)/mpfr.cmxa
-	$(OCAMLOPT) -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<
+	$(OCAMLOPT) -c -o $@ -I $(BUILDDIR) $(OCAMLOPTFLAGS) $<
 
 $(BUILDDIR)/creal.cmi: \
 		mlgmp/creal.mli $(if $(OCAMLC),$(BUILDDIR)/gmp.cma,$(BUILDDIR)/gmp.cmxa)
-	$(or $(OCAMLC),$(OCAMLOPT)) -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<
+	$(or \
+		$(if $(OCAMLC),$(OCAMLC) -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<), \
+		$(if $(OCAMLOPT),$(OCAMLOPT) -c -o $@ -I $(BUILDDIR) $(OCAMLOPTFLAGS) $<))
 
 $(BUILDDIR)/creal.cmo: mlgmp/creal.ml $(BUILDDIR)/creal.cmi $(BUILDDIR)/gmp2mlgmp.cmo
 	$(OCAMLC) -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<
 
 $(BUILDDIR)/creal.cmx: mlgmp/creal.ml $(BUILDDIR)/creal.cmi $(BUILDDIR)/gmp2mlgmp.cmx
-	$(OCAMLOPT) -c -o $@ -I $(BUILDDIR) $(OCAMLCFLAGS) $<
+	$(OCAMLOPT) -c -o $@ -I $(BUILDDIR) $(OCAMLOPTFLAGS) $<
 
 $(BUILDDIR)/%.byte.exe: mlgmp/%.ml $(BUILDDIR)/creal.cmo
 	$(OCAMLC) -c -o $(BUILDDIR)/$*.cmo -I $(BUILDDIR) $(OCAMLCFLAGS) $<
 	$(OCAMLC) -o $@ -I $(BUILDDIR) gmp.cma mpfr.cma $(BUILDDIR)/gmp2mlgmp.cmo $(BUILDDIR)/creal.cmo $(BUILDDIR)/$*.cmo
 
 $(BUILDDIR)/%.opt.exe: mlgmp/%.ml $(BUILDDIR)/creal.cmx
-	$(OCAMLOPT) -c -o $(BUILDDIR)/$*.cmx -I $(BUILDDIR) $(OCAMLCFLAGS) $<
+	$(OCAMLOPT) -c -o $(BUILDDIR)/$*.cmx -I $(BUILDDIR) $(OCAMLOPTFLAGS) $<
 	$(OCAMLOPT) -o $@ -I $(BUILDDIR) gmp.cmxa mpfr.cmxa $(BUILDDIR)/gmp2mlgmp.cmx $(BUILDDIR)/creal.cmx $(BUILDDIR)/$*.cmx
 
 check: all $(TESTS)

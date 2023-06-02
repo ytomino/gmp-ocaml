@@ -17,6 +17,7 @@ ifneq ($(WITH_GMP),)
 endif
 
 OCAMLCFLAGS=-w +a
+OCAMLOPTFLAGS=$(OCAMLCFLAGS)
 CFLAGS=$(WIFLAGS) -std=gnu99 -Wall -Wextra
 
 CCLIB=$(addprefix -cclib ,$(WLFLAGS) -lgmp)

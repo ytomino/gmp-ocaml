@@ -22,6 +22,7 @@ ifneq ($(WITH_MPFR),)
 endif
 
 OCAMLCFLAGS=-w +a
+OCAMLOPTFLAGS=$(OCAMLCFLAGS)
 CFLAGS=$(WIFLAGS) -std=gnu99 -Wall -Wextra
 
 CCLIB=$(addprefix -cclib ,$(WLFLAGS) -lmpfr)
