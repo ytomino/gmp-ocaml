@@ -8,6 +8,7 @@ CSRC=gmp_stub.c gmp__Random_stub.c
 LIBNAME=gmp
 STUBLIBNAME=ml$(LIBNAME)
 
+WITH_GMP?=
 WIFLAGS=
 WLFLAGS=
 ifneq ($(WITH_GMP),)

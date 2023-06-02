@@ -8,6 +8,8 @@ CSRC=mpfr_stub.c
 LIBNAME=mpfr
 STUBLIBNAME=ml$(LIBNAME)
 
+WITH_GMP?=
+WITH_MPFR?=
 WIFLAGS=
 WLFLAGS=
 ifneq ($(WITH_GMP),)
