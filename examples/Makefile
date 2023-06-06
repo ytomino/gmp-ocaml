@@ -60,11 +60,15 @@ $(BUILDDIR)/creal.cmx: mlgmp/creal.ml $(BUILDDIR)/creal.cmi $(BUILDDIR)/gmp2mlgm
 
 $(BUILDDIR)/%.byte.exe: mlgmp/%.ml $(BUILDDIR)/creal.cmo
 	$(OCAMLC) -c -o $(BUILDDIR)/$*.cmo -I $(BUILDDIR) $(OCAMLCFLAGS) $<
-	$(OCAMLC) -o $@ -I $(BUILDDIR) gmp.cma mpfr.cma $(BUILDDIR)/gmp2mlgmp.cmo $(BUILDDIR)/creal.cmo $(BUILDDIR)/$*.cmo
+	$(OCAMLC) $(strip \
+		-o $@ -I $(BUILDDIR) gmp.cma mpfr.cma \
+		$(BUILDDIR)/gmp2mlgmp.cmo $(BUILDDIR)/creal.cmo $(BUILDDIR)/$*.cmo)
 
 $(BUILDDIR)/%.opt.exe: mlgmp/%.ml $(BUILDDIR)/creal.cmx
 	$(OCAMLOPT) -c -o $(BUILDDIR)/$*.cmx -I $(BUILDDIR) $(OCAMLOPTFLAGS) $<
-	$(OCAMLOPT) -o $@ -I $(BUILDDIR) gmp.cmxa mpfr.cmxa $(BUILDDIR)/gmp2mlgmp.cmx $(BUILDDIR)/creal.cmx $(BUILDDIR)/$*.cmx
+	$(OCAMLOPT) $(strip \
+		-o $@ -I $(BUILDDIR) gmp.cmxa mpfr.cmxa \
+		$(BUILDDIR)/gmp2mlgmp.cmx $(BUILDDIR)/creal.cmx $(BUILDDIR)/$*.cmx)
 
 check: all $(TESTS)
 
@@ -80,36 +84,40 @@ interactive: $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
 $(and $(OCAMLC),$(BUILDDIR)/gmp.cma) \
 $(and $(OCAMLOPT),$(BUILDDIR)/gmp.cmxa)&: \
 		../source/gmp*
-	$(MAKE) -C ../source -f Makefile.gmp install \
+	$(MAKE) $(strip \
+		-C ../source -f Makefile.gmp install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
-		INSTALLDIR=$(abspath $(BUILDDIR))
+		INSTALLDIR=$(abspath $(BUILDDIR)))
 
 $(and $(OCAMLC),$(BUILDDIR)/mpfr.cma) \
 $(and $(OCAMLOPT),$(BUILDDIR)/mpfr.cmxa)&: \
 		../source/mpfr* \
 		$(and $(OCAMLC),$(BUILDDIR)/gmp.cma) \
 		$(and $(OCAMLOPT),$(BUILDDIR)/gmp.cmxa)
-	$(MAKE) -C ../source -f Makefile.mpfr install \
+	$(MAKE) $(strip \
+		-C ../source -f Makefile.mpfr install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
-		INSTALLDIR=$(abspath $(BUILDDIR))
+		INSTALLDIR=$(abspath $(BUILDDIR)))
 
 $(and $(OCAMLC),$(BUILDDIR)/mpc.cma) \
 $(and $(OCAMLOPT),$(BUILDDIR)/mpc.cmxa)&: \
 		../source/mpc* \
 		$(and $(OCAMLC),$(BUILDDIR)/mpfr.cma) \
 		$(and $(OCAMLOPT),$(BUILDDIR)/mpfr.cmxa)
-	$(MAKE) -C ../source -f Makefile.mpc install \
+	$(MAKE) $(strip \
+		-C ../source -f Makefile.mpc install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
-		INSTALLDIR=$(abspath $(BUILDDIR))
+		INSTALLDIR=$(abspath $(BUILDDIR)))
 
 $(BINLN):
 	ln -s $(BUILDDIR) $@
 
 clean:
 	-$(and $(BINLN),[ -h "$(BINLN)" ] && rm "$(BINLN)")
-	-$(MAKE) -C ../source clean uninstall \
+	-$(MAKE) $(strip \
+		-C ../source clean uninstall \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
-		INSTALLDIR=$(abspath $(BUILDDIR))
+		INSTALLDIR=$(abspath $(BUILDDIR)))
 	-rm $(BUILDDIR)/*.exe $(BUILDDIR)/*.cm? $(BUILDDIR)/*.o
 	-rmdir $(BUILDDIR)/stublibs
 	-rmdir $(BUILDDIR)
