@@ -10,7 +10,7 @@ and MPC.
 Prerequisites
 -------------
 
-OCaml >= 4.08
+OCaml >= 4.11
  https://ocaml.org/
 GMP >= 4.3
  http://gmplib.org/
