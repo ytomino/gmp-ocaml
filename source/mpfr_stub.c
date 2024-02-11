@@ -592,7 +592,7 @@ CAMLprim value mlmpfr_based_string_of_fr(value mode, value base, value x)
 	CAMLreturn(result);
 }
 
-value mlmpfr_fr_get_str(value mode, value base, value digits, value x)
+CAMLprim value mlmpfr_fr_get_str(value mode, value base, value digits, value x)
 {
 	CAMLparam4(mode, base, digits, x);
 	CAMLlocal1(result);

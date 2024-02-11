@@ -1930,7 +1930,7 @@ CAMLprim value mlgmp_based_string_of_f(value base, value x)
 	CAMLreturn(result);
 }
 
-value mlgmp_f_get_str(value base, value digits, value x)
+CAMLprim value mlgmp_f_get_str(value base, value digits, value x)
 {
 	CAMLparam3(base, digits, x);
 	CAMLlocal1(result);
