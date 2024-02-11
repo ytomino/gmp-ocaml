@@ -776,127 +776,6 @@ CAMLprim value mlgmp_z_test_bit(value x, value bit_index)
 	CAMLreturn(Val_int(result));
 }
 
-CAMLprim value mlgmp_z_export_length(value x)
-{
-	CAMLparam1(x);
-	mpz_srcptr x_value = Z_val(x);
-	bool is_neg = mpz_sgn(x_value) < 0;
-	mpz_t neg;
-	mpz_srcptr from;
-	if(is_neg){
-		/* adjust to use complement on two */
-		mpz_init(neg);
-		mpz_add_ui(neg, x_value, 1);
-		from = neg;
-	}else{
-		from = x_value;
-	}
-	int result = mpz_sizeinbase(from, 2) / 8 + 1; /* keeping MSB */
-	if(is_neg){
-		mpz_clear(neg);
-	}
-	CAMLreturn(Val_int(result));
-}
-
-CAMLprim value mlgmp_z_export(
-	value order,
-	value x,
-	value buf,
-	value pos,
-	value len)
-{
-	CAMLparam5(order, x, buf, pos, len);
-	ssize_t pos_value = Long_val(pos);
-	ssize_t len_value = Long_val(len);
-	if((ssize_t)caml_string_length(buf) < pos_value + len_value){
-		caml_failwith(__FUNCTION__);
-	}
-	int order_value = Order_val(order);
-	mpz_srcptr x_value = Z_val(x);
-	size_t count;
-	bool is_neg = mpz_sgn(x_value) < 0;
-	mpz_t neg;
-	mpz_srcptr from;
-	if(is_neg){
-		/* this adding one is a part of making complement on two */
-		mpz_init(neg);
-		mpz_add_ui(neg, x_value, 1);
-		from = neg;
-	}else{
-		from = x_value;
-	}
-	uint8_t *s = mpz_export(NULL, &count, order_value, 1, 0, 0, from);
-	if(is_neg){
-		mpz_clear(neg);
-	}
-	ssize_t remains = len_value - count;
-	uint8_t *d = Bytes_val(buf) + pos_value;
-	if(order_value > 0){
-		/* most significant first */
-		if(remains >= 0){
-			memcpy(d + remains, s, count);
-			memset(d, 0, remains);
-		}else{
-			memcpy(d, s - remains, count + remains);
-		}
-	}else{
-		/* least significant first */
-		if(remains >= 0){
-			memcpy(d, s, count);
-			memset(d + count, 0, remains);
-		}else{
-			memcpy(d, s, count + remains);
-		}
-	}
-	free(s);
-	if(is_neg){
-		/* this bitwise-not is a part of making complement on two */
-		for(ssize_t i = 0; i < len_value; ++i){
-			d[i] = ~d[i];
-		}
-	}
-	CAMLreturn(Val_unit);
-}
-
-CAMLprim value mlgmp_z_import(
-	value order,
-	value signed_,
-	value buf,
-	value pos,
-	value len)
-{
-	CAMLparam5(order, signed_, buf, pos, len);
-	CAMLlocal1(result);
-	ssize_t pos_value = Long_val(pos);
-	ssize_t len_value = Long_val(len);
-	if((ssize_t)caml_string_length(buf) < pos_value + len_value){
-		caml_failwith(__FUNCTION__);
-	}
-	int order_value = Order_val(order);
-	result = mlgmp_alloc_z_init();
-	mpz_ptr result_value = Z_val(result);
-	uint8_t const *s = Bytes_val(buf) + pos_value;
-	mpz_import(result_value, len_value, order_value, 1, 0, 0, s);
-	if(len_value > 0 && Bool_val(signed_)){
-		bool is_neg;
-		if(order_value > 0){
-			/* most significant first */
-			is_neg = (s[0] & 0x80) != 0;
-		}else{
-			/* least significant first */
-			is_neg = (s[len_value - 1] & 0x80) != 0;
-		}
-		if(is_neg){
-			mpz_t shifted;
-			mpz_init_set_si(shifted, -1);
-			mpz_mul_2exp(shifted, shifted, len_value * 8);
-			mpz_ior(result_value, result_value, shifted);
-			mpz_clear(shifted);
-		}
-	}
-	CAMLreturn(result);
-}
-
 CAMLprim value mlgmp_z_of_based_string(value base, value x)
 {
 	CAMLparam2(base, x);
@@ -1025,6 +904,127 @@ CAMLprim value mlgmp_float_of_z(value x)
 	CAMLparam1(x);
 	CAMLlocal1(result);
 	result = caml_copy_double(mpz_get_d(Z_val(x)));
+	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_z_export_length(value x)
+{
+	CAMLparam1(x);
+	mpz_srcptr x_value = Z_val(x);
+	bool is_neg = mpz_sgn(x_value) < 0;
+	mpz_t neg;
+	mpz_srcptr from;
+	if(is_neg){
+		/* adjust to use complement on two */
+		mpz_init(neg);
+		mpz_add_ui(neg, x_value, 1);
+		from = neg;
+	}else{
+		from = x_value;
+	}
+	int result = mpz_sizeinbase(from, 2) / 8 + 1; /* keeping MSB */
+	if(is_neg){
+		mpz_clear(neg);
+	}
+	CAMLreturn(Val_int(result));
+}
+
+CAMLprim value mlgmp_z_export(
+	value order,
+	value x,
+	value buf,
+	value pos,
+	value len)
+{
+	CAMLparam5(order, x, buf, pos, len);
+	ssize_t pos_value = Long_val(pos);
+	ssize_t len_value = Long_val(len);
+	if((ssize_t)caml_string_length(buf) < pos_value + len_value){
+		caml_failwith(__FUNCTION__);
+	}
+	int order_value = Order_val(order);
+	mpz_srcptr x_value = Z_val(x);
+	size_t count;
+	bool is_neg = mpz_sgn(x_value) < 0;
+	mpz_t neg;
+	mpz_srcptr from;
+	if(is_neg){
+		/* this adding one is a part of making complement on two */
+		mpz_init(neg);
+		mpz_add_ui(neg, x_value, 1);
+		from = neg;
+	}else{
+		from = x_value;
+	}
+	uint8_t *s = mpz_export(NULL, &count, order_value, 1, 0, 0, from);
+	if(is_neg){
+		mpz_clear(neg);
+	}
+	ssize_t remains = len_value - count;
+	uint8_t *d = Bytes_val(buf) + pos_value;
+	if(order_value > 0){
+		/* most significant first */
+		if(remains >= 0){
+			memcpy(d + remains, s, count);
+			memset(d, 0, remains);
+		}else{
+			memcpy(d, s - remains, count + remains);
+		}
+	}else{
+		/* least significant first */
+		if(remains >= 0){
+			memcpy(d, s, count);
+			memset(d + count, 0, remains);
+		}else{
+			memcpy(d, s, count + remains);
+		}
+	}
+	free(s);
+	if(is_neg){
+		/* this bitwise-not is a part of making complement on two */
+		for(ssize_t i = 0; i < len_value; ++i){
+			d[i] = ~d[i];
+		}
+	}
+	CAMLreturn(Val_unit);
+}
+
+CAMLprim value mlgmp_z_import(
+	value order,
+	value signed_,
+	value buf,
+	value pos,
+	value len)
+{
+	CAMLparam5(order, signed_, buf, pos, len);
+	CAMLlocal1(result);
+	ssize_t pos_value = Long_val(pos);
+	ssize_t len_value = Long_val(len);
+	if((ssize_t)caml_string_length(buf) < pos_value + len_value){
+		caml_failwith(__FUNCTION__);
+	}
+	int order_value = Order_val(order);
+	result = mlgmp_alloc_z_init();
+	mpz_ptr result_value = Z_val(result);
+	uint8_t const *s = Bytes_val(buf) + pos_value;
+	mpz_import(result_value, len_value, order_value, 1, 0, 0, s);
+	if(len_value > 0 && Bool_val(signed_)){
+		bool is_neg;
+		if(order_value > 0){
+			/* most significant first */
+			is_neg = (s[0] & 0x80) != 0;
+		}else{
+			/* least significant first */
+			is_neg = (s[len_value - 1] & 0x80) != 0;
+		}
+		if(is_neg){
+			mpz_t shifted;
+			mpz_init_set_si(shifted, -1);
+			mpz_mul_2exp(shifted, shifted, len_value * 8);
+			mpz_ior(result_value, result_value, shifted);
+			mpz_clear(shifted);
+		}
+	}
 	CAMLreturn(result);
 }
 

@@ -94,12 +94,6 @@ module Z: sig
 	external set_bit: t -> int -> t = "mlgmp_z_set_bit"
 	external clear_bit: t -> int -> t = "mlgmp_z_clear_bit"
 	external test_bit: t -> int -> int = "mlgmp_z_test_bit"
-	(* import/export *)
-	external export_length: t -> int = "mlgmp_z_export_length"
-	external export: order:byte_order -> t -> bytes -> int -> int -> unit =
-		"mlgmp_z_export"
-	external import: order:byte_order -> signed:bool -> bytes -> int -> int -> t =
-		"mlgmp_z_import"
 	(* conversions *)
 	external of_based_string: base:int -> string -> t = "mlgmp_z_of_based_string"
 	val of_string: string -> t
@@ -114,6 +108,12 @@ module Z: sig
 	external of_nativeint: nativeint -> t = "mlgmp_z_of_nativeint"
 	external to_nativeint: nativeint -> t = "mlgmp_nativeint_of_z"
 	external to_float: t -> float = "mlgmp_float_of_z"
+	(* import/export *)
+	external export_length: t -> int = "mlgmp_z_export_length"
+	external export: order:byte_order -> t -> bytes -> int -> int -> unit =
+		"mlgmp_z_export"
+	external import: order:byte_order -> signed:bool -> bytes -> int -> int -> t =
+		"mlgmp_z_import"
 end
 
 type q
