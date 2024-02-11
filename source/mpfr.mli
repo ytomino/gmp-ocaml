@@ -29,12 +29,6 @@ external z_of_fr: mode:rounding_mode -> fr -> z = "mlmpfr_z_of_fr"
 val z_of_truncated_fr: fr -> z
 external fr_of_fr: prec:int -> mode:rounding_mode -> fr -> fr =
 	"mlmpfr_fr_of_fr"
-external bits_of_single: fr -> int32 = "mlmpfr_fr_bits_of_single"
-external bits_of_double: fr -> int64 = "mlmpfr_fr_bits_of_double"
-external bits_of_extended: fr -> int64 * int = "mlmpfr_fr_bits_of_extended"
-external single_of_bits: int32 -> fr = "mlmpfr_fr_single_of_bits"
-external double_of_bits: int64 -> fr = "mlmpfr_fr_double_of_bits"
-external extended_of_bits: int64 * int -> fr = "mlmpfr_fr_extended_of_bits"
 
 module FR: sig
 	type t = fr
@@ -167,4 +161,11 @@ module FR: sig
 	external default_rounding_mode: unit -> rounding_mode =
 		"mlmpfr_fr_get_default_rounding_mode"
 	val default: unit -> (module Param)
+	(* import/export *)
+	external bits_of_single: fr -> int32 = "mlmpfr_fr_bits_of_single"
+	external bits_of_double: fr -> int64 = "mlmpfr_fr_bits_of_double"
+	external bits_of_extended: fr -> int64 * int = "mlmpfr_fr_bits_of_extended"
+	external single_of_bits: int32 -> fr = "mlmpfr_fr_single_of_bits"
+	external double_of_bits: int64 -> fr = "mlmpfr_fr_double_of_bits"
+	external extended_of_bits: int64 * int -> fr = "mlmpfr_fr_extended_of_bits"
 end

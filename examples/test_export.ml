@@ -1,4 +1,9 @@
 open Gmp;;
+open Mpfr;;
+
+let log = false;;
+
+(* Z *)
 
 assert (Z.export_length (Z.of_int (-32769)) = 3);;
 assert (Z.export_length (Z.of_int (-32768)) = 2);;
@@ -129,5 +134,73 @@ test_export_and_import (Z.of_int 255);;
 test_export_and_import (Z.of_int 256);;
 test_export_and_import (Z.of_int 32767);;
 test_export_and_import (Z.of_int 32768);;
+
+(* FR *)
+
+let bit_eq (x: float) (y: float) = (
+	x = y || (classify_float x = FP_nan && classify_float y = FP_nan)
+);;
+
+let single_check (x: float) (y: int32) = (
+	let x1 = FR.bits_of_single (fr_of_float ~prec:24 ~mode:`N x) in
+	if log then Printf.eprintf "%.8lx" x1;
+	let y1 = float_of_fr ~mode:`N (FR.single_of_bits y) in
+	if log then Printf.eprintf " %f\n" y1;
+	x1 = y && bit_eq y1 x
+);;
+
+assert (single_check 0.0 0x00000000l);;
+assert (single_check 1.0 0x3f800000l);;
+assert (single_check 2.0 0x40000000l);;
+assert (single_check 3.0 0x40400000l);;
+assert (single_check 0.5 0x3f000000l);;
+assert (single_check ~-.1.0 0xbf800000l);;
+assert (single_check ~-.0.0 0x80000000l);;
+assert (single_check ~-.1.25 0xbfa00000l);;
+assert (single_check nan 0x7fc00000l || single_check nan 0xffc00000l);;
+assert (single_check infinity 0x7f800000l);;
+assert (single_check ~-.infinity 0xff800000l);;
+
+let double_check (x: float) (y: int64) = (
+	let x1 = FR.bits_of_double (fr_of_float ~prec:53 ~mode:`N x) in
+	if log then Printf.eprintf "%.16Lx" x1;
+	let y1 = float_of_fr ~mode:`N (FR.double_of_bits y) in
+	if log then Printf.eprintf " %f\n" y1;
+	x1 = y && bit_eq y1 x
+);;
+
+assert (double_check 0.0 0x0000000000000000L);;
+assert (double_check 1.0 0x3ff0000000000000L);;
+assert (double_check 2.0 0x4000000000000000L);;
+assert (double_check 3.0 0x4008000000000000L);;
+assert (double_check 0.5 0x3fe0000000000000L);;
+assert (double_check ~-.1.0 0xbff0000000000000L);;
+assert (double_check ~-.0.0 0x8000000000000000L);;
+assert (double_check ~-.1.25 0xbff4000000000000L);;
+assert (double_check nan 0x7ff8000000000000L
+	|| double_check nan 0xfff8000000000000L);;
+assert (double_check infinity 0x7ff0000000000000L);;
+assert (double_check ~-.infinity 0xfff0000000000000L);;
+
+let extended_check (x: float) (y: int64 * int) = (
+	let (m, e) as x1 = FR.bits_of_extended (fr_of_float ~prec:64 ~mode:`N x) in
+	if log then Printf.eprintf "%.4x:%.16Lx" e m;
+	let y1 = float_of_fr ~mode:`N (FR.extended_of_bits y) in
+	if log then Printf.eprintf " %f\n" y1;
+	x1 = y && bit_eq y1 x
+);;
+
+assert (extended_check 0.0 (0x0000000000000000L, 0x0000));;
+assert (extended_check 1.0 (0x8000000000000000L, 0x3fff));;
+assert (extended_check 2.0 (0x8000000000000000L, 0x4000));;
+assert (extended_check 3.0 (0xc000000000000000L, 0x4000));;
+assert (extended_check 0.5 (0x8000000000000000L, 0x3ffe));;
+assert (extended_check ~-.1.0 (0x8000000000000000L, 0xbfff));;
+assert (extended_check ~-.0.0 (0x0000000000000000L, 0x8000));;
+assert (extended_check ~-.1.25 (0xa000000000000000L, 0xbfff));;
+assert (extended_check nan (0xc000000000000000L, 0x7fff)
+	|| extended_check nan (0xc000000000000000L, 0xffff));;
+assert (extended_check infinity (0x8000000000000000L, 0x7fff));;
+assert (extended_check ~-.infinity (0x8000000000000000L, 0xffff));;
 
 Printf.eprintf "ok\n";;

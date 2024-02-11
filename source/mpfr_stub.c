@@ -664,6 +664,20 @@ CAMLprim value mlmpfr_fr_of_fr(value prec, value mode, value x)
 	CAMLreturn(result);
 }
 
+CAMLprim value mlmpfr_fr_get_default_prec(value unit)
+{
+	CAMLparam1(unit);
+	long result = mpfr_get_default_prec();
+	CAMLreturn(Val_long(result));
+}
+
+CAMLprim value mlmpfr_fr_get_default_rounding_mode(value unit)
+{
+	CAMLparam1(unit);
+	mpfr_rnd_t result = mpfr_get_default_rounding_mode();
+	CAMLreturn(Val_rnd(result));
+}
+
 CAMLprim value mlmpfr_fr_bits_of_single(value x)
 {
 	CAMLparam1(x);
@@ -919,20 +933,6 @@ CAMLprim value mlmpfr_fr_extended_of_bits(value i80)
 	}
 #endif
 	CAMLreturn(result);
-}
-
-CAMLprim value mlmpfr_fr_get_default_prec(value unit)
-{
-	CAMLparam1(unit);
-	long result = mpfr_get_default_prec();
-	CAMLreturn(Val_long(result));
-}
-
-CAMLprim value mlmpfr_fr_get_default_rounding_mode(value unit)
-{
-	CAMLparam1(unit);
-	mpfr_rnd_t result = mpfr_get_default_rounding_mode();
-	CAMLreturn(Val_rnd(result));
 }
 
 /* setup */
