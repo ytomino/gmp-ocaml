@@ -108,10 +108,19 @@ module Z = struct
 	external to_nativeint: nativeint -> t = "mlgmp_nativeint_of_z";;
 	external to_float: t -> float = "mlgmp_float_of_z";;
 	external export_length: t -> int = "mlgmp_z_export_length";;
-	external export: order:byte_order -> t -> bytes -> int -> int -> unit =
-		"mlgmp_z_export";;
-	external import: order:byte_order -> signed:bool -> bytes -> int -> int -> t =
-		"mlgmp_z_import";;
+	external unsafe_export: order:byte_order -> t -> bytes -> int -> int -> unit =
+		"mlgmp_z_unsafe_export";;
+	let export ~order x buf pos len =
+		if pos >= 0 && len >= 0 && pos + len <= Bytes.length buf
+		then unsafe_export ~order x buf pos len
+		else invalid_arg "Gmp.Z.export";; (* __FUNCTION__ *)
+	external unsafe_import: order:byte_order -> signed:bool -> bytes -> int ->
+		int -> t =
+		"mlgmp_z_unsafe_import";;
+	let import ~order ~signed buf pos len =
+		if pos >= 0 && len >= 0 && pos + len <= Bytes.length buf
+		then unsafe_import ~order ~signed buf pos len
+		else invalid_arg "Gmp.Z.import";; (* __FUNCTION__ *)
 end;;
 
 type q;;

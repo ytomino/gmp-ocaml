@@ -110,10 +110,8 @@ module Z: sig
 	external to_float: t -> float = "mlgmp_float_of_z"
 	(* import/export *)
 	external export_length: t -> int = "mlgmp_z_export_length"
-	external export: order:byte_order -> t -> bytes -> int -> int -> unit =
-		"mlgmp_z_export"
-	external import: order:byte_order -> signed:bool -> bytes -> int -> int -> t =
-		"mlgmp_z_import"
+	val export: order:byte_order -> t -> bytes -> int -> int -> unit
+	val import: order:byte_order -> signed:bool -> bytes -> int -> int -> t
 end
 
 type q

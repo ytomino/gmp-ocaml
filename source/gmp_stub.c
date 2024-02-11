@@ -929,7 +929,7 @@ CAMLprim value mlgmp_z_export_length(value x)
 	CAMLreturn(Val_int(result));
 }
 
-CAMLprim value mlgmp_z_export(
+CAMLprim value mlgmp_z_unsafe_export(
 	value order,
 	value x,
 	value buf,
@@ -937,11 +937,6 @@ CAMLprim value mlgmp_z_export(
 	value len)
 {
 	CAMLparam5(order, x, buf, pos, len);
-	ssize_t pos_value = Long_val(pos);
-	ssize_t len_value = Long_val(len);
-	if((ssize_t)caml_string_length(buf) < pos_value + len_value){
-		caml_failwith(__FUNCTION__);
-	}
 	int order_value = Order_val(order);
 	mpz_srcptr x_value = Z_val(x);
 	size_t count;
@@ -960,8 +955,9 @@ CAMLprim value mlgmp_z_export(
 	if(is_neg){
 		mpz_clear(neg);
 	}
+	ssize_t len_value = Long_val(len);
 	ssize_t remains = len_value - count;
-	uint8_t *d = Bytes_val(buf) + pos_value;
+	uint8_t *d = Bytes_val(buf) + Long_val(pos);
 	if(order_value > 0){
 		/* most significant first */
 		if(remains >= 0){
@@ -989,7 +985,7 @@ CAMLprim value mlgmp_z_export(
 	CAMLreturn(Val_unit);
 }
 
-CAMLprim value mlgmp_z_import(
+CAMLprim value mlgmp_z_unsafe_import(
 	value order,
 	value signed_,
 	value buf,
@@ -998,15 +994,11 @@ CAMLprim value mlgmp_z_import(
 {
 	CAMLparam5(order, signed_, buf, pos, len);
 	CAMLlocal1(result);
-	ssize_t pos_value = Long_val(pos);
-	ssize_t len_value = Long_val(len);
-	if((ssize_t)caml_string_length(buf) < pos_value + len_value){
-		caml_failwith(__FUNCTION__);
-	}
 	int order_value = Order_val(order);
 	result = mlgmp_alloc_z_init();
 	mpz_ptr result_value = Z_val(result);
-	uint8_t const *s = Bytes_val(buf) + pos_value;
+	uint8_t const *s = Bytes_val(buf) + Long_val(pos);
+	ssize_t len_value = Long_val(len);
 	mpz_import(result_value, len_value, order_value, 1, 0, 0, s);
 	if(len_value > 0 && Bool_val(signed_)){
 		bool is_neg;
