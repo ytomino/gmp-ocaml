@@ -19,6 +19,8 @@ assert (-123.0 = float_of_z (z_of_string "-123"));;
 assert (123.0 = float_of_q (q_of_int 123));;
 assert (-123.0 = float_of_q (q_of_int (-123)));;
 assert (q_of_int 10 = q_of_z (z_of_int 10));;
+assert (Q.make_int 6 2 = q_of_int 3);;
+assert (Q.make_int ~-6 ~-2 = q_of_int 3);;
 
 assert (123.0 = float_of_f (f_of_int ~prec:8 123));;
 assert (-123.0 = float_of_f (f_of_int ~prec:8 (-123)));;

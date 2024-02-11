@@ -1438,7 +1438,13 @@ CAMLprim value mlgmp_q_make_int(value x, value y)
 	CAMLlocal1(result);
 	result = mlgmp_alloc_q_init();
 	mpq_ptr result_value = Q_val(result);
-	mpq_set_si(result_value, Long_val(x), Long_val(y));
+	long num = Long_val(x);
+	long den = Long_val(y);
+	if(den < 0){
+		num = -num;
+		den = -den;
+	}
+	mpq_set_si(result_value, num, den);
 	mpq_canonicalize(result_value);
 	CAMLreturn(result);
 }
