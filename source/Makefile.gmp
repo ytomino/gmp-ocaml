@@ -14,7 +14,7 @@ WLFLAGS=$(and $(WITH_GMP),-L$(WITH_GMP)/lib)
 
 OCAMLCFLAGS=-w +a
 OCAMLOPTFLAGS=$(OCAMLCFLAGS)
-CFLAGS=$(WIFLAGS) -std=gnu99 -Wall -Wextra
+CFLAGS=-std=gnu99 -Wall -Wextra $(WIFLAGS)
 
 CCLIB=$(addprefix -cclib ,$(WLFLAGS) -lgmp)
 LDFLAGS=$(WLFLAGS)
