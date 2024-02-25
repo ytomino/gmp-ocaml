@@ -8,6 +8,8 @@ CSRC=mpc_stub.c
 LIBNAME=mpc
 STUBLIBNAME=ml$(LIBNAME)
 
+DEBUG=
+
 WITH_GMP?=
 WITH_MPFR?=
 WITH_MPC?=
@@ -18,9 +20,10 @@ WLFLAGS=$(and $(WITH_GMP),-L$(WITH_GMP)/lib) \
         $(and $(WITH_MPFR),-L$(WITH_MPFR)/lib) \
         $(and $(WITH_MPC),-L$(WITH_MPC)/lib)
 
-OCAMLCFLAGS=-w +a
+OCAMLCFLAGS=$(and $(filter-out 0,$(DEBUG)),-g) -w +a
 OCAMLOPTFLAGS=$(OCAMLCFLAGS)
-CFLAGS=-std=gnu99 -Wall -Wextra $(WIFLAGS)
+CFLAGS=$(and $(filter-out 0,$(DEBUG)),-g$(DEBUG)) -std=gnu99 -Wall -Wextra \
+       $(WIFLAGS)
 
 CCLIB=$(addprefix -cclib ,$(WLFLAGS) -lmpc)
 LDFLAGS=$(WLFLAGS)

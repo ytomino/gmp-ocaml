@@ -8,13 +8,16 @@ CSRC=gmp_stub.c gmp__Random_stub.c
 LIBNAME=gmp
 STUBLIBNAME=ml$(LIBNAME)
 
+DEBUG=
+
 WITH_GMP?=
 WIFLAGS=$(and $(WITH_GMP),-I$(WITH_GMP)/include)
 WLFLAGS=$(and $(WITH_GMP),-L$(WITH_GMP)/lib)
 
-OCAMLCFLAGS=-w +a
+OCAMLCFLAGS=$(and $(filter-out 0,$(DEBUG)),-g) -w +a
 OCAMLOPTFLAGS=$(OCAMLCFLAGS)
-CFLAGS=-std=gnu99 -Wall -Wextra $(WIFLAGS)
+CFLAGS=$(and $(filter-out 0,$(DEBUG)),-g$(DEBUG)) -std=gnu99 -Wall -Wextra \
+       $(WIFLAGS)
 
 CCLIB=$(addprefix -cclib ,$(WLFLAGS) -lgmp)
 LDFLAGS=$(WLFLAGS)
