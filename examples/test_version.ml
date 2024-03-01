@@ -16,4 +16,4 @@ check (gmp_compiled_version ()) (gmp_compiled_version_string ());;
 check (mpfr_compiled_version ()) (mpfr_compiled_version_string ());;
 check (mpc_compiled_version ()) (mpc_compiled_version_string ());;
 
-Printf.eprintf "ok\n";;
+prerr_endline "ok";;

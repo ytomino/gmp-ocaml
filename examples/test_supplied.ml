@@ -211,4 +211,4 @@ assert (
 		&& FR.abs (C.imag r) < FR.of_float d
 );;
 
-Printf.eprintf "ok\n";;
+prerr_endline "ok";;

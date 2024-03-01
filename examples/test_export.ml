@@ -233,4 +233,4 @@ assert (extended_check nan (0xc000000000000000L, 0x7fff)
 assert (extended_check infinity (0x8000000000000000L, 0x7fff));;
 assert (extended_check ~-.infinity (0x8000000000000000L, 0xffff));;
 
-Printf.eprintf "ok\n";;
+prerr_endline "ok";;

@@ -58,4 +58,4 @@ assert (check_marshal Cd.one);;
 assert (check_marshal Cd.i);;
 assert (check_marshal (Cd.make_float ~-.1.2 3.4, Cd.make_float ~-.5.6 7.8));;
 
-Printf.eprintf "ok\n";;
+prerr_endline "ok";;

@@ -90,4 +90,4 @@ assert (FR.default_rounding_mode () = `N);;
 assert (C.default_prec () = (53, 53));;
 assert (C.default_rounding_mode () = (`N, `N));;
 
-Printf.eprintf "ok\n";;
+prerr_endline "ok";;

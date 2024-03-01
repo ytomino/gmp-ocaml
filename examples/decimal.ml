@@ -165,4 +165,4 @@ assert (
 	String.sub (Decimal.to_based_string ~base:3 (Z.minus_one, ~-1)) 0 7 = "-0.0022"
 );;
 
-Printf.eprintf "ok\n";;
+prerr_endline "ok";;

@@ -56,4 +56,4 @@ with Failure _ ->
 	let version = major lsl 16 + minor lsl 8 + patchlevel in
 	assert (version < 0x010300);;
 
-Printf.eprintf "ok\n";;
+prerr_endline "ok";;

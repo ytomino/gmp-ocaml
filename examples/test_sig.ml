@@ -115,4 +115,4 @@ let (_: unit) =
 		end)
 	in ();;
 
-Printf.eprintf "ok\n";;
+prerr_endline "ok";;
