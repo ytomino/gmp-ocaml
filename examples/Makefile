@@ -9,6 +9,7 @@ OCAMLOPT=$(or $(filter-out $(OCAMLC),$(OCAMLC:c=opt)),$(PROGRAMPREFIX)ocamlopt)
 RLWRAP?=
 
 DEBUG=
+ASSERT=1
 
 OCAMLCFLAGS=$(and $(filter-out 0,$(DEBUG)),-g)
 OCAMLOPTFLAGS=$(OCAMLCFLAGS)
@@ -98,7 +99,8 @@ $(and $(OCAMLOPT),$(BUILDDIR)/gmp.cmxa)&: \
 	$(MAKE) $(strip \
 		-C ../source -f Makefile.gmp install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
-		INSTALLDIR=$(abspath $(BUILDDIR)))
+		INSTALLDIR=$(abspath $(BUILDDIR)) \
+		ASSERT=$(ASSERT))
 
 $(and $(OCAMLC),$(BUILDDIR)/mpfr.cma) \
 $(and $(OCAMLOPT),$(BUILDDIR)/mpfr.cmxa)&: \
@@ -108,7 +110,8 @@ $(and $(OCAMLOPT),$(BUILDDIR)/mpfr.cmxa)&: \
 	$(MAKE) $(strip \
 		-C ../source -f Makefile.mpfr install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
-		INSTALLDIR=$(abspath $(BUILDDIR)))
+		INSTALLDIR=$(abspath $(BUILDDIR)) \
+		ASSERT=$(ASSERT))
 
 $(and $(OCAMLC),$(BUILDDIR)/mpc.cma) \
 $(and $(OCAMLOPT),$(BUILDDIR)/mpc.cmxa)&: \
@@ -118,7 +121,8 @@ $(and $(OCAMLOPT),$(BUILDDIR)/mpc.cmxa)&: \
 	$(MAKE) $(strip \
 		-C ../source -f Makefile.mpc install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
-		INSTALLDIR=$(abspath $(BUILDDIR)))
+		INSTALLDIR=$(abspath $(BUILDDIR)) \
+		ASSERT=$(ASSERT))
 
 $(BINLN):
 	ln -s $(BUILDDIR) $@
