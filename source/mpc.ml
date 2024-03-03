@@ -187,7 +187,7 @@ module C = struct
 		let fr_prec = FR.default_prec () in
 		fr_prec, fr_prec;;
 	external default_rounding_mode: unit -> rounding_mode =
-		"mlmpc_c_get_default_rounding_mode";;
+		"mlmpc_c_default_rounding_mode";;
 	let default () =
 		let module Default: Param = struct
 			let prec = default_prec ();;

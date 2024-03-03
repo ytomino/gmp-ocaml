@@ -267,7 +267,7 @@ module F: sig
 		external to_float: t -> float = "mlgmp_float_of_f"
 		val of_z: z -> t
 	end
-	external default_prec: unit -> int = "mlgmp_f_get_default_prec"
+	external default_prec: unit -> int = "mlgmp_f_default_prec"
 	val default: unit -> (module Param)
 end
 

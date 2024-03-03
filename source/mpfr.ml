@@ -157,9 +157,9 @@ module FR = struct
 		let of_z = of_z ~prec ~mode;;
 		let to_z = to_z ~mode;;
 	end;;
-	external default_prec: unit -> int = "mlmpfr_fr_get_default_prec";;
+	external default_prec: unit -> int = "mlmpfr_fr_default_prec";;
 	external default_rounding_mode: unit -> rounding_mode =
-		"mlmpfr_fr_get_default_rounding_mode";;
+		"mlmpfr_fr_default_rounding_mode";;
 	let default () =
 		let module Default: Param = struct
 			let prec = default_prec ();;

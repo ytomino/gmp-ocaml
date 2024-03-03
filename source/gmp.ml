@@ -271,7 +271,7 @@ module F = struct
 		external to_float: t -> float = "mlgmp_float_of_f";;
 		let of_z = of_z ~prec;;
 	end;;
-	external default_prec: unit -> int = "mlgmp_f_get_default_prec";;
+	external default_prec: unit -> int = "mlgmp_f_default_prec";;
 	let default () =
 		let module Default: Param = struct
 			let prec = default_prec ();;

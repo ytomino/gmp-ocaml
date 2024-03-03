@@ -2003,7 +2003,7 @@ CAMLprim value mlgmp_f_of_f(value prec, value x)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlgmp_f_get_default_prec(value unit)
+CAMLprim value mlgmp_f_default_prec(value unit)
 {
 	CAMLparam1(unit);
 	long result = mpf_get_default_prec();

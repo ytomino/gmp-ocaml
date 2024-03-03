@@ -179,6 +179,6 @@ module C: sig
 	end
 	val default_prec: unit -> int * int
 	external default_rounding_mode: unit -> rounding_mode =
-		"mlmpc_c_get_default_rounding_mode"
+		"mlmpc_c_default_rounding_mode"
 	val default: unit -> (module Param)
 end

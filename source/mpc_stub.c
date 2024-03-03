@@ -685,7 +685,7 @@ CAMLprim value mlmpc_c_make_fr(value prec, value mode, value r, value i)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlmpc_c_get_default_rounding_mode(value unit)
+CAMLprim value mlmpc_c_default_rounding_mode(value unit)
 {
 	CAMLparam1(unit);
 	CAMLlocal2(result, real_m);
