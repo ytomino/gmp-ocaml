@@ -12,17 +12,17 @@ DEBUG=
 ASSERT=
 
 WITH_GMP?=
-WIFLAGS=$(and $(WITH_GMP),-I$(WITH_GMP)/include)
-WLFLAGS=$(and $(WITH_GMP),-L$(WITH_GMP)/lib)
 
 OCAMLCFLAGS=$(and $(filter-out 0,$(DEBUG)),-g) $(if $(ASSERT),,-noassert) -w +a
 OCAMLOPTFLAGS=$(OCAMLCFLAGS)
 CFLAGS=$(and $(filter-out 0,$(DEBUG)),-g$(DEBUG)) \
-       $(and $(ASSERT),-DDEBUG -DNDEBUG) -std=gnu99 -Wall -Wextra $(WIFLAGS)
+       $(and $(ASSERT),-DDEBUG -DNDEBUG) -std=gnu99 -Wall -Wextra \
+       $(and $(WITH_GMP),-I$(WITH_GMP)/include)
 
-CCLIB=$(addprefix -cclib ,$(WLFLAGS) -lgmp)
-LDFLAGS=$(WLFLAGS)
-LDLIB=-lgmp
+LD_GMP=$(and $(WITH_GMP),-L$(WITH_GMP)/lib) -lgmp
+
+CCLIB=$(addprefix -cclib ,$(LD_GMP))
+LDLIB=$(LD_GMP)
 
 include Makefile.rules
 

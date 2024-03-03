@@ -14,21 +14,24 @@ ASSERT=
 WITH_GMP?=
 WITH_MPFR?=
 WITH_MPC?=
-WIFLAGS=$(and $(WITH_GMP),-I$(WITH_GMP)/include) \
-        $(and $(WITH_MPFR),-I$(WITH_MPFR)/include) \
-        $(and $(WITH_MPC),-I$(WITH_MPC)/include)
-WLFLAGS=$(and $(WITH_GMP),-L$(WITH_GMP)/lib) \
-        $(and $(WITH_MPFR),-L$(WITH_MPFR)/lib) \
-        $(and $(WITH_MPC),-L$(WITH_MPC)/lib)
 
 OCAMLCFLAGS=$(and $(filter-out 0,$(DEBUG)),-g) $(if $(ASSERT),,-noassert) -w +a
 OCAMLOPTFLAGS=$(OCAMLCFLAGS)
 CFLAGS=$(and $(filter-out 0,$(DEBUG)),-g$(DEBUG)) \
-       $(and $(ASSERT),-DDEBUG -DNDEBUG) -std=gnu99 -Wall -Wextra $(WIFLAGS)
+       $(and $(ASSERT),-DDEBUG -DNDEBUG) -std=gnu99 -Wall -Wextra \
+       $(sort \
+         $(and $(WITH_GMP),-I$(WITH_GMP)/include) \
+         $(and $(WITH_MPFR),-I$(WITH_MPFR)/include) \
+         $(and $(WITH_MPC),-I$(WITH_MPC)/include))
 
-CCLIB=$(addprefix -cclib ,$(WLFLAGS) -lmpc)
-LDFLAGS=$(WLFLAGS)
-LDLIB=-lmpc -lmpfr -lgmp
+LD_MPC=$(sort \
+         $(and $(WITH_GMP),-L$(WITH_GMP)/lib) \
+         $(and $(WITH_MPFR),-L$(WITH_MPFR)/lib) \
+         $(and $(WITH_MPC),-L$(WITH_MPC)/lib)) \
+       -lmpc
+
+CCLIB=$(addprefix -cclib ,$(LD_MPC))
+LDLIB=$(LD_MPC) -lmpfr -lgmp
 
 include Makefile.rules
 
