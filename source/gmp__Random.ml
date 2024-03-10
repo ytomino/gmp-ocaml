@@ -13,13 +13,13 @@ external seed_z: t -> z -> unit = "mlgmp_random_seed_z";;
 let make_int x = let r = create () in seed_int r x; r;;
 let make_self_init () = make_int (random_seed ());;
 let make_z x = let r = create () in seed_z r x; r;;
-let make a =
-	let rec loop a i seed =
+let make: int array -> t =
+	let rec loop i seed a =
 		if i >= Array.length a then make_z seed else
 		let n = Z.add_int (Z.shift_left seed 30) a.(i) in
-		loop a (i + 1) n
+		loop (i + 1) n a
 	in
-	loop a 0 Z.zero;;
+	loop 0 Z.zero;;
 external copy: t -> t = "mlgmp_random_copy";;
 external int_bits: t -> int -> int = "mlgmp_random_int_bits";;
 let bits state = int_bits state 30;;

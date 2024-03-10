@@ -4,15 +4,15 @@ open Gmp;;
 
 module Decimal = struct
 	type t = Z.t * int;;
-	let canonicalize (x_val, _ as x: t) = (
-		if Z.compare_int x_val 0 = 0 then Z.zero, 0 else
+	let canonicalize: t -> t =
 		let rec loop (x_val, x_exp as x: t) = (
 			let q, r = Z.tdiv_int x_val 10 in
 			if r <> 0 then x else
 			loop (q, x_exp + 1)
 		) in
-		loop x
-	);;
+		fun (x_val, _ as x: t) ->
+		if Z.compare_int x_val 0 = 0 then Z.zero, 0 else
+		loop x;;
 	let to_common (x_val, x_exp: t) (y_val, y_exp: t) = (
 		let exp' = min x_exp y_exp in
 		let x_val' = Z.scale ~base:10 ~exponent:(x_exp - exp') x_val in
@@ -64,7 +64,15 @@ module Decimal = struct
 		end
 	);;
 	let of_string = of_based_string ~base:10;;
-	let to_based_string ~(base: int) (x_val, x_exp: t) = (
+	let to_based_string: base:int -> t -> string =
+		let rec loop ~(base:int) (limit: int) (n: Z.t) (d: Z.t) (b: Buffer.t) = (
+			if limit = 0 || Z.compare_int n 0 = 0 then Buffer.contents b else
+			let n = Z.mul_int n base in
+			let q, r = Z.tdiv n d in
+			Buffer.add_char b (Char.chr (Char.code '0' + Z.to_int q));
+			loop ~base (limit - 1) r d b
+		) in
+		fun ~(base: int) (x_val, x_exp: t) ->
 		if x_exp >= 0 then (
 			Z.to_based_string ~base (Z.scale ~base:10 ~exponent:x_exp x_val)
 		) else if base = 10 then (
@@ -85,16 +93,8 @@ module Decimal = struct
 			let q, r = Z.tdiv a d in
 			Buffer.add_string b (Z.to_based_string ~base q);
 			Buffer.add_char b '.';
-			let rec loop (limit: int) (n: Z.t) = (
-				if limit = 0 || Z.compare_int n 0 = 0 then Buffer.contents b else
-				let n = Z.mul_int n base in
-				let q, r = Z.tdiv n d in
-				Buffer.add_char b (Char.chr (Char.code '0' + Z.to_int q));
-				loop (limit - 1) r
-			) in
-			loop 114 r (* the binary precision of _Decimal128 *)
-		)
-	);;
+			loop ~base 114 r d b (* the binary precision of _Decimal128 *)
+		);;
 	let to_string = to_based_string ~base:10;;
 	let of_int (x: int) = canonicalize (Z.of_int x, 0);;
 	let of_z (x: Z.t) = canonicalize (x, 0);;
