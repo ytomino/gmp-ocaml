@@ -15,9 +15,10 @@ WITH_GMP?=
 
 OCAMLCFLAGS=$(and $(filter-out 0,$(DEBUG)),-g) $(if $(ASSERT),,-noassert) -w +a
 OCAMLOPTFLAGS=$(OCAMLCFLAGS)
+OCAML_INCLUDE_FLAGS=
 CFLAGS=$(and $(filter-out 0,$(DEBUG)),-g$(DEBUG)) \
-       $(and $(ASSERT),-DDEBUG -DNDEBUG) -std=gnu99 -Wall -Wextra \
-       $(and $(WITH_GMP),-I$(WITH_GMP)/include)
+       $(and $(ASSERT),-DDEBUG -DNDEBUG) -std=gnu99 -Wall -Wextra
+C_INCLUDE_FLAGS=$(and $(WITH_GMP),-I$(WITH_GMP)/include)
 
 LD_GMP=$(and $(WITH_GMP),-L$(WITH_GMP)/lib) -lgmp
 
