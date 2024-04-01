@@ -111,14 +111,14 @@ module Z = struct
 	external unsafe_export: order:byte_order -> t -> bytes -> int -> int -> unit =
 		"mlgmp_z_unsafe_export";;
 	let export ~order x buf pos len =
-		if pos >= 0 && len >= 0 && pos + len <= Bytes.length buf
+		if pos >= 0 && len >= 0 && len <= Bytes.length buf - pos
 		then unsafe_export ~order x buf pos len
 		else invalid_arg "Gmp.Z.export";; (* __FUNCTION__ *)
 	external unsafe_import: order:byte_order -> signed:bool -> bytes -> int ->
 		int -> t =
 		"mlgmp_z_unsafe_import";;
 	let import ~order ~signed buf pos len =
-		if pos >= 0 && len >= 0 && pos + len <= Bytes.length buf
+		if pos >= 0 && len >= 0 && len <= Bytes.length buf - pos
 		then unsafe_import ~order ~signed buf pos len
 		else invalid_arg "Gmp.Z.import";; (* __FUNCTION__ *)
 end;;
