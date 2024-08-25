@@ -21,6 +21,33 @@
 #include "mpfr_040000.h"
 #endif
 
+/* supplied */
+
+CAMLexport void mlmpfr_mpfr_si_pow_si(
+	mpfr_ptr rop, long op1, long op2, mpfr_rnd_t rnd)
+{
+	if(op1 == 2){
+		mpfr_set_si_2exp(rop, 1, op2, rnd);
+	}else if(op1 < 0){
+		if(op2 < 0){
+			mpfr_ui_pow_ui(rop, -op1, -op2, rnd);
+			mpfr_si_div(rop, (op2 % 2 != 0) ? -1 : 1, rop, rnd);
+		}else{
+			mpfr_ui_pow_ui(rop, -op1, op2, rnd);
+			if(op2 % 2 != 0){
+				mpfr_neg(rop, rop, rnd);
+			}
+		}
+	}else{
+		if(op2 < 0){
+			mpfr_ui_pow_ui(rop, op1, -op2, rnd);
+			mpfr_ui_div(rop, 1, rop, rnd);
+		}else{
+			mpfr_ui_pow_ui(rop, op1, op2, rnd);
+		}
+	}
+}
+
 /* version functions */
 
 CAMLprim value mlmpfr_compiled_version(value unit)
@@ -257,34 +284,8 @@ CAMLprim value mlmpfr_fr_int_pow_int(
 	CAMLparam4(prec, mode, base, exponent);
 	CAMLlocal1(result);
 	result = mlmpfr_alloc_fr_init2(Long_val(prec));
-	mpfr_ptr result_value = FR_val(result);
-	mpfr_rnd_t m = Rnd_val(mode);
-	long b = Long_val(base);
-	long e = Long_val(exponent);
-	if(e < 0){
-		long n;
-		if(b < 0){
-			if(e % 2 != 0){
-				n = -1;
-			}else{
-				n = 1;
-			}
-			mpfr_ui_pow_ui(result_value, -b, -e, m);
-		}else{
-			n = 1;
-			mpfr_ui_pow_ui(result_value, b, -e, m);
-		}
-		mpfr_si_div(result_value, n, result_value, m);
-	}else{
-		if(b < 0){
-			mpfr_ui_pow_ui(result_value, -b, e, m);
-			if(e % 2 != 0){
-				mpfr_neg(result_value, result_value, m);
-			}
-		}else{
-			mpfr_ui_pow_ui(result_value, b, e, m);
-		}
-	}
+	mlmpfr_mpfr_si_pow_si(
+		FR_val(result), Long_val(base), Long_val(exponent), Rnd_val(mode));
 	CAMLreturn(result);
 }
 

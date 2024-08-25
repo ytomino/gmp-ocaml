@@ -267,38 +267,10 @@ CAMLprim value mlmpc_c_int_pow_int(
 		Long_val(Field(prec, 1)));
 	mpc_ptr result_value = C_val(result);
 	mpc_rnd_t m = Crnd_val(mode);
-	long b = Long_val(base);
-	long e = Long_val(exponent);
 	mpfr_rnd_t real_rnd = MPC_RND_RE(m);
 	mpfr_rnd_t imag_rnd = MPC_RND_IM(m);
-	if(e < 0){
-		long n;
-		mpfr_ptr result_real = mpc_realref(result_value);
-		if(b < 0){
-			if(e % 2 != 0){
-				n = -1;
-			}else{
-				n = 1;
-			}
-			mpfr_ui_pow_ui(result_real, -b, -e, real_rnd);
-		}else{
-			n = 1;
-			mpfr_ui_pow_ui(result_real, b, -e, real_rnd);
-		}
-		mpfr_si_div(result_real, n, result_real, real_rnd);
-	}else{
-		if(b < 0){
-			if(e % 2 != 0){
-				mpfr_ptr result_real = mpc_realref(result_value);
-				mpfr_ui_pow_ui(result_real, -b, e, real_rnd);
-				mpfr_neg(result_real, result_real, real_rnd);
-			}else{
-				mpfr_ui_pow_ui(mpc_realref(result_value), -b, e, real_rnd);
-			}
-		}else{
-			mpfr_ui_pow_ui(mpc_realref(result_value), b, e, real_rnd);
-		}
-	}
+	mlmpfr_mpfr_si_pow_si(
+		mpc_realref(result_value), Long_val(base), Long_val(exponent), real_rnd);
 	mpfr_set_ui(mpc_imagref(result_value), 0, imag_rnd);
 	CAMLreturn(result);
 }

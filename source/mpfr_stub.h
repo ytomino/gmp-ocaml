@@ -110,6 +110,11 @@ static inline void fr_deserialize(mpfr_ptr x)
 	if(err < 0) caml_failwith(__FUNCTION__);
 }
 
+/* supplied */
+
+CAMLextern void mlmpfr_mpfr_si_pow_si(
+	mpfr_ptr rop, long op1, long op2, mpfr_rnd_t rnd);
+
 /* custom-operations */
 
 extern struct custom_operations mlmpfr_fr_ops;
