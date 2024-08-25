@@ -27,11 +27,13 @@ static inline void c_check_fr_rnd(mpfr_rnd_t rnd)
 	case MPFR_RNDU:
 	case MPFR_RNDD:
 		break;
+#if MPFR_VERSION_MAJOR >= 3
 	case MPFR_RNDA:
 #if MPC_VERSION >= 0x010300
 		break;
 #endif
 	case MPFR_RNDF:
+#endif
 	case MPFR_RNDNA:
 	default:
 		caml_failwith(__FUNCTION__);

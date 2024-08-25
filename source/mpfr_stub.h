@@ -14,6 +14,10 @@
 /* conversions */
 
 #if MPFR_VERSION_MAJOR < 3
+#define MPFR_RNDN GMP_RNDN
+#define MPFR_RNDZ GMP_RNDZ
+#define MPFR_RNDU GMP_RNDU
+#define MPFR_RNDD GMP_RNDD
 #define MPFR_RNDNA GMP_RNDNA
 #endif
 
@@ -25,10 +29,10 @@ static inline mpfr_ptr FR_val(value x)
 static inline mpfr_rnd_t Rnd_val(value x)
 {
 	switch(x){
-	case 0x009d: return GMP_RNDN;
-	case 0x00b5: return GMP_RNDZ;
-	case 0x00ab: return GMP_RNDU;
-	case 0x0089: return GMP_RNDD;
+	case 0x009d: return MPFR_RNDN;
+	case 0x00b5: return MPFR_RNDZ;
+	case 0x00ab: return MPFR_RNDU;
+	case 0x0089: return MPFR_RNDD;
 #if MPFR_VERSION_MAJOR >= 3
 	case 0x0083: return MPFR_RNDA;
 	case 0x008d: return MPFR_RNDF;
@@ -41,10 +45,10 @@ static inline mpfr_rnd_t Rnd_val(value x)
 static inline value Val_rnd(mpfr_rnd_t x)
 {
 	switch(x){
-	case GMP_RNDN: return 0x009d;
-	case GMP_RNDZ: return 0x00b5;
-	case GMP_RNDU: return 0x00ab;
-	case GMP_RNDD: return 0x0089;
+	case MPFR_RNDN: return 0x009d;
+	case MPFR_RNDZ: return 0x00b5;
+	case MPFR_RNDU: return 0x00ab;
+	case MPFR_RNDD: return 0x0089;
 #if MPFR_VERSION_MAJOR >= 3
 	case MPFR_RNDA: return 0x0083;
 	case MPFR_RNDF: return 0x008d;
@@ -59,7 +63,7 @@ static inline value Val_rnd(mpfr_rnd_t x)
 static inline long fr_hash(mpfr_ptr x)
 {
 	long exp;
-	double fra = mpfr_get_d_2exp(&exp, x, GMP_RNDN);
+	double fra = mpfr_get_d_2exp(&exp, x, MPFR_RNDN);
 	long result = exp ^ (long)(fra * (double)LONG_MAX);
 	return result;
 }
@@ -70,7 +74,7 @@ static inline void fr_serialize(mpfr_ptr x)
 {
 	mp_prec_t prec = mpfr_get_prec(x);
 	mp_exp_t exponent;
-	char *image = mpfr_get_str (NULL, &exponent, 16, 0, x, GMP_RNDN);
+	char *image = mpfr_get_str (NULL, &exponent, 16, 0, x, MPFR_RNDN);
 	size_t i_length = strlen(image);
 	caml_serialize_int_4(prec);
 	if(mpfr_number_p(x)){
@@ -102,7 +106,7 @@ static inline void fr_deserialize(mpfr_ptr x)
 	caml_deserialize_block_1(image, length);
 	image[length] = '\0';
 	mpfr_init2(x, prec);
-	int err = mpfr_set_str(x, image, 16, GMP_RNDN);
+	int err = mpfr_set_str(x, image, 16, MPFR_RNDN);
 	if(err < 0) caml_failwith(__FUNCTION__);
 }
 

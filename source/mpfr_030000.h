@@ -1,8 +1,5 @@
 /* the additional entities from MPFR 2.4.1 to MPFR 3.0.0 */
 
-#define MPFR_RNDN GMP_RNDN
-//#define MPFR_RNDNA GMP_RNDNA
-
 typedef mp_exp_t mpfr_exp_t;
 
 static inline int mpfr_set_flt(mpfr_t rop, float op, mpfr_rnd_t rnd)
