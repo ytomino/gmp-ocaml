@@ -6,7 +6,6 @@
 #include <caml/memory.h>
 #include <caml/mlvalues.h>
 #include <sys/types.h>
-#include <limits.h>
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>

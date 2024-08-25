@@ -1,5 +1,6 @@
 #include <caml/fail.h>
 #include <caml/intext.h>
+#include <limits.h>
 #include <string.h>
 #include <mpfr.h>
 

@@ -4,7 +4,6 @@
 #include <caml/custom.h>
 #include <caml/memory.h>
 #include <caml/mlvalues.h>
-#include <limits.h>
 #include "gmp_stub.h"
 
 /* for version < 1.0.0 */
