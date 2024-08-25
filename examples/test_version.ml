@@ -3,12 +3,15 @@ open Mpfr;;
 open Mpc;;
 
 let check (major, minor, patchlevel) string = (
-	Scanf.sscanf string "%d.%d.%d%s" (fun s_major s_minor s_patchlevel s ->
+	Scanf.sscanf string "%d.%d%s" (fun s_major s_minor string' ->
 		assert (s_major = major);
 		assert (s_minor = minor);
-		assert (s_patchlevel = patchlevel);
-		assert (s = "");
-		()
+		if string' = "" then assert (patchlevel = 0)
+		else
+			Scanf.sscanf string' ".%d%s" (fun s_patchlevel string'' ->
+				assert (s_patchlevel = patchlevel);
+				assert (string'' = "")
+			)
 	)
 );;
 
