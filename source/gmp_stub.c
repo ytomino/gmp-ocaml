@@ -852,9 +852,10 @@ CAMLprim value mlgmp_z_of_int64(value x)
 CAMLprim value mlgmp_int64_of_z(value x)
 {
 	CAMLparam1(x);
-	CAMLlocal1(result);
+	CAMLlocal1(val_result);
+	int64_t result;
 #if LONG_BIT >= 64
-	result = caml_copy_int64(mpz_get_si(Z_val(x)));
+	result = mpz_get_si(Z_val(x));
 #elif LONG_BIT >= 32
 	mpz_ptr x_value = Z_val(x);
 	mpz_t lo;
@@ -863,13 +864,14 @@ CAMLprim value mlgmp_int64_of_z(value x)
 	mpz_t hi;
 	mpz_init(hi);
 	mpz_fdiv_q_2exp(hi, x_value, 32);
-	result = caml_copy_int64(((int64_t)mpz_get_si(hi) << 32) | mpz_get_ui(lo));
+	result = ((int64_t)mpz_get_si(hi) << 32) | mpz_get_ui(lo);
 	mpz_clear(hi);
 	mpz_clear(lo);
 #else
 #error "sizeof(long) < 4"
 #endif
-	CAMLreturn(result);
+	val_result = caml_copy_int64(result);
+	CAMLreturn(val_result);
 }
 
 CAMLprim value mlgmp_z_of_nativeint(value x)
