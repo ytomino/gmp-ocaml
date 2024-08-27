@@ -69,6 +69,8 @@ assert (
 	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N ~-.0.015625) = "-0.015625"
 );;
 
+(* assert (string_of_c ~mode:(`N, `N) (C.zero ~prec:(10, 10)) = "(+0 +0)");; *)
+
 let inf = fr_of_float ~prec:10 ~mode:`N infinity in
 let inf_str = string_of_float infinity in
 assert (fr_of_string ~prec:10 ~mode:`N inf_str = inf);
