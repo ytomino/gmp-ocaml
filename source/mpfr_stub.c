@@ -49,6 +49,27 @@ CAMLexport void mlmpfr_mpfr_si_pow_si(
 	}
 }
 
+/* mpfr_free_str */
+
+static inline char** Mpfrstr_val(value val_object)
+{
+	return (char **)(Data_custom_val(val_object));
+}
+
+static void mlmpfr_mpfrstr_finalize(value val_object)
+{
+	mpfr_free_str(*Mpfrstr_val(val_object));
+}
+
+static value mlmpfr_alloc_mpfrstr(void)
+{
+	CAMLparam0();
+	CAMLlocal1(val_result);
+	val_result = caml_alloc_final(1, mlmpfr_mpfrstr_finalize, 0, 1);
+	*Mpfrstr_val(val_result) = NULL;
+	CAMLreturn(val_result);
+}
+
 /* version functions */
 
 CAMLprim value mlmpfr_compiled_version(value unit)
@@ -581,13 +602,15 @@ CAMLprim value mlmpfr_fr_of_based_string(
 CAMLprim value mlmpfr_based_string_of_fr(value mode, value base, value x)
 {
 	CAMLparam3(mode, base, x);
-	CAMLlocal1(result);
+	CAMLlocal2(result, val_image);
 	mpfr_ptr x_value = FR_val(x);
 	if(mpfr_nan_p(x_value)){
 		result = caml_copy_string("nan");
 	}else if(mpfr_inf_p(x_value)){
 		result = caml_copy_string((char const *)"-inf" + 1 - mpfr_signbit(x_value));
 	}else{
+		val_image = mlmpfr_alloc_mpfrstr();
+		x_value = FR_val(x); /* across OCaml allocation */
 		mp_exp_t exponent;
 		char *image = mpfr_get_str(
 			NULL,
@@ -596,6 +619,7 @@ CAMLprim value mlmpfr_based_string_of_fr(value mode, value base, value x)
 			0,
 			x_value,
 			Rnd_val(mode));
+		*Mpfrstr_val(val_image) = image;
 		ssize_t length = strlen(image);
 		int sign_width = image[0] == '-'; /* 0 or 1 */
 		mp_exp_t exponent_p = exponent + sign_width;
@@ -628,7 +652,6 @@ CAMLprim value mlmpfr_based_string_of_fr(value mode, value base, value x)
 			buf[length - exponent + 2] = '\0';
 			result = caml_copy_string(buf);
 		}
-		mpfr_free_str(image);
 	}
 	CAMLreturn(result);
 }
@@ -636,7 +659,8 @@ CAMLprim value mlmpfr_based_string_of_fr(value mode, value base, value x)
 CAMLprim value mlmpfr_fr_get_str(value mode, value base, value digits, value x)
 {
 	CAMLparam4(mode, base, digits, x);
-	CAMLlocal1(result);
+	CAMLlocal2(result, val_image);
+	val_image = mlmpfr_alloc_mpfrstr();
 	mp_exp_t exponent;
 	char *image = mpfr_get_str(
 		NULL,
@@ -645,10 +669,10 @@ CAMLprim value mlmpfr_fr_get_str(value mode, value base, value digits, value x)
 		Long_val(digits),
 		FR_val(x),
 		Rnd_val(mode));
+	*Mpfrstr_val(val_image) = image;
 	result = caml_alloc_tuple(2);
 	Store_field(result, 0, caml_copy_string(image));
 	Store_field(result, 1, Val_long(exponent));
-	mpfr_free_str(image);
 	CAMLreturn(result);
 }
 

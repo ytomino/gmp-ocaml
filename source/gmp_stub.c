@@ -26,6 +26,27 @@
 #include "gmp_050100.h"
 #endif
 
+/* free */
+
+static inline char** Cstr_val(value val_object)
+{
+	return (char **)(Data_custom_val(val_object));
+}
+
+static void mlgmp_cstr_finalize(value val_object)
+{
+	free(*Cstr_val(val_object));
+}
+
+static value mlgmp_alloc_cstr(void)
+{
+	CAMLparam0();
+	CAMLlocal1(val_result);
+	val_result = caml_alloc_final(1, mlgmp_cstr_finalize, 0, 1);
+	*Cstr_val(val_result) = NULL;
+	CAMLreturn(val_result);
+}
+
 /* version functions */
 
 CAMLprim value mlgmp_compiled_version(value unit)
@@ -808,10 +829,11 @@ CAMLprim value mlgmp_z_of_based_string(value base, value x)
 CAMLprim value mlgmp_based_string_of_z(value base, value x)
 {
 	CAMLparam2(base, x);
-	CAMLlocal1(result);
+	CAMLlocal2(result, val_image);
+	val_image = mlgmp_alloc_cstr();
 	char *image = mpz_get_str(NULL, Int_val(base), Z_val(x));
+	*Cstr_val(val_image) = image;
 	result = caml_copy_string(image);
-	free(image);
 	CAMLreturn(result);
 }
 
@@ -1405,10 +1427,11 @@ CAMLprim value mlgmp_q_of_based_string(value base, value x)
 CAMLprim value mlgmp_based_string_of_q(value base, value x)
 {
 	CAMLparam2(base, x);
-	CAMLlocal1(result);
+	CAMLlocal2(result, val_image);
+	val_image = mlgmp_alloc_cstr();
 	char *image = mpq_get_str(NULL, Int_val(base), Q_val(x));
+	*Cstr_val(val_image) = image;
 	result = caml_copy_string(image);
-	free(image);
 	CAMLreturn(result);
 }
 
@@ -1963,9 +1986,11 @@ CAMLprim value mlgmp_f_of_based_string(value prec, value base, value x)
 CAMLprim value mlgmp_based_string_of_f(value base, value x)
 {
 	CAMLparam2(base, x);
-	CAMLlocal1(result);
+	CAMLlocal2(result, val_image);
+	val_image = mlgmp_alloc_cstr();
 	mp_exp_t exponent;
 	char *image = mpf_get_str(NULL, &exponent, Int_val(base), 0, F_val(x));
+	*Cstr_val(val_image) = image;
 	ssize_t length = strlen(image);
 	int sign_width = image[0] == '-'; /* 0 or 1 */
 	mp_exp_t exponent_p = exponent + sign_width;
@@ -1998,14 +2023,14 @@ CAMLprim value mlgmp_based_string_of_f(value base, value x)
 		buf[length - exponent + 2] = '\0';
 		result = caml_copy_string(buf);
 	}
-	free(image);
 	CAMLreturn(result);
 }
 
 CAMLprim value mlgmp_f_get_str(value base, value digits, value x)
 {
 	CAMLparam3(base, digits, x);
-	CAMLlocal1(result);
+	CAMLlocal2(result, val_image);
+	val_image = mlgmp_alloc_cstr();
 	mp_exp_t exponent;
 	char *image = mpf_get_str(
 		NULL,
@@ -2013,10 +2038,10 @@ CAMLprim value mlgmp_f_get_str(value base, value digits, value x)
 		Int_val(base),
 		Long_val(digits),
 		F_val(x));
+	*Cstr_val(val_image) = image;
 	result = caml_alloc_tuple(2);
 	Store_field(result, 0, caml_copy_string(image));
 	Store_field(result, 1, Val_long(exponent));
-	free(image);
 	CAMLreturn(result);
 }
 

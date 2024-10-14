@@ -12,6 +12,27 @@
 #include "mpc_010000.h"
 #endif
 
+/* mpc_free_str */
+
+static inline char** Mpcstr_val(value val_object)
+{
+	return (char **)(Data_custom_val(val_object));
+}
+
+static void mlmpc_mpcstr_finalize(value val_object)
+{
+	mpc_free_str(*Mpcstr_val(val_object));
+}
+
+static value mlmpc_alloc_mpcstr(void)
+{
+	CAMLparam0();
+	CAMLlocal1(val_result);
+	val_result = caml_alloc_final(1, mlmpc_mpcstr_finalize, 0, 1);
+	*Mpcstr_val(val_result) = NULL;
+	CAMLreturn(val_result);
+}
+
 /* version functions */
 
 CAMLprim value mlmpc_compiled_version(value unit)
@@ -529,10 +550,11 @@ CAMLprim value mlmpc_c_of_based_string(
 CAMLprim value mlmpc_based_string_of_c(value mode, value base, value x)
 {
 	CAMLparam3(mode, base, x);
-	CAMLlocal1(result);
+	CAMLlocal2(result, val_image);
+	val_image = mlmpc_alloc_mpcstr();
 	char *image = mpc_get_str(Int_val(base), 0, C_val(x), Crnd_val(mode));
+	*Mpcstr_val(val_image) = image;
 	result = caml_copy_string(image);
-	mpc_free_str(image);
 	CAMLreturn(result);
 }
 
