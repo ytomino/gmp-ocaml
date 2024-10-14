@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <string.h>
 #include "gmp_stub.h"
 
 /* for version < 4.0.0 */
@@ -81,6 +82,46 @@ CAMLprim value mlmpfr_get_version_string(value unit)
 
 /* custom data */
 
+CAMLexport void mlmpfr_caml_serialize_fr(mpfr_ptr x)
+{
+	mp_prec_t prec = mpfr_get_prec(x);
+	mp_exp_t exponent;
+	char *image = mpfr_get_str (NULL, &exponent, 16, 0, x, MPFR_RNDN);
+	size_t i_length = strlen(image);
+	caml_serialize_int_4(prec);
+	if(mpfr_number_p(x)){
+		char exponent_buf[sizeof(mp_exp_t) * 2 + 1];
+		size_t e_length = gmp_sprintf(exponent_buf, "%lx", (long)exponent);
+		caml_serialize_int_4(i_length + e_length + 3);
+		char *p = image;
+		if(*p == '-'){
+			caml_serialize_block_1(p, 1);
+			++ p;
+			-- i_length;
+		}
+		caml_serialize_block_1("0.", 2);
+		caml_serialize_block_1(p, i_length);
+		caml_serialize_block_1("@", 1);
+		caml_serialize_block_1(exponent_buf, e_length);
+	}else{
+		caml_serialize_int_4(i_length);
+		caml_serialize_block_1(image, i_length);
+	}
+	free(image);
+}
+
+CAMLexport void mlmpfr_caml_deserialize_fr(mpfr_ptr x)
+{
+	mp_prec_t prec = caml_deserialize_uint_4();
+	size_t length = caml_deserialize_uint_4();
+	char image[length + 1];
+	caml_deserialize_block_1(image, length);
+	image[length] = '\0';
+	mpfr_init2(x, prec);
+	int err = mpfr_set_str(x, image, 16, MPFR_RNDN);
+	if(err < 0) caml_failwith(__FUNCTION__);
+}
+
 static void mlmpfr_fr_finalize(value x)
 {
 	mpfr_clear(FR_val(x));
@@ -106,14 +147,14 @@ static void mlmpfr_fr_serialize(value x,
 	CAMLparam1(x);
 	*wsize_32 = WSIZE_32_FR;
 	*wsize_64 = WSIZE_64_FR;
-	fr_serialize(FR_val(x));
+	mlmpfr_caml_serialize_fr(FR_val(x));
 	CAMLreturn0;
 }
 
 static unsigned long mlmpfr_fr_deserialize(void *dst)
 {
 	CAMLparam0();
-	fr_deserialize((mpfr_ptr)dst);
+	mlmpfr_caml_deserialize_fr((mpfr_ptr)dst);
 	CAMLreturnT(unsigned long, sizeof(mpfr_t));
 }
 

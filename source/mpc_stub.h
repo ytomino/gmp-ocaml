@@ -56,20 +56,6 @@ static inline long c_hash(mpc_ptr x)
 	return fr_hash(mpc_realref(x)) ^ fr_hash(mpc_imagref(x));
 }
 
-/* serialize */
-
-static inline void c_serialize(mpc_ptr x)
-{
-	fr_serialize(mpc_realref(x));
-	fr_serialize(mpc_imagref(x));
-}
-
-static inline void c_deserialize(mpc_ptr x)
-{
-	fr_deserialize(mpc_realref(x));
-	fr_deserialize(mpc_imagref(x));
-}
-
 /* custom-operations */
 
 extern struct custom_operations mlmpc_c_ops;

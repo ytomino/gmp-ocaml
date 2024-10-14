@@ -9,6 +9,7 @@
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <string.h>
 
 /* Tag_some/Val_none are added since OCaml 4.12 */
 
@@ -66,6 +67,25 @@ CAMLprim value mlgmp_get_version_string(value unit)
 
 /* custom data */
 
+static void mlgmp_caml_serialize_z(mpz_ptr x)
+{
+	char *image = mpz_get_str (NULL, 16, x);
+	size_t length = strlen(image);
+	caml_serialize_int_4(length);
+	caml_serialize_block_1(image, length);
+	free(image);
+}
+
+static void mlgmp_caml_deserialize_z(mpz_ptr x)
+{
+	size_t length = caml_deserialize_uint_4();
+	char image[length + 1];
+	caml_deserialize_block_1(image, length);
+	image[length] = '\0';
+	int err = mpz_init_set_str(x, image, 16);
+	if(err < 0) caml_failwith(__FUNCTION__);
+}
+
 static void mlgmp_z_finalize(value x)
 {
 	mpz_clear(Z_val(x));
@@ -91,14 +111,14 @@ static void mlgmp_z_serialize(value x,
 	CAMLparam1(x);
 	*wsize_32 = WSIZE_32_Z;
 	*wsize_64 = WSIZE_64_Z;
-	z_serialize(Z_val(x));
+	mlgmp_caml_serialize_z(Z_val(x));
 	CAMLreturn0;
 }
 
 static unsigned long mlgmp_z_deserialize(void *dst)
 {
 	CAMLparam0();
-	z_deserialize((mpz_ptr)dst);
+	mlgmp_caml_deserialize_z((mpz_ptr)dst);
 	CAMLreturnT(unsigned long, sizeof(mpz_t));
 }
 
@@ -1025,6 +1045,19 @@ CAMLprim value mlgmp_z_unsafe_import(
 
 /* custom data */
 
+static void mlgmp_caml_serialize_q(mpq_ptr x)
+{
+	mlgmp_caml_serialize_z(mpq_numref(x));
+	mlgmp_caml_serialize_z(mpq_denref(x));
+}
+
+static void mlgmp_caml_deserialize_q(mpq_ptr x)
+{
+	mlgmp_caml_deserialize_z(mpq_numref(x));
+	mlgmp_caml_deserialize_z(mpq_denref(x));
+	mpq_canonicalize(x);
+}
+
 static void mlgmp_q_finalize(value x)
 {
 	mpq_clear(Q_val(x));
@@ -1050,14 +1083,14 @@ static void mlgmp_q_serialize(value x,
 	CAMLparam1(x);
 	*wsize_32 = WSIZE_32_Q;
 	*wsize_64 = WSIZE_64_Q;
-	q_serialize(Q_val(x));
+	mlgmp_caml_serialize_q(Q_val(x));
 	CAMLreturn0;
 }
 
 static unsigned long mlgmp_q_deserialize(void *dst)
 {
 	CAMLparam0();
-	q_deserialize((mpq_ptr)dst);
+	mlgmp_caml_deserialize_q((mpq_ptr)dst);
 	CAMLreturnT(unsigned long, sizeof(mpq_t));
 }
 
@@ -1466,6 +1499,41 @@ CAMLprim value mlgmp_q_make_z(value x, value y)
 
 /* custom data */
 
+static void mlgmp_caml_serialize_f(mpf_ptr x)
+{
+	mp_bitcnt_t prec = mpf_get_prec(x);
+	mp_exp_t exponent;
+	char *image = mpf_get_str (NULL, &exponent, 16, 0, x);
+	size_t i_length = strlen(image);
+	caml_serialize_int_4(prec);
+	char exponent_buf[sizeof(mp_exp_t) * 2 + 1];
+	size_t e_length = gmp_sprintf(exponent_buf, "%lx", (long)exponent);
+	caml_serialize_int_4(i_length + e_length + 3);
+	char *p = image;
+	if(*p == '-'){
+		caml_serialize_block_1(p, 1);
+		++ p;
+		-- i_length;
+	}
+	caml_serialize_block_1("0.", 2);
+	caml_serialize_block_1(p, i_length);
+	caml_serialize_block_1("@", 1);
+	caml_serialize_block_1(exponent_buf, e_length);
+	free(image);
+}
+
+static void mlgmp_caml_deserialize_f(mpf_ptr x)
+{
+	mp_bitcnt_t prec = caml_deserialize_uint_4();
+	size_t length = caml_deserialize_uint_4();
+	char image[length + 1];
+	caml_deserialize_block_1(image, length);
+	image[length] = '\0';
+	mpf_init2(x, prec);
+	int err = mpf_set_str(x, image, 16);
+	if(err < 0) caml_failwith(__FUNCTION__);
+}
+
 static void mlgmp_f_finalize(value x)
 {
 	mpf_clear(F_val(x));
@@ -1491,14 +1559,14 @@ static void mlgmp_f_serialize(value x,
 	CAMLparam1(x);
 	*wsize_32 = WSIZE_32_F;
 	*wsize_64 = WSIZE_64_F;
-	f_serialize(F_val(x));
+	mlgmp_caml_serialize_f(F_val(x));
 	CAMLreturn0;
 }
 
 static unsigned long mlgmp_f_deserialize(void *dst)
 {
 	CAMLparam0();
-	f_deserialize((mpf_ptr)dst);
+	mlgmp_caml_deserialize_f((mpf_ptr)dst);
 	CAMLreturnT(unsigned long, sizeof(mpf_t));
 }
 

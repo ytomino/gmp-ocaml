@@ -1,7 +1,6 @@
 #include <caml/fail.h>
 #include <caml/intext.h>
 #include <limits.h>
-#include <string.h>
 #include <mpfr.h>
 
 /* word size */
@@ -68,54 +67,15 @@ static inline long fr_hash(mpfr_ptr x)
 	return result;
 }
 
-/* serialize */
-
-static inline void fr_serialize(mpfr_ptr x)
-{
-	mp_prec_t prec = mpfr_get_prec(x);
-	mp_exp_t exponent;
-	char *image = mpfr_get_str (NULL, &exponent, 16, 0, x, MPFR_RNDN);
-	size_t i_length = strlen(image);
-	caml_serialize_int_4(prec);
-	if(mpfr_number_p(x)){
-		char exponent_buf[sizeof(mp_exp_t) * 2 + 1];
-		size_t e_length = gmp_sprintf(exponent_buf, "%lx", (long)exponent);
-		caml_serialize_int_4(i_length + e_length + 3);
-		char *p = image;
-		if(*p == '-'){
-			caml_serialize_block_1(p, 1);
-			++ p;
-			-- i_length;
-		}
-		caml_serialize_block_1("0.", 2);
-		caml_serialize_block_1(p, i_length);
-		caml_serialize_block_1("@", 1);
-		caml_serialize_block_1(exponent_buf, e_length);
-	}else{
-		caml_serialize_int_4(i_length);
-		caml_serialize_block_1(image, i_length);
-	}
-	free(image);
-}
-
-static inline void fr_deserialize(mpfr_ptr x)
-{
-	mp_prec_t prec = caml_deserialize_uint_4();
-	size_t length = caml_deserialize_uint_4();
-	char image[length + 1];
-	caml_deserialize_block_1(image, length);
-	image[length] = '\0';
-	mpfr_init2(x, prec);
-	int err = mpfr_set_str(x, image, 16, MPFR_RNDN);
-	if(err < 0) caml_failwith(__FUNCTION__);
-}
-
 /* supplied */
 
 CAMLextern void mlmpfr_mpfr_si_pow_si(
 	mpfr_ptr rop, long op1, long op2, mpfr_rnd_t rnd);
 
 /* custom-operations */
+
+CAMLextern void mlmpfr_caml_serialize_fr(mpfr_ptr x);
+CAMLextern void mlmpfr_caml_deserialize_fr(mpfr_ptr x);
 
 extern struct custom_operations mlmpfr_fr_ops;
 

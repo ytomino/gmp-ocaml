@@ -45,6 +45,18 @@ CAMLprim value mlmpc_get_version_string(value unit)
 
 /* custom data */
 
+static void mlgmp_caml_serialize_c(mpc_ptr x)
+{
+	mlmpfr_caml_serialize_fr(mpc_realref(x));
+	mlmpfr_caml_serialize_fr(mpc_imagref(x));
+}
+
+static void mlgmp_caml_deserialize_c(mpc_ptr x)
+{
+	mlmpfr_caml_deserialize_fr(mpc_realref(x));
+	mlmpfr_caml_deserialize_fr(mpc_imagref(x));
+}
+
 static void mlmpc_c_finalize(value x)
 {
 	mpc_clear(C_val(x));
@@ -70,14 +82,14 @@ static void mlmpc_c_serialize(value x,
 	CAMLparam1(x);
 	*wsize_32 = WSIZE_32_C;
 	*wsize_64 = WSIZE_64_C;
-	c_serialize(C_val(x));
+	mlgmp_caml_serialize_c(C_val(x));
 	CAMLreturn0;
 }
 
 static unsigned long mlmpc_c_deserialize(void *dst)
 {
 	CAMLparam0();
-	c_deserialize((mpc_ptr)dst);
+	mlgmp_caml_deserialize_c((mpc_ptr)dst);
 	CAMLreturnT(unsigned long, sizeof(mpc_t));
 }
 
