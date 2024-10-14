@@ -19,7 +19,7 @@ OCAMLCFLAGS=$(and $(filter-out 0,$(DEBUG)),-g) $(if $(ASSERT),,-noassert) -w +a
 OCAMLOPTFLAGS=$(OCAMLCFLAGS)
 OCAML_INCLUDE_FLAGS=
 CFLAGS=$(and $(filter-out 0,$(DEBUG)),-g$(DEBUG)) \
-       $(and $(ASSERT),-DDEBUG -DNDEBUG) -std=gnu99 -Wall -Wextra
+       $(if $(ASSERT),-DDEBUG,-DNDEBUG) -std=gnu99 -Wall -Wextra
 C_INCLUDE_FLAGS=$(sort \
                   $(and $(WITH_GMP),-I$(WITH_GMP)/include) \
                   $(and $(WITH_MPFR),-I$(WITH_MPFR)/include) \
