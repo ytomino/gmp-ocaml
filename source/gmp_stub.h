@@ -1,6 +1,7 @@
 #include <caml/fail.h>
 #include <caml/intext.h>
 #include <limits.h>
+#include <math.h>
 #include <gmp.h>
 
 /* limits.h */
@@ -87,9 +88,24 @@ static inline long f_hash(mpf_ptr x)
 	return result;
 }
 
+/* supplied */
+
 #if __GNU_MP_RELEASE < 50000
 typedef unsigned long int mp_bitcnt_t;
 #endif
+
+/* See https://www.mpfr.org/mpfr-current/mpfr.html
+   #index-mpfr_005fget_005fstr_005fndigits */
+static inline size_t mlgmp_mpf_get_str_ndigits(int b, mp_bitcnt_t p)
+{
+	if(b == 2){
+		return 1 + (p - 1);
+	}else if(b == 16){
+		return 1 + (p + 2) / 4; /* ceil((p - 1) / 4) */
+	}else{
+		return 1 + ceil((double)p * M_LN2 / log((double)b));
+	}
+}
 
 /* custom-operations */
 

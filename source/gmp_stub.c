@@ -6,7 +6,6 @@
 #include <caml/memory.h>
 #include <caml/mlvalues.h>
 #include <sys/types.h>
-#include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
@@ -90,11 +89,12 @@ CAMLprim value mlgmp_get_version_string(value unit)
 
 static void mlgmp_caml_serialize_z(mpz_ptr x)
 {
-	char *image = mpz_get_str (NULL, 16, x);
+	size_t capacity = mpz_sizeinbase(x, 16) + 2;
+	char image[capacity];
+	mpz_get_str(image, 16, x);
 	size_t length = strlen(image);
 	caml_serialize_int_4(length);
 	caml_serialize_block_1(image, length);
-	free(image);
 }
 
 static void mlgmp_caml_deserialize_z(mpz_ptr x)
@@ -1526,7 +1526,9 @@ static void mlgmp_caml_serialize_f(mpf_ptr x)
 {
 	mp_bitcnt_t prec = mpf_get_prec(x);
 	mp_exp_t exponent;
-	char *image = mpf_get_str (NULL, &exponent, 16, 0, x);
+	size_t capacity = mlgmp_mpf_get_str_ndigits(16, prec) + 2;
+	char image[capacity];
+	mpf_get_str(image, &exponent, 16, 0, x);
 	size_t i_length = strlen(image);
 	caml_serialize_int_4(prec);
 	char exponent_buf[sizeof(mp_exp_t) * 2 + 1];
@@ -1542,7 +1544,6 @@ static void mlgmp_caml_serialize_f(mpf_ptr x)
 	caml_serialize_block_1(p, i_length);
 	caml_serialize_block_1("@", 1);
 	caml_serialize_block_1(exponent_buf, e_length);
-	free(image);
 }
 
 static void mlgmp_caml_deserialize_f(mpf_ptr x)

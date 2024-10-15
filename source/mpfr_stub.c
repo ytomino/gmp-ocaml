@@ -10,8 +10,16 @@
 #include <string.h>
 #include "gmp_stub.h"
 
-/* for version < 4.0.0 */
+/* MAX */
 
+#ifndef MAX
+#define MAX(a,b) (((a)>(b))?(a):(b))
+	/* defined in sys/param.h in some environments */
+#endif
+
+/* for version < 4.1.0 */
+
+#if MPFR_VERSION < 0x040100
 #if MPFR_VERSION < 0x040000
 #if MPFR_VERSION < 0x030100
 #if MPFR_VERSION < 0x030000
@@ -20,6 +28,8 @@
 #include "mpfr_030100.h"
 #endif
 #include "mpfr_040000.h"
+#endif
+#include "mpfr_040100.h"
 #endif
 
 /* supplied */
@@ -107,7 +117,10 @@ CAMLexport void mlmpfr_caml_serialize_fr(mpfr_ptr x)
 {
 	mp_prec_t prec = mpfr_get_prec(x);
 	mp_exp_t exponent;
-	char *image = mpfr_get_str (NULL, &exponent, 16, 0, x, MPFR_RNDN);
+	size_t capacity = mpfr_get_str_ndigits(16, prec) + 2;
+	capacity = MAX(capacity, 7); /* "-@Inf@\0" */
+	char image[capacity];
+	mpfr_get_str(image, &exponent, 16, 0, x, MPFR_RNDN);
 	size_t i_length = strlen(image);
 	caml_serialize_int_4(prec);
 	if(mpfr_number_p(x)){
@@ -128,7 +141,6 @@ CAMLexport void mlmpfr_caml_serialize_fr(mpfr_ptr x)
 		caml_serialize_int_4(i_length);
 		caml_serialize_block_1(image, i_length);
 	}
-	free(image);
 }
 
 CAMLexport void mlmpfr_caml_deserialize_fr(mpfr_ptr x)
