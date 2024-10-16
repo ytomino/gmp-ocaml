@@ -1401,21 +1401,21 @@ CAMLprim value mlgmp_q_of_based_string(value base, value x)
 	result = mlgmp_alloc_q_init();
 	mpq_ptr result_value = Q_val(result);
 	int b = Int_val(base);
+	size_t x_length = caml_string_length(x);
 	char const *x_value = String_val(x);
-	char *period = strchr(x_value, '.');
+	char *period = memchr(x_value, '.', x_length);
 	if(period == NULL){
 		int err = mpq_set_str(result_value, x_value, b);
 		if(err < 0) caml_failwith(__FUNCTION__);
 		if(mpz_sgn(mpq_denref(result_value)) == 0) caml_raise_zero_divide();
 	}else{
-		int length = strlen(x_value);
-		char buf[length]; /* length + 1(NUL) - 1('.') */
+		char buf[x_length]; /* length + 1(NUL) - 1('.') */
 		int period_index = period - x_value;
 		int next_index = period_index + 1;
-		int decimal_length = length - next_index;
+		size_t decimal_length = x_length - next_index;
 		memcpy(buf, x_value, period_index);
 		memcpy(buf + period_index, x_value + next_index, decimal_length);
-		buf[length - 1] = '\0';
+		buf[x_length - 1] = '\0';
 		int err = mpz_set_str(mpq_numref(result_value), buf, b);
 		if(err < 0) caml_failwith(__FUNCTION__);
 		mpz_ui_pow_ui(mpq_denref(result_value), b, decimal_length);
