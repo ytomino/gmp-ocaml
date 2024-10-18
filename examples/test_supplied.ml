@@ -35,7 +35,8 @@ assert (Z.int_pow_int ~base:(-3) ~exponent:3 = Z.of_int (-27));;
 let table = [
 	(Z.tdiv, Z.tdiv_int, 't');
 	(Z.fdiv, Z.fdiv_int, 'f');
-	(Z.cdiv, Z.cdiv_int, 'c')]
+	(Z.cdiv, Z.cdiv_int, 'c')
+]
 in
 List.iter (fun (f1, f2, id) ->
 	for d = ~-10 to 10 do
