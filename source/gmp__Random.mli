@@ -22,7 +22,7 @@ external int64: t -> int64 -> int64 = "mlgmp_random_int64"
 external nativeint: t -> nativeint -> nativeint = "mlgmp_random_nativeint"
 val bool: t -> bool
 external float_bits: t -> int -> float = "mlgmp_random_float_bits"
-val float: t -> float -> float
+val float: t -> float -> float (* [0,bound), unlike Stdlib.Random.float *)
 external z: t -> z -> z = "mlgmp_random_z"
 external f_bits: t -> int -> f = "mlgmp_random_f_bits"
-external f: t -> prec:int -> f -> f = "mlgmp_random_f"
+external f: t -> prec:int -> f -> f = "mlgmp_random_f" (* [0,bound) *)
