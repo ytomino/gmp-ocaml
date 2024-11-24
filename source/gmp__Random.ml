@@ -30,6 +30,26 @@ external nativeint: t -> nativeint -> nativeint = "mlgmp_random_nativeint";;
 let bool state = int_bits state 1 <> 0;;
 external float_bits: t -> int -> float = "mlgmp_random_float_bits";;
 let float state n = n *. float_bits state 53;;
+let float_exclusive state n =
+	let bound = Int64.sub (Int64.shift_left 1L 53) 1L in
+	let r = Int64.add (int64 state bound) 1L in (* [1,2**prec-1] *)
+	let r = ldexp (Int64.to_float r) ~-53 in (* (0,1) *)
+	n *. r;;
+let float_inclusive state n =
+	let bound = Int64.add (Int64.shift_left 1L 53) 1L in
+	let r = int64 state bound in (* [0,2**prec] *)
+	let r = ldexp (Int64.to_float r) ~-53 in (* [0,1] *)
+	n *. r;;
 external z: t -> z -> z = "mlgmp_random_z";;
 external f_bits: t -> int -> f = "mlgmp_random_f_bits";;
 external f: t -> prec:int -> f -> f = "mlgmp_random_f";;
+let f_exclusive state ~prec n =
+	let bound = Z.sub_int (Z.int_pow_int ~base:2 ~exponent:prec) 1 in
+	let r = Z.add_int (z state bound) 1 in (* [1,2**prec-1] *)
+	let r = F.ldexp ~prec (f_of_z ~prec r) ~-prec in (* (0,1) *)
+	F.mul ~prec n r;;
+let f_inclusive state ~prec n =
+	let bound = Z.add_int (Z.int_pow_int ~base:2 ~exponent:prec) 1 in
+	let r = z state bound in (* [0,2**prec] *)
+	let r = F.ldexp ~prec (f_of_z ~prec r) ~-prec in (* [0,1] *)
+	F.mul ~prec n r;;
