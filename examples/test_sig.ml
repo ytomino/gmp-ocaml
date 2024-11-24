@@ -68,6 +68,7 @@ module type F1 = sig (* float *)
 	include R
 	include F0 with type t := t
 	val frexp: t -> t * int
+	val ldexp: t -> int -> t
 	val trunc: t -> t
 	val ceil: t -> t
 	val floor: t -> t

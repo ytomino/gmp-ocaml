@@ -1520,6 +1520,17 @@ CAMLprim value mlgmp_q_make_z(value x, value y)
 
 /**** F ****/
 
+/* supplied */
+
+static void mlgmp_mpf_ldexp(mpf_ptr rop, mpf_srcptr op, long exp)
+{
+	if(exp < 0){
+		mpf_div_2exp(rop, op, -exp);
+	}else{
+		mpf_mul_2exp(rop, op, exp);
+	}
+}
+
 /* custom data */
 
 static void mlgmp_caml_serialize_f(mpf_ptr x)
@@ -1772,11 +1783,7 @@ CAMLprim value mlgmp_f_int_pow_int(value prec, value base, value exponent)
 	long e = Long_val(exponent);
 	if(b == 2){
 		mpf_set_ui(result_value, 1);
-		if(e < 0){
-			mpf_div_2exp(result_value, result_value, -e);
-		}else{
-			mpf_mul_2exp(result_value, result_value, e);
-		}
+		mlgmp_mpf_ldexp(result_value, result_value, e);
 	}else if(b < 0){
 		mpf_set_ui(result_value, -b);
 		if(e < 0){
@@ -1817,11 +1824,7 @@ CAMLprim value mlgmp_f_scale(
 	long b = Long_val(base);
 	long e = Long_val(exponent);
 	if(b == 2){
-		if(e >= 0){
-			mpf_mul_2exp(result_value, f, e);
-		}else{
-			mpf_div_2exp(result_value, f, -e);
-		}
+		mlgmp_mpf_ldexp(result_value, f, e);
 	}else{
 		mpz_t a;
 		mpz_init(a);
@@ -1890,16 +1893,21 @@ CAMLprim value mlgmp_f_frexp(value prec, value x)
 		result_fraction = mlgmp_alloc_f_init2(Long_val(prec));
 		mpf_ptr rf_value = F_val(result_fraction);
 		x_value = F_val(x); /* moved if gc was invoked by caml_alloc_... */
-		if(exponent > 0){
-			mpf_div_2exp(rf_value, x_value, exponent);
-		}else{
-			mpf_mul_2exp(rf_value, x_value, - exponent);
-		}
+		mlgmp_mpf_ldexp(rf_value, x_value, -exponent);
 	}
 	result = caml_alloc_tuple(2);
 	Store_field(result, 0, result_fraction);
 	Store_field(result, 1, Val_long(exponent));
 	CAMLreturn(result);
+}
+
+CAMLprim value mlgmp_f_ldexp(value val_prec, value val_x, value val_exponent)
+{
+	CAMLparam3(val_prec, val_x, val_exponent);
+	CAMLlocal1(val_result);
+	val_result = mlgmp_alloc_f_init2(Long_val(val_prec));
+	mlgmp_mpf_ldexp(F_val(val_result), F_val(val_x), Long_val(val_exponent));
+	CAMLreturn(val_result);
 }
 
 CAMLprim value mlgmp_f_trunc(value prec, value x)

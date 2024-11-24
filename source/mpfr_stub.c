@@ -59,6 +59,16 @@ CAMLexport void mlmpfr_mpfr_si_pow_si(
 	}
 }
 
+static void mlmpfr_mpfr_ldexp(
+	mpfr_ptr rop, mpfr_srcptr op, long exp, mpfr_rnd_t rnd)
+{
+	if(exp < 0){
+		mpfr_div_2exp(rop, op, -exp, rnd);
+	}else{
+		mpfr_mul_2exp(rop, op, exp, rnd);
+	}
+}
+
 /* mpfr_free_str */
 
 static inline char** Mpfrstr_val(value val_object)
@@ -379,11 +389,7 @@ CAMLprim value mlmpfr_fr_scale(
 	long b = Long_val(base);
 	long e = Long_val(exponent);
 	if(b == 2){
-		if(e >= 0){
-			mpfr_mul_2exp(result_value, f, e, m);
-		}else{
-			mpfr_div_2exp(result_value, f, -e, m);
-		}
+		mlmpfr_mpfr_ldexp(result_value, f, e, m);
 	}else{
 		mpz_t a;
 		mpz_init(a);
@@ -435,6 +441,17 @@ CAMLprim value mlmpfr_fr_frexp(value prec, value mode, value x)
 	Store_field(result, 0, result_fraction);
 	Store_field(result, 1, Val_long(exponent));
 	CAMLreturn(result);
+}
+
+CAMLprim value mlmpfr_fr_ldexp(
+	value val_prec, value val_mode, value val_x, value val_exponent)
+{
+	CAMLparam4(val_prec, val_mode, val_x, val_exponent);
+	CAMLlocal1(val_result);
+	val_result = mlmpfr_alloc_fr_init2(Long_val(val_prec));
+	mlmpfr_mpfr_ldexp(
+		FR_val(val_result), FR_val(val_x), Long_val(val_exponent), Rnd_val(val_mode));
+	CAMLreturn(val_result);
 }
 
 CAMLprim value mlmpfr_fr_trunc(value prec, value x)

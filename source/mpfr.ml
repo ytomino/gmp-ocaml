@@ -72,6 +72,8 @@ module FR = struct
 	external nearly_equal: int -> t -> t -> bool = "mlmpfr_fr_nearly_equal";;
 	external frexp: prec:int -> mode:rounding_mode -> t -> t * int =
 		"mlmpfr_fr_frexp";;
+	external ldexp: prec:int -> mode:rounding_mode -> t -> int -> t =
+		"mlmpfr_fr_ldexp";;
 	external trunc: prec:int -> t -> t = "mlmpfr_fr_trunc";;
 	external ceil: prec:int -> t -> t = "mlmpfr_fr_ceil";;
 	external floor: prec:int -> t -> t = "mlmpfr_fr_floor";;
@@ -132,6 +134,7 @@ module FR = struct
 		let sqrt = sqrt ~prec ~mode;;
 		external nearly_equal: int -> t -> t -> bool = "mlmpfr_fr_nearly_equal";;
 		let frexp = frexp ~prec ~mode;;
+		let ldexp = ldexp ~prec ~mode;;
 		let trunc = trunc ~prec;;
 		let ceil = ceil ~prec;;
 		let floor = floor ~prec;;

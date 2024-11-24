@@ -162,6 +162,18 @@ assert (F.root ~nth:1 (F.of_int 2) = F.of_int 2);;
 assert (F.root ~nth:2 (F.of_int 4) = F.of_int 2);;
 assert (F.root ~nth:3 (F.of_int 8) = F.of_int 2);;
 
+(* mpf_frexp is missing *)
+assert (F.frexp F.one = (F.of_float 0.5, 1));;
+assert (F.frexp (F.of_float 0.25) = (F.of_float 0.5, ~-1));;
+assert (F.frexp F.minus_one = (F.of_float ~-.0.5, 1));;
+assert (F.frexp (F.of_float ~-.0.25) = (F.of_float ~-.0.5, ~-1));;
+
+(* mpf_ldexp is missing *)
+assert (F.ldexp (F.of_float 1.5) ~-2 = F.of_float 0.375);;
+assert (F.ldexp (F.of_float 1.5) 2 = F.of_float 6.);;
+assert (F.ldexp (F.of_float ~-.1.5) ~-2 = F.of_float ~-.0.375);;
+assert (F.ldexp (F.of_float ~-.1.5) 2 = F.of_float ~-.6.);;
+
 (* mpf_log is missing *)
 let prec = 10 in
 assert (
@@ -186,6 +198,12 @@ assert (FR.int_pow_int ~base:~-3 ~exponent:~-2 = FR.div FR.one (FR.of_int 9));;
 assert (
 	FR.int_pow_int ~base:~-3 ~exponent:~-3 = FR.div FR.minus_one (FR.of_int 27)
 );;
+
+(* mpfr_ldexp is missing *)
+assert (FR.ldexp (FR.of_float 1.5) ~-2 = FR.of_float 0.375);;
+assert (FR.ldexp (FR.of_float 1.5) 2 = FR.of_float 6.);;
+assert (FR.ldexp (FR.of_float ~-.1.5) ~-2 = FR.of_float ~-.0.375);;
+assert (FR.ldexp (FR.of_float ~-.1.5) 2 = FR.of_float ~-.6.);;
 
 (* mpc_sub_si is missing *)
 assert (C.sub_int (C.of_int 4) (+1) = C.of_int 3);;

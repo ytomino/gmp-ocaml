@@ -67,6 +67,8 @@ module FR: sig
 	external nearly_equal: int -> t -> t -> bool = "mlmpfr_fr_nearly_equal"
 	external frexp: prec:int -> mode:rounding_mode -> t -> t * int =
 		"mlmpfr_fr_frexp"
+	external ldexp: prec:int -> mode:rounding_mode -> t -> int -> t =
+		"mlmpfr_fr_ldexp"
 	external trunc: prec:int -> t -> t = "mlmpfr_fr_trunc"
 	external ceil: prec:int -> t -> t = "mlmpfr_fr_ceil"
 	external floor: prec:int -> t -> t = "mlmpfr_fr_floor"
@@ -130,6 +132,7 @@ module FR: sig
 		(* floating-point operations *)
 		external nearly_equal: int -> t -> t -> bool = "mlmpfr_fr_nearly_equal"
 		val frexp: t -> t * int
+		val ldexp: t -> int -> t
 		val trunc: t -> t
 		val ceil: t -> t
 		val floor: t -> t
