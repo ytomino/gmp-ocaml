@@ -172,7 +172,7 @@ module Gmp = struct
 			(if lm > 1 then
 				let tmp = Bytes.create (succ lm) in
 				Bytes.blit (Bytes.unsafe_of_string mantissa) 0 tmp 0 (1+i);
-				Bytes.blit (Bytes.unsafe_of_string mantissa) (1+i) tmp (2+i) ((pred lm)-i);
+				Bytes.blit (Bytes.unsafe_of_string mantissa) (1+i) tmp (2+i) (pred lm - i);
 				Bytes.set tmp (1+i) '.';
 				Bytes.unsafe_to_string tmp
 			else mantissa)

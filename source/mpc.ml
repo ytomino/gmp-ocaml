@@ -36,7 +36,7 @@ external c_of_fr: prec:int * int -> mode:rounding_mode -> fr -> c =
 external make_int: prec:int * int -> mode:rounding_mode -> int -> int -> c =
 	"mlmpc_c_make_int";;
 
-let nn = (`N, `N);;
+let nn = `N, `N;;
 
 module C = struct
 	type t = c;;
