@@ -1,6 +1,6 @@
 open Gmp;;
 
-external random_seed: unit -> int = "caml_sys_random_seed";;
+external random_seed: unit -> int array = "caml_sys_random_seed";;
 
 type t;;
 
@@ -11,7 +11,6 @@ external create_mt: unit -> t = "mlgmp_random_create_mt";;
 external seed_int: t -> int -> unit = "mlgmp_random_seed_int";;
 external seed_z: t -> z -> unit = "mlgmp_random_seed_z";;
 let make_int x = let r = create () in seed_int r x; r;;
-let make_self_init () = make_int (random_seed ());;
 let make_z x = let r = create () in seed_z r x; r;;
 let make: int array -> t =
 	let rec loop i seed a =
@@ -20,6 +19,7 @@ let make: int array -> t =
 		loop (i + 1) n a
 	in
 	loop 0 Z.zero;;
+let make_self_init () = make (random_seed ());;
 external copy: t -> t = "mlgmp_random_copy";;
 external int_bits: t -> int -> int = "mlgmp_random_int_bits";;
 let bits state = int_bits state 30;;

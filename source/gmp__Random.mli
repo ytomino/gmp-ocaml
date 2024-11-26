@@ -9,9 +9,9 @@ external create_mt: unit -> t = "mlgmp_random_create_mt"
 external seed_int: t -> int -> unit = "mlgmp_random_seed_int"
 external seed_z: t -> z -> unit = "mlgmp_random_seed_z"
 val make_int: int -> t (* create and seed_int *)
-val make_self_init: unit -> t (* make_int with a seed of O'Caml runtime *)
 val make_z: z -> t (* create and seed_z *)
 val make: int array -> t
+val make_self_init: unit -> t (* make with a seed of OCaml runtime *)
 external copy: t -> t = "mlgmp_random_copy"
 (* generating *)
 external int_bits: t -> int -> int = "mlgmp_random_int_bits"
