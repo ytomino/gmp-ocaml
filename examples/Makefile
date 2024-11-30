@@ -29,7 +29,7 @@ EXAMPLES1=$(basename $(wildcard *.ml))
 EXAMPLES=$(EXAMPLES1) essai test_creal test_mlgmp test_suite
 TESTS=$(filter test_%,$(EXAMPLES1))
 
-.PHONY: all check interacitve clean $(TESTS)
+.PHONY: all check interactive clean $(TESTS)
 
 all: \
 	$(and $(OCAMLC),$(patsubst %,$(BUILDDIR)/%.byte.exe,$(EXAMPLES))) \
