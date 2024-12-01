@@ -33,10 +33,11 @@ LDLIB=$(LD_MPFR) -lgmp
 
 include Makefile.rules
 
-$(BUILDDIR)/mpfr_stub.o: gmp_stub.h mpfr_stub.h mpfr_030000.h mpfr_030100.h mpfr_040000.h
+$(BUILDDIR)/mpfr_stub.o \
+: gmp_stub.h mpfr_stub.h mpfr_030000.h mpfr_030100.h mpfr_040000.h
 $(BUILDDIR)/mpfr.cmi: gmp.mli
 $(BUILDDIR)/mpfr_pp.cmo: $(BUILDDIR)/mpfr.cmi
 $(BUILDDIR)/mpfr_pp.cmx: $(BUILDDIR)/mpfr.cmx
-$(BUILDDIR)/mpfr_pp_install.cmo: \
-	private override OCAMLCFLAGS+=-I $(OCAMLLIBDIR)/compiler-libs
+$(BUILDDIR)/mpfr_pp_install.cmo \
+: private override OCAMLCFLAGS+=-I $(OCAMLLIBDIR)/compiler-libs
 $(BUILDDIR)/mpfr_pp_install.cmo: $(BUILDDIR)/mpfr_pp.cmo
