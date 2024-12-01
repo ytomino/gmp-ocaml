@@ -27,11 +27,11 @@ LDLIB=$(LD_GMP)
 
 include Makefile.rules
 
-$(BUILDDIR)/gmp.cmi $(BUILDDIR)/gmp.cmo $(BUILDDIR)/gmp.cmx: \
-	private override OCAMLCFLAGS+=-no-alias-deps -w -49
+$(BUILDDIR)/gmp.cmi $(BUILDDIR)/gmp.cmo $(BUILDDIR)/gmp.cmx \
+: private override OCAMLCFLAGS+=-no-alias-deps -w -49
 $(BUILDDIR)/gmp_stub.o: gmp_stub.h gmp_050100.h
 $(BUILDDIR)/gmp__Random.cmi $(BUILDDIR)/gmp_pp.cmo: $(BUILDDIR)/gmp.cmi
 $(BUILDDIR)/gmp__Random.cmx $(BUILDDIR)/gmp_pp.cmx: $(BUILDDIR)/gmp.cmx
-$(BUILDDIR)/gmp_pp_install.cmo: \
-	private override OCAMLCFLAGS+=-I $(OCAMLLIBDIR)/compiler-libs
+$(BUILDDIR)/gmp_pp_install.cmo \
+: private override OCAMLCFLAGS+=-I $(OCAMLLIBDIR)/compiler-libs
 $(BUILDDIR)/gmp_pp_install.cmo: $(BUILDDIR)/gmp_pp.cmo
