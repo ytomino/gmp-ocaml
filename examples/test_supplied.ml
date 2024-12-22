@@ -45,9 +45,9 @@ List.iter (fun (f1, f2, id) ->
 				let r1, q1 = f1 (Z.of_int n) (Z.of_int d) in
 				let r2, q2 = f2 (Z.of_int n) d in
 				if Z.compare r1 r2 <> 0 || Z.compare_int q1 q2 <> 0 then (
-					Printf.printf "Z.%cdiv %d %d = %s, %s\n" id n d (Z.to_string r1)
+					Printf.eprintf "Z.%cdiv %d %d = %s, %s\n" id n d (Z.to_string r1)
 						(Z.to_string q1);
-					Printf.printf "Z.%cdiv_int %d %d = %s, %d\n" id n d (Z.to_string r2) q2;
+					Printf.eprintf "Z.%cdiv_int %d %d = %s, %d\n" id n d (Z.to_string r2) q2;
 					assert false
 				)
 			done
