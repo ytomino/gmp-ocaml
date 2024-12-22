@@ -33,10 +33,9 @@ expect_export_failure Z.zero Bytes.empty ~-1 1;; (* negative pos *)
 let expect_export order x buf pos len expect = (
 	Z.export ~order:order x buf pos len;
 	if buf <> expect then (
-		Printf.printf "expect = \"%s\"; result = \"%s\"\n"
+		Printf.eprintf "expect = \"%s\"; result = \"%s\"\n"
 			(String.escaped (Bytes.to_string expect))
 			(String.escaped (Bytes.to_string buf));
-		flush stdout;
 		assert false
 	)
 );;
@@ -125,10 +124,9 @@ expect_import_failure Bytes.empty ~-1 1;; (* negative pos *)
 let expect_import order signed buf pos len expect = (
 	let x = Z.import ~order ~signed buf pos len in
 	if x <> expect then (
-		Printf.printf "expect = \"%s\"; result = \"%s\"\n"
+		Printf.eprintf "expect = \"%s\"; result = \"%s\"\n"
 			(String.escaped (Z.to_string expect))
 			(String.escaped (Bytes.to_string buf));
-		flush stdout;
 		assert false
 	)
 );;
@@ -142,9 +140,8 @@ let test_export_and_import x = (
 	Z.export ~order:`N x buf 0 len;
 	let r = Z.import ~order:`N ~signed:true buf 0 len in
 	if r <> x then (
-		Printf.printf "x = %s; r = %s; buf = \"%s\"\n" (string_of_z x) (string_of_z r)
+		Printf.eprintf "x = %s; r = %s; buf = \"%s\"\n" (string_of_z x) (string_of_z r)
 			(String.escaped (Bytes.to_string buf));
-		flush stdout;
 		assert false
 	)
 );;
