@@ -14,19 +14,19 @@ val make: int array -> t
 val make_self_init: unit -> t (* make with a seed of OCaml runtime *)
 external copy: t -> t = "mlgmp_random_copy"
 (* generating *)
-external int_bits: t -> int -> int = "mlgmp_random_int_bits"
+external int_bits: int -> t -> int = "mlgmp_random_int_bits"
 val bits: t -> int
 external int: t -> int -> int = "mlgmp_random_int"
 external int32: t -> int32 -> int32 = "mlgmp_random_int32"
 external int64: t -> int64 -> int64 = "mlgmp_random_int64"
 external nativeint: t -> nativeint -> nativeint = "mlgmp_random_nativeint"
 val bool: t -> bool
-external float_bits: t -> int -> float = "mlgmp_random_float_bits"
+external float_bits: int -> t -> float = "mlgmp_random_float_bits"
 val float: t -> float -> float (* [0,bound), unlike Stdlib.Random.float *)
 val float_exclusive: t -> float -> float (* (0,bound) *)
 val float_inclusive: t -> float -> float (* [0,bound] *)
 external z: t -> z -> z = "mlgmp_random_z"
-external f_bits: t -> int -> f = "mlgmp_random_f_bits"
+external f_bits: int -> t -> f = "mlgmp_random_f_bits"
 external f: t -> prec:int -> f -> f = "mlgmp_random_f" (* [0,bound) *)
 val f_exclusive: t -> prec:int -> f -> f (* (0,bound) *)
 val f_inclusive: t -> prec:int -> f -> f (* [0,bound] *)
