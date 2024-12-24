@@ -123,46 +123,46 @@ assert (Decimal.sub (Z.of_int 2, 5) (Z.of_int 3, 4) = (Z.of_int 17, 4));;
 assert (Decimal.sub (Z.of_int 15, 1) (Z.of_int 50, 0) = (Z.one, 2));;
 assert (Decimal.sub Decimal.one Decimal.one = Decimal.zero);;
 
-assert (Decimal.mul (Z.of_int 2, ~-1) (Z.of_int 3, 1) = (Z.of_int 6, 0));;
-assert (Decimal.mul (Z.of_int 2, ~-1) (Z.of_int 5, 1) = (Z.one, 1));;
+assert (Decimal.mul (Z.of_int 2, -1) (Z.of_int 3, 1) = (Z.of_int 6, 0));;
+assert (Decimal.mul (Z.of_int 2, -1) (Z.of_int 5, 1) = (Z.one, 1));;
 
-assert (Decimal.div Decimal.one (Z.of_int 2, 0) = (Z.of_int 5, ~-1));;
+assert (Decimal.div Decimal.one (Z.of_int 2, 0) = (Z.of_int 5, -1));;
 assert (Decimal.div (Z.one, 2) (Z.of_int 2, 1) = (Z.of_int 5, 0));;
 
 assert (Decimal.scale ~base:10 ~exponent:1 (Z.of_int 2, 5) = (Z.of_int 2, 6));;
 assert (Decimal.scale ~base:5 ~exponent:1 (Z.of_int 2, 5) = (Z.one, 6));;
 assert (
-	Decimal.scale ~base:5 ~exponent:~-1 (Z.of_int 2, 5) = (Z.of_int 4, 4)
+	Decimal.scale ~base:5 ~exponent:(-1) (Z.of_int 2, 5) = (Z.of_int 4, 4)
 );;
 
 assert (Decimal.of_string "100" = (Z.one, 2));;
-assert (Decimal.of_string "0.01" = (Z.one, ~-2));;
-assert (Decimal.of_string "2.3" = (Z.of_int 23, ~-1));;
+assert (Decimal.of_string "0.01" = (Z.one, -2));;
+assert (Decimal.of_string "2.3" = (Z.of_int 23, -1));;
 
 assert (Decimal.of_based_string ~base:2 "1010" = (Z.one, 1));;
-assert (Decimal.of_based_string ~base:2 "1.1" = (Z.of_int 15, ~-1));;
-assert (Decimal.of_based_string ~base:2 "0.11" = (Z.of_int 75, ~-2));;
+assert (Decimal.of_based_string ~base:2 "1.1" = (Z.of_int 15, -1));;
+assert (Decimal.of_based_string ~base:2 "0.11" = (Z.of_int 75, -2));;
 assert (Decimal.of_based_string ~base:2 "-1010" = (Z.minus_one, 1));;
-assert (Decimal.of_based_string ~base:2 "-1.1" = (Z.of_int ~-15, ~-1));;
-assert (Decimal.of_based_string ~base:2 "-0.11" = (Z.of_int ~-75, ~-2));;
+assert (Decimal.of_based_string ~base:2 "-1.1" = (Z.of_int (-15), -1));;
+assert (Decimal.of_based_string ~base:2 "-0.11" = (Z.of_int (-75), -2));;
 
 assert (Decimal.to_string (Z.of_int 2, 1) = "20");;
 assert (Decimal.to_string (Z.of_int 2, 0) = "2");;
-assert (Decimal.to_string (Z.of_int 2, ~-1) = "0.2");;
-assert (Decimal.to_string (Z.of_int 2, ~-2) = "0.02");;
-assert (Decimal.to_string (Z.of_int 23, ~-1) = "2.3");;
+assert (Decimal.to_string (Z.of_int 2, -1) = "0.2");;
+assert (Decimal.to_string (Z.of_int 2, -2) = "0.02");;
+assert (Decimal.to_string (Z.of_int 23, -1) = "2.3");;
 
 assert (Decimal.to_based_string ~base:2 (Z.one, 1) = "1010");;
-assert (Decimal.to_based_string ~base:2 (Z.of_int 15, ~-1) = "1.1");;
-assert (Decimal.to_based_string ~base:2 (Z.of_int 75, ~-2) = "0.11");;
+assert (Decimal.to_based_string ~base:2 (Z.of_int 15, -1) = "1.1");;
+assert (Decimal.to_based_string ~base:2 (Z.of_int 75, -2) = "0.11");;
 assert (
-	String.sub (Decimal.to_based_string ~base:3 (Z.one, ~-1)) 0 6 = "0.0022"
+	String.sub (Decimal.to_based_string ~base:3 (Z.one, -1)) 0 6 = "0.0022"
 );;
 assert (Decimal.to_based_string ~base:2 (Z.minus_one, 1) = "-1010");;
-assert (Decimal.to_based_string ~base:2 (Z.of_int ~-15, ~-1) = "-1.1");;
-assert (Decimal.to_based_string ~base:2 (Z.of_int ~-75, ~-2) = "-0.11");;
+assert (Decimal.to_based_string ~base:2 (Z.of_int (-15), -1) = "-1.1");;
+assert (Decimal.to_based_string ~base:2 (Z.of_int (-75), -2) = "-0.11");;
 assert (
-	String.sub (Decimal.to_based_string ~base:3 (Z.minus_one, ~-1)) 0 7 = "-0.0022"
+	String.sub (Decimal.to_based_string ~base:3 (Z.minus_one, -1)) 0 7 = "-0.0022"
 );;
 
 prerr_endline "ok";;
