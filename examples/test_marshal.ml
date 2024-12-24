@@ -22,13 +22,13 @@ if log then (Printf.eprintf "Z\n"; flush stderr);;
 
 assert (check_marshal Z.zero);;
 assert (check_marshal Z.one);;
-assert (check_marshal (Z.of_int 2, Z.of_int ~-3));;
+assert (check_marshal (Z.of_int 2, Z.of_int (-3)));;
 
 if log then (Printf.eprintf "Q\n"; flush stderr);;
 
 assert (check_marshal Q.zero);;
 assert (check_marshal Q.one);;
-assert (check_marshal (Q.make_int 2 3, Q.make_int ~-3 ~-4));;
+assert (check_marshal (Q.make_int 2 3, Q.make_int (-3) (-4)));;
 
 if log then (Printf.eprintf "F\n"; flush stderr);;
 
@@ -36,7 +36,7 @@ module Fd = F.Make (val F.default ());;
 
 assert (check_marshal Fd.zero);;
 assert (check_marshal Fd.one);;
-assert (check_marshal (Fd.of_float 1.41421356, Fd.of_float ~-.2.3620679));;
+assert (check_marshal (Fd.of_float 1.41421356, Fd.of_float (-2.3620679)));;
 
 if log then (Printf.eprintf "FR\n"; flush stderr);;
 
@@ -44,7 +44,7 @@ module FRd = FR.Make (val FR.default ());;
 
 assert (check_marshal FRd.zero);;
 assert (check_marshal FRd.one);;
-assert (check_marshal (FRd.of_float 1.41421356, FRd.of_float ~-.2.3620679));;
+assert (check_marshal (FRd.of_float 1.41421356, FRd.of_float (-2.3620679)));;
 assert (check_marshal (FRd.of_float infinity));;
 assert (check_marshal (FRd.of_float neg_infinity));;
 assert (classify_float (FRd.to_float (marshal (FRd.of_float nan))) = FP_nan);;
@@ -56,6 +56,6 @@ module Cd = C.Make (val C.default ());;
 assert (check_marshal Cd.zero);;
 assert (check_marshal Cd.one);;
 assert (check_marshal Cd.i);;
-assert (check_marshal (Cd.make_float ~-.1.2 3.4, Cd.make_float ~-.5.6 7.8));;
+assert (check_marshal (Cd.make_float (-1.2) 3.4, Cd.make_float (-5.6) 7.8));;
 
 prerr_endline "ok";;

@@ -20,7 +20,7 @@ assert (123.0 = float_of_q (q_of_int 123));;
 assert (-123.0 = float_of_q (q_of_int (-123)));;
 assert (q_of_int 10 = q_of_z (z_of_int 10));;
 assert (Q.make_int 6 2 = q_of_int 3);;
-assert (Q.make_int ~-6 ~-2 = q_of_int 3);;
+assert (Q.make_int (-6) (-2) = q_of_int 3);;
 
 assert (123.0 = float_of_f (f_of_int ~prec:8 123));;
 assert (-123.0 = float_of_f (f_of_int ~prec:8 (-123)));;
@@ -30,10 +30,10 @@ assert (string_of_f (f_of_float ~prec:10 12.0) = "12.");;
 assert (string_of_f (f_of_float ~prec:10 100.0) = "100.");;
 assert (string_of_f (f_of_float ~prec:10 34.25) = "34.25");;
 assert (string_of_f (f_of_float ~prec:10 0.0625) = "0.0625");;
-assert (string_of_f (f_of_float ~prec:10 ~-.12.0) = "-12.");;
-assert (string_of_f (f_of_float ~prec:10 ~-.100.0) = "-100.");;
-assert (string_of_f (f_of_float ~prec:10 ~-.34.25) = "-34.25");;
-assert (string_of_f (f_of_float ~prec:10 ~-.0.0625) = "-0.0625");;
+assert (string_of_f (f_of_float ~prec:10 (-12.0)) = "-12.");;
+assert (string_of_f (f_of_float ~prec:10 (-100.0)) = "-100.");;
+assert (string_of_f (f_of_float ~prec:10 (-34.25)) = "-34.25");;
+assert (string_of_f (f_of_float ~prec:10 (-0.0625)) = "-0.0625");;
 
 assert (123.0 = float_of_fr ~mode:`N (fr_of_int ~prec:8 ~mode:`N 123));;
 assert (-123.0 = float_of_fr ~mode:`N (fr_of_int ~prec:8 ~mode:`N (-123)));;
@@ -56,17 +56,17 @@ assert (
 	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N 0.015625) = "0.015625"
 );;
 assert (
-	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N ~-.12352.0) = "-12352."
+	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N (-12352.0)) = "-12352."
 );;
 assert (
-	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N ~-.1000400.0)
+	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N (-1000400.0))
 		= "-1000400."
 );;
 assert (
-	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N ~-.34.25) = "-34.250"
+	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N (-34.25)) = "-34.250"
 );;
 assert (
-	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N ~-.0.015625) = "-0.015625"
+	string_of_fr ~mode:`N (fr_of_float ~prec:10 ~mode:`N (-0.015625)) = "-0.015625"
 );;
 
 (* assert (string_of_c ~mode:(`N, `N) (C.zero ~prec:(10, 10)) = "(+0 +0)");; *)

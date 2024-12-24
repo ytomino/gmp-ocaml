@@ -27,8 +27,8 @@ let expect_export_failure x buf pos len = (
 
 expect_export_failure Z.zero Bytes.empty 0 1;; (* overrun *)
 expect_export_failure Z.zero Bytes.empty 1 0;; (* overrun *)
-expect_export_failure Z.zero Bytes.empty ~-1 0;; (* negative pos *)
-expect_export_failure Z.zero Bytes.empty ~-1 1;; (* negative pos *)
+expect_export_failure Z.zero Bytes.empty (-1) 0;; (* negative pos *)
+expect_export_failure Z.zero Bytes.empty (-1) 1;; (* negative pos *)
 
 let expect_export order x buf pos len expect = (
 	Z.export ~order:order x buf pos len;
@@ -116,8 +116,8 @@ let expect_import_failure buf pos len = (
 
 expect_import_failure Bytes.empty 0 1;; (* overrun *)
 expect_import_failure Bytes.empty 1 0;; (* overrun *)
-expect_import_failure Bytes.empty ~-1 0;; (* negative pos *)
-expect_import_failure Bytes.empty ~-1 1;; (* negative pos *)
+expect_import_failure Bytes.empty (-1) 0;; (* negative pos *)
+expect_import_failure Bytes.empty (-1) 1;; (* negative pos *)
 
 let expect_import order signed buf pos len expect = (
 	let x = Z.import ~order ~signed buf pos len in
@@ -179,9 +179,9 @@ assert (single_check 1.0 0x3f800000l);;
 assert (single_check 2.0 0x40000000l);;
 assert (single_check 3.0 0x40400000l);;
 assert (single_check 0.5 0x3f000000l);;
-assert (single_check ~-.1.0 0xbf800000l);;
-assert (single_check ~-.0.0 0x80000000l);;
-assert (single_check ~-.1.25 0xbfa00000l);;
+assert (single_check (-1.0) 0xbf800000l);;
+assert (single_check (-0.0) 0x80000000l);;
+assert (single_check (-1.25) 0xbfa00000l);;
 assert (single_check nan 0x7fc00000l || single_check nan 0xffc00000l);;
 assert (single_check infinity 0x7f800000l);;
 assert (single_check ~-.infinity 0xff800000l);;
@@ -199,9 +199,9 @@ assert (double_check 1.0 0x3ff0000000000000L);;
 assert (double_check 2.0 0x4000000000000000L);;
 assert (double_check 3.0 0x4008000000000000L);;
 assert (double_check 0.5 0x3fe0000000000000L);;
-assert (double_check ~-.1.0 0xbff0000000000000L);;
-assert (double_check ~-.0.0 0x8000000000000000L);;
-assert (double_check ~-.1.25 0xbff4000000000000L);;
+assert (double_check (-1.0) 0xbff0000000000000L);;
+assert (double_check (-0.0) 0x8000000000000000L);;
+assert (double_check (-1.25) 0xbff4000000000000L);;
 assert (
 	double_check nan 0x7ff8000000000000L || double_check nan 0xfff8000000000000L
 );;
@@ -221,9 +221,9 @@ assert (extended_check 1.0 (0x8000000000000000L, 0x3fff));;
 assert (extended_check 2.0 (0x8000000000000000L, 0x4000));;
 assert (extended_check 3.0 (0xc000000000000000L, 0x4000));;
 assert (extended_check 0.5 (0x8000000000000000L, 0x3ffe));;
-assert (extended_check ~-.1.0 (0x8000000000000000L, 0xbfff));;
-assert (extended_check ~-.0.0 (0x0000000000000000L, 0x8000));;
-assert (extended_check ~-.1.25 (0xa000000000000000L, 0xbfff));;
+assert (extended_check (-1.0) (0x8000000000000000L, 0xbfff));;
+assert (extended_check (-0.0) (0x0000000000000000L, 0x8000));;
+assert (extended_check (-1.25) (0xa000000000000000L, 0xbfff));;
 assert (
 	extended_check nan (0xc000000000000000L, 0x7fff)
 	|| extended_check nan (0xc000000000000000L, 0xffff)

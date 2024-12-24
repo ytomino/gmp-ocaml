@@ -33,12 +33,12 @@ let float state n = n *. float_bits state 53;;
 let float_exclusive state n =
 	let bound = Int64.sub (Int64.shift_left 1L 53) 1L in
 	let r = Int64.add (int64 state bound) 1L in (* [1,2**prec-1] *)
-	let r = ldexp (Int64.to_float r) ~-53 in (* (0,1) *)
+	let r = ldexp (Int64.to_float r) (-53) in (* (0,1) *)
 	n *. r;;
 let float_inclusive state n =
 	let bound = Int64.add (Int64.shift_left 1L 53) 1L in
 	let r = int64 state bound in (* [0,2**prec] *)
-	let r = ldexp (Int64.to_float r) ~-53 in (* [0,1] *)
+	let r = ldexp (Int64.to_float r) (-53) in (* [0,1] *)
 	n *. r;;
 external z: t -> z -> z = "mlgmp_random_z";;
 external f_bits: t -> int -> f = "mlgmp_random_f_bits";;
