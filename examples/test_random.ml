@@ -4,10 +4,43 @@ let verbose = false;;
 
 let state = Random.make_self_init ();;
 
-(* float_exclusive *)
+(* int_bits *)
 
 let prec = 3;;
 let bound = 1 lsl prec;;
+
+let drawn = ref 0 in
+while !drawn <> 1 lsl bound - 1 do
+	let x = Random.int_bits prec state in
+	assert (x >= 0 && x < bound);
+	drawn := !drawn lor (1 lsl x)
+done;;
+
+(* float_bits *)
+
+let drawn = ref 0 in
+while !drawn <> 1 lsl bound - 1 do
+	let x = ldexp (Random.float_bits prec state) prec in
+	assert (x >= 0. && x < float_of_int bound);
+	let f, i = modf x in
+	assert (f = 0.);
+	drawn := !drawn lor (1 lsl int_of_float i)
+done;;
+
+(* f_bits *)
+
+let default_prec = F.default_prec () in
+let drawn = ref 0 in
+while !drawn <> 1 lsl bound - 1 do
+	let x = F.ldexp ~prec:default_prec (Random.f_bits prec state) prec in
+	assert (F.compare_int x 0 >= 0 && F.compare_int x bound < 0);
+	let i = F.trunc ~prec:default_prec x in
+	let f = F.sub ~prec:default_prec x i in
+	assert (F.compare_int f 0 = 0);
+	drawn := !drawn lor (1 lsl int_of_float (float_of_f i))
+done;;
+
+(* float_exclusive *)
 
 let try_once f of_int to_int nums trial_count =
 	incr trial_count;

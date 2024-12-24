@@ -124,7 +124,7 @@ module Gmp = struct
 		let from_string = Default_F.of_string;;
 		let to_float = Gmp.F.to_float;;
 		let to_string = Gmp.F.to_string;;
-		let urandomb ~state ~nbits = Gmp.Random.f_bits state nbits;;
+		let urandomb ~state ~nbits = Gmp.Random.f_bits nbits state;;
 	end;;
 	module FR = struct
 		let default_prec = 120;;

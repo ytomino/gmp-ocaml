@@ -86,9 +86,9 @@ CAMLprim value mlgmp_random_copy(value source)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlgmp_random_int_bits(value state, value bits)
+CAMLprim value mlgmp_random_int_bits(value bits, value state)
 {
-	CAMLparam2(state, bits);
+	CAMLparam2(bits, state);
 	long result = gmp_urandomb_ui(Random_val(state), Long_val(bits));
 	CAMLreturn(Val_long(result));
 }
@@ -148,9 +148,9 @@ CAMLprim value mlgmp_random_nativeint(value state, value n)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlgmp_random_float_bits(value state, value bits)
+CAMLprim value mlgmp_random_float_bits(value bits, value state)
 {
-	CAMLparam2(state, bits);
+	CAMLparam2(bits, state);
 	CAMLlocal1(result);
 	mp_bitcnt_t b = Long_val(bits);
 	mpf_t r;
@@ -170,9 +170,9 @@ CAMLprim value mlgmp_random_z(value state, value n)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlgmp_random_f_bits(value state, value bits)
+CAMLprim value mlgmp_random_f_bits(value bits, value state)
 {
-	CAMLparam2(state, bits);
+	CAMLparam2(bits, state);
 	CAMLlocal1(result);
 	mp_bitcnt_t b = Long_val(bits);
 	result = mlgmp_alloc_f_init2(b);
