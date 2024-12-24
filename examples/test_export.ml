@@ -9,7 +9,7 @@ assert (Z.export_length (Z.of_int (-32769)) = 3);;
 assert (Z.export_length (Z.of_int (-32768)) = 2);;
 assert (Z.export_length (Z.of_int (-129)) = 2);;
 assert (Z.export_length (Z.of_int (-128)) = 1);;
-assert (Z.export_length (Z.of_int (-1)) = 1);;
+assert (Z.export_length Z.minus_one = 1);;
 assert (Z.export_length Z.zero = 1);;
 assert (Z.export_length Z.one = 1);;
 assert (Z.export_length (Z.of_int 127) = 1);;
@@ -52,10 +52,9 @@ expect_export `B (Z.of_int (-256)) (Bytes.make 2 'x') 0 2
 	(Bytes.of_string "\xff\x00");;
 expect_export `B (Z.of_int (-128)) (Bytes.make 2 'x') 0 2
 	(Bytes.of_string "\xff\x80");;
-expect_export `B (Z.of_int (-1)) (Bytes.make 2 'x') 0 2
+expect_export `B Z.minus_one (Bytes.make 2 'x') 0 2
 	(Bytes.of_string "\xff\xff");;
-expect_export `B (Z.of_int (-1)) (Bytes.make 1 'x') 0 1
-	(Bytes.of_string "\xff");;
+expect_export `B Z.minus_one (Bytes.make 1 'x') 0 1 (Bytes.of_string "\xff");;
 expect_export `B Z.zero (Bytes.make 1 'x') 0 1 (Bytes.of_string "\x00");;
 expect_export `B Z.one (Bytes.make 1 'x') 0 1 (Bytes.of_string "\x01");;
 expect_export `B (Z.of_int 127) (Bytes.make 1 'x') 0 1
@@ -85,10 +84,9 @@ expect_export `L (Z.of_int (-256)) (Bytes.make 2 'x') 0 2
 	(Bytes.of_string "\x00\xff");;
 expect_export `L (Z.of_int (-128)) (Bytes.make 2 'x') 0 2
 	(Bytes.of_string "\x80\xff");;
-expect_export `L (Z.of_int (-1)) (Bytes.make 2 'x') 0 2
+expect_export `L Z.minus_one (Bytes.make 2 'x') 0 2
 	(Bytes.of_string "\xff\xff");;
-expect_export `L (Z.of_int (-1)) (Bytes.make 1 'x') 0 1
-	(Bytes.of_string "\xff");;
+expect_export `L Z.minus_one (Bytes.make 1 'x') 0 1 (Bytes.of_string "\xff");;
 expect_export `L Z.zero (Bytes.make 1 'x') 0 1 (Bytes.of_string "\x00");;
 expect_export `L Z.one (Bytes.make 1 'x') 0 1 (Bytes.of_string "\x01");;
 expect_export `L (Z.of_int 127) (Bytes.make 1 'x') 0 1
@@ -152,7 +150,7 @@ test_export_and_import (Z.of_int (-257));;
 test_export_and_import (Z.of_int (-256));;
 test_export_and_import (Z.of_int (-129));;
 test_export_and_import (Z.of_int (-128));;
-test_export_and_import (Z.of_int (-1));;
+test_export_and_import Z.minus_one;;
 test_export_and_import Z.zero;;
 test_export_and_import Z.one;;
 test_export_and_import (Z.of_int 127);;
