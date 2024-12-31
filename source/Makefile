@@ -10,6 +10,6 @@ WITH=gmp,mpfr,mpc
 all clean install uninstall:
 	$(and $(findstring gmp,$(WITH)),$(call DO,GMP,Makefile.gmp))
 	$(and $(findstring mpfr,$(WITH)),$(wildcard Makefile.mpfr), \
-		$(call DO,GMP,Makefile.mpfr))
+		$(call DO,MPFR,Makefile.mpfr))
 	$(and $(findstring mpc,$(WITH)),$(wildcard Makefile.mpc), \
-		$(call DO,GMP,Makefile.mpc))
+		$(call DO,MPC,Makefile.mpc))
