@@ -16,10 +16,13 @@ WITH_MPFR?=
 WITH_MPC?=
 
 OCAMLCFLAGS=$(and $(filter-out 0,$(DEBUG)),-g) $(if $(ASSERT),,-noassert) -w +a
-OCAMLOPTFLAGS=$(OCAMLCFLAGS)
+OCAMLOPTFLAGS=$(OCAMLCFLAGS) \
+              $(and $(filter-out false,$(FUNCTION_SECTIONS)), \
+                -function-sections)
 OCAML_INCLUDE_FLAGS=
-CFLAGS=$(and $(filter-out 0,$(DEBUG)),-g$(DEBUG)) \
-       $(if $(ASSERT),-DDEBUG,-DNDEBUG) -std=gnu99 -Wall -Wextra
+CFLAGS=$(and $(filter-out 0,$(DEBUG)),-g$(DEBUG)) $(if $(ASSERT),,-DNDEBUG) \
+       $(and $(filter-out false,$(FUNCTION_SECTIONS)),-ffunction-sections) \
+       -std=gnu99 -Wall -Wextra
 C_INCLUDE_FLAGS=$(sort \
                   $(and $(WITH_GMP),-I$(WITH_GMP)/include) \
                   $(and $(WITH_MPFR),-I$(WITH_MPFR)/include) \
