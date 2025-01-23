@@ -47,11 +47,11 @@ try
 	let x = c_of_float ~prec:(8, 8) ~mode:(`A, `A) (-0x1.01p0) in
 	assert (x = c_of_float ~prec:(56, 56) ~mode:(`Z, `Z) (-0x1.02p0));
 	(* zero, positive *)
-	let x = C.make_float ~prec:(8, 8) ~mode:(`A, `A) 0.0 0x1.01p0 in
-	assert (x = C.make_float ~prec:(56, 56) ~mode:(`Z, `Z) 0.0 0x1.02p0);
+	let x = C.make_float ~prec:(8, 8) ~mode:(`A, `A) 0. 0x1.01p0 in
+	assert (x = C.make_float ~prec:(56, 56) ~mode:(`Z, `Z) 0. 0x1.02p0);
 	(* zero, negative *)
-	let x = C.make_float ~prec:(8, 8) ~mode:(`A, `A) 0.0 (-0x1.01p0) in
-	assert (x = C.make_float ~prec:(56, 56) ~mode:(`Z, `Z) 0.0 (-0x1.02p0))
+	let x = C.make_float ~prec:(8, 8) ~mode:(`A, `A) 0. (-0x1.01p0) in
+	assert (x = C.make_float ~prec:(56, 56) ~mode:(`Z, `Z) 0. (-0x1.02p0))
 with
 | Failure _ ->
 	if verbose then Printf.eprintf "MPC_RNDA is unsupported.\n";

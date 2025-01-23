@@ -127,29 +127,27 @@ assert (F.fma (F.of_int 2) (F.of_int 3) (F.of_int 5) = F.of_int 11);;
 
 (* mpf_pow_si is missing *)
 assert (F.pow_int ~base:(F.of_int 2) ~exponent:3 = F.of_int 8);;
-assert (
-	F.pow_int ~base:(F.of_int 2) ~exponent:(-3) = F.of_float (1.0 /. 8.0)
-);;
+assert (F.pow_int ~base:(F.of_int 2) ~exponent:(-3) = F.of_float (1. /. 8.));;
 assert (F.pow_int ~base:F.zero ~exponent:0 = F.one);;
 assert (F.pow_int ~base:(F.of_int (-2)) ~exponent:2 = F.of_int 4);;
 assert (F.pow_int ~base:(F.of_int (-2)) ~exponent:3 = F.of_int (-8));;
 assert (
-	F.pow_int ~base:(F.of_int (-2)) ~exponent:(-2) = F.of_float (1.0 /. 4.0)
+	F.pow_int ~base:(F.of_int (-2)) ~exponent:(-2) = F.of_float (1. /. 4.)
 );;
 assert (
-	F.pow_int ~base:(F.of_int (-2)) ~exponent:(-3) = F.of_float (-1.0 /. 8.0)
+	F.pow_int ~base:(F.of_int (-2)) ~exponent:(-3) = F.of_float (-1. /. 8.)
 );;
 
 (* mpf_si_pow_si is missing *)
 assert (F.int_pow_int ~base:2 ~exponent:3 = F.of_int 8);;
-assert (F.int_pow_int ~base:2 ~exponent:(-3) = F.of_float (1.0 /. 8.0));;
+assert (F.int_pow_int ~base:2 ~exponent:(-3) = F.of_float (1. /. 8.));;
 assert (F.int_pow_int ~base:3 ~exponent:3 = F.of_int 27);;
 assert (F.int_pow_int ~base:3 ~exponent:(-3) = F.div F.one (F.of_int 27));;
 assert (F.int_pow_int ~base:0 ~exponent:0 = F.one);;
 assert (F.int_pow_int ~base:(-2) ~exponent:2 = F.of_int 4);;
 assert (F.int_pow_int ~base:(-2) ~exponent:3 = F.of_int (-8));;
-assert (F.int_pow_int ~base:(-2) ~exponent:(-2) = F.of_float (1.0 /. 4.0));;
-assert (F.int_pow_int ~base:(-2) ~exponent:(-3) = F.of_float (-1.0 /. 8.0));;
+assert (F.int_pow_int ~base:(-2) ~exponent:(-2) = F.of_float (1. /. 4.));;
+assert (F.int_pow_int ~base:(-2) ~exponent:(-3) = F.of_float (-1. /. 8.));;
 assert (F.int_pow_int ~base:(-3) ~exponent:2 = F.of_int 9);;
 assert (F.int_pow_int ~base:(-3) ~exponent:3 = F.of_int (-27));;
 assert (F.int_pow_int ~base:(-3) ~exponent:(-2) = F.div F.one (F.of_int 9));;
@@ -177,21 +175,21 @@ assert (F.ldexp (F.of_float (-1.5)) 2 = F.of_float (-6.));;
 (* mpf_log is missing *)
 let prec = 10 in
 assert (
-	F.nearly_equal prec (F.log (F.of_float 10.0)) (F.of_float 2.302585093)
+	F.nearly_equal prec (F.log (F.of_float 10.)) (F.of_float 2.302585093)
 );;
 assert (F.based_log ~base:2 (F.of_int 2) = F.one);;
 assert (F.based_log ~base:4 (F.of_int 4) = F.one);;
 
 (* mpfr_si_pow_si is missing *)
 assert (FR.int_pow_int ~base:2 ~exponent:3 = FR.of_int 8);;
-assert (FR.int_pow_int ~base:2 ~exponent:(-3) = FR.of_float (1.0 /. 8.0));;
+assert (FR.int_pow_int ~base:2 ~exponent:(-3) = FR.of_float (1. /. 8.));;
 assert (FR.int_pow_int ~base:3 ~exponent:3 = FR.of_int 27);;
 assert (FR.int_pow_int ~base:3 ~exponent:(-3) = FR.div FR.one (FR.of_int 27));;
 assert (FR.int_pow_int ~base:0 ~exponent:0 = FR.one);;
 assert (FR.int_pow_int ~base:(-2) ~exponent:2 = FR.of_int 4);;
 assert (FR.int_pow_int ~base:(-2) ~exponent:3 = FR.of_int (-8));;
-assert (FR.int_pow_int ~base:(-2) ~exponent:(-2) = FR.of_float (1.0 /. 4.0));;
-assert (FR.int_pow_int ~base:(-2) ~exponent:(-3) = FR.of_float (-1.0 /. 8.0));;
+assert (FR.int_pow_int ~base:(-2) ~exponent:(-2) = FR.of_float (1. /. 4.));;
+assert (FR.int_pow_int ~base:(-2) ~exponent:(-3) = FR.of_float (-1. /. 8.));;
 assert (FR.int_pow_int ~base:(-3) ~exponent:2 = FR.of_int 9);;
 assert (FR.int_pow_int ~base:(-3) ~exponent:3 = FR.of_int (-27));;
 assert (
@@ -213,14 +211,14 @@ assert (C.sub_int (C.of_int 4) (-1) = C.of_int 5);;
 
 (* mpc_si_pow_si is missing *)
 assert (C.int_pow_int ~base:2 ~exponent:3 = C.of_int 8);;
-assert (C.int_pow_int ~base:2 ~exponent:(-3) = C.of_float (1.0 /. 8.0));;
+assert (C.int_pow_int ~base:2 ~exponent:(-3) = C.of_float (1. /. 8.));;
 assert (C.int_pow_int ~base:3 ~exponent:3 = C.of_int 27);;
 assert (C.int_pow_int ~base:3 ~exponent:(-3) = C.div C.one (C.of_int 27));;
 assert (C.int_pow_int ~base:0 ~exponent:0 = C.one);;
 assert (C.int_pow_int ~base:(-2) ~exponent:2 = C.of_int 4);;
 assert (C.int_pow_int ~base:(-2) ~exponent:3 = C.of_int (-8));;
-assert (C.int_pow_int ~base:(-2) ~exponent:(-2) = C.of_float (1.0 /. 4.0));;
-assert (C.int_pow_int ~base:(-2) ~exponent:(-3) = C.of_float (-1.0 /. 8.0));;
+assert (C.int_pow_int ~base:(-2) ~exponent:(-2) = C.of_float (1. /. 4.));;
+assert (C.int_pow_int ~base:(-2) ~exponent:(-3) = C.of_float (-1. /. 8.));;
 assert (C.int_pow_int ~base:(-3) ~exponent:2 = C.of_int 9);;
 assert (C.int_pow_int ~base:(-3) ~exponent:3 = C.of_int (-27));;
 assert (C.int_pow_int ~base:(-3) ~exponent:(-2) = C.div C.one (C.of_int 9));;

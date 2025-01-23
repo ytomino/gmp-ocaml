@@ -1964,7 +1964,7 @@ CAMLprim value mlgmp_f_based_log(value prec, value base, value x)
 	if(b == 2){
 		mpf_set_d(result_value, log(mantissa) / M_LN2 + (double)exponent);
 	}else if(b == 16){
-		mpf_set_d(result_value, (log(mantissa) / M_LN2 + (double)exponent) / 4.0);
+		mpf_set_d(result_value, (log(mantissa) / M_LN2 + (double)exponent) / 4.);
 	}else{
 		mpf_set_d(result_value, log(mantissa) + (double)exponent * M_LN2);
 		mpf_t base_value;
