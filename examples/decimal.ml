@@ -49,10 +49,10 @@ module Decimal = struct
 	let scale ~(base: int) ~(exponent: int) (x_val, x_exp as x: t) = (
 		if base = 10 then x_val, x_exp + exponent else
 		if exponent > 0 then canonicalize (Z.scale ~base ~exponent x_val, x_exp) else
-		div x (Z.int_pow_int ~base ~exponent:(~-exponent), 0)
+		div x (Z.int_pow_int ~base ~exponent:~-exponent, 0)
 	);;
 	let of_based_string ~(base: int) (x: string) = (
-		begin match String.index_opt x '.' with
+		match String.index_opt x '.' with
 		| None ->
 			canonicalize (Z.of_based_string ~base x, 0)
 		| Some p ->
@@ -61,7 +61,6 @@ module Decimal = struct
 			let v = Z.of_based_string ~base (String.sub x 0 p ^ String.sub x n e) in
 			if base = 10 then canonicalize (v, ~-e) else
 			div (v, 0) (Z.int_pow_int ~base ~exponent:e, 0)
-		end
 	);;
 	let of_string = of_based_string ~base:10;;
 	let to_based_string: base:int -> t -> string =

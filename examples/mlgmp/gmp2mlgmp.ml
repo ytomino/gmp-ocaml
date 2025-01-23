@@ -167,17 +167,17 @@ module Gmp = struct
 			Mpfr.fr_get_str ~mode ~base digits x;;
 		let to_string_base_digits ~mode ~base ~digits x =
 			let mantissa, exponent = to_string_exp_base_digits ~mode ~base ~digits x in
-			let i = (if sgn x < 0 then 1 else 0) in
+			let i = if sgn x < 0 then 1 else 0 in
 			let lm = String.length mantissa in
 			(if lm > 1 then
 				let tmp = Bytes.create (succ lm) in
 				Bytes.blit (Bytes.unsafe_of_string mantissa) 0 tmp 0 (1+i);
-				Bytes.blit (Bytes.unsafe_of_string mantissa) (1+i) tmp (2+i) ((pred lm)-i);
+				Bytes.blit (Bytes.unsafe_of_string mantissa) (1+i) tmp (2+i) (pred lm - i);
 				Bytes.set tmp (1+i) '.';
 				Bytes.unsafe_to_string tmp
 			else mantissa)
 			^ (if base <= 10 then "E" else "@")
-			^ (string_of_int (pred exponent));;
+			^ string_of_int (pred exponent);;
 		let to_string = to_string_base_digits ~mode:GMP_RNDN ~base:10 ~digits:10;;
 	end;;
 	exception Unimplemented of string;;

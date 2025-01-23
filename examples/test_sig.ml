@@ -86,20 +86,20 @@ module type C2 = sig (* complex *)
 	include Elementary2 with type t := t
 end;;
 
-let (_: unit) = let module Check: S = Gmp.Z in ();;
+let _: unit = let module Check: S = Gmp.Z in ();;
 
-let (_: unit) = let module Check: R = Gmp.Q in ();;
+let _: unit = let module Check: R = Gmp.Q in ();;
 
-let (_: unit) = let module Check: F0 = Gmp.F in ();;
-let (_: unit) =
+let _: unit = let module Check: F0 = Gmp.F in ();;
+let _: unit =
 	let module Check: F1 =
 		Gmp.F.Make (struct
 			let prec = 10;;
 		end)
 	in ();;
 
-let (_: unit) = let module Check: F0 = Mpfr.FR in ();;
-let (_: unit) =
+let _: unit = let module Check: F0 = Mpfr.FR in ();;
+let _: unit =
 	let module Check: F2 =
 		Mpfr.FR.Make (struct
 			let prec = 10;;
@@ -107,8 +107,8 @@ let (_: unit) =
 		end)
 	in ();;
 
-let (_: unit) = let module Check: S0 = Mpc.C in ();;
-let (_: unit) =
+let _: unit = let module Check: S0 = Mpc.C in ();;
+let _: unit =
 	let module Check: C2 with type real := Mpfr.fr =
 		Mpc.C.Make (struct
 			let prec = 10, 10;;
