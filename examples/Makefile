@@ -150,7 +150,7 @@ $(TESTS): % \
 
 interactive: $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
 	$(RLWRAP) ocaml $(strip \
-		$(OCAMLCFLAGS) $(OCAML_INCLUDE_FLAGS) -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma)
+		$(OCAML_INCLUDE_FLAGS) -I $(BUILDDIR) gmp.cma mpfr.cma mpc.cma)
 
 clean:
 	-$(and $(BINLN),[ -h "$(BINLN)" ] && rm "$(BINLN)")
