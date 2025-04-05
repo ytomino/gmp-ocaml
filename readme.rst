@@ -23,30 +23,32 @@ How to make
 -----------
 
 Install
-+++++++
+"""""""
+
+.. role:: path(emphasis)
 
 ::
 
  make install PREFIX=/usr/local
 
 Specify your preferred directory to ``PREFIX``.
-The libraries would be installed into ``$PREFIX/lib/ocaml`` (default is
+The libraries would be installed into :path:`$PREFIX/lib/ocaml` (default is
 ``ocamlc -where``).
 
 If GMP is not installed in the default search path, specify the directory
 containing GMP to ``WITH_GMP``.
-``$WITH_GMP/include`` and ``$WITH_GMP/lib`` would be used.
+:path:`$WITH_GMP/include` and :path:`$WITH_GMP/lib` would be used.
 ``WITH_MPFR`` and ``WITH_MPC`` are similar.
 
 Uninstall
-+++++++++
+"""""""""
 
 ::
 
  make uninstall PREFIX=/usr/local
 
 Build examples
-++++++++++++++
+""""""""""""""
 
 ::
 
@@ -56,7 +58,8 @@ License
 -------
 
 It is dual-licensed under the New BSD License and LGPLv3, see below.
-Please apply LGPLv3 when static linking libgmp.a, libmpfr.a or libmpc.a.
+Please apply LGPLv3 when static linking :path:`libgmp.a`, :path:`libmpfr.a` or
+:path:`libmpc.a`.
 
 **license of gmp-ocaml (1)** ::
 
