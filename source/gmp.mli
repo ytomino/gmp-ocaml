@@ -5,7 +5,7 @@ external gmp_compiled_version_string: unit -> string =
 external gmp_get_version_string: unit -> string = "mlgmp_get_version_string"
 
 type z
-type byte_order = [`B | `L | `N] (* Big, Little and Native endianness *)
+type byte_order = [`B | `L | `N] (* Big, Little, and Native endianness *)
 
 external z_of_based_string: base:int -> string -> z = "mlgmp_z_of_based_string"
 val z_of_string: string -> z

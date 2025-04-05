@@ -1,11 +1,11 @@
-GMP, MPFR and MPC interface library for Objective-Caml
-======================================================
+GMP, MPFR, and MPC interface library for Objective-Caml
+=======================================================
 
 What's this?
 ------------
 
-Objective-Caml binding to the multiple precision arithmetic libraries GMP, MPFR
-and MPC.
+Objective-Caml binding to the multiple precision arithmetic libraries GMP,
+MPFR, and MPC.
 
 Prerequisites
 -------------
@@ -58,7 +58,7 @@ License
 -------
 
 It is dual-licensed under the New BSD License and LGPLv3, see below.
-Please apply LGPLv3 when static linking :path:`libgmp.a`, :path:`libmpfr.a` or
+Please apply LGPLv3 when static linking :path:`libgmp.a`, :path:`libmpfr.a`, or
 :path:`libmpc.a`.
 
 **license of gmp-ocaml (1)** ::
@@ -85,7 +85,7 @@ Please apply LGPLv3 when static linking :path:`libgmp.a`, :path:`libmpfr.a` or
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-**license of gmp-ocaml (2), GMP, MPFR and MPC** ::
+**license of gmp-ocaml (2), GMP, MPFR, and MPC** ::
 
  This file is part of gmp-ocaml.
  
