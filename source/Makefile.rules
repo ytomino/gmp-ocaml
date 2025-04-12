@@ -8,10 +8,10 @@ define COMPILE_MLI
 $(or \
 	$(and $(OCAMLC), \
 		$(OCAMLC) $(strip \
-			-c $(OCAMLCFLAGS) -o $@ $(OCAML_INCLUDE_FLAGS) -I $(BUILDDIR) $<)), \
+			-c $(OCAMLCFLAGS) -o $@ -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) $<)), \
 	$(and $(OCAMLOPT), \
 		$(OCAMLOPT) $(strip \
-			-c $(OCAMLOPTFLAGS) -o $@ $(OCAML_INCLUDE_FLAGS) -I $(BUILDDIR) $<)))
+			-c $(OCAMLOPTFLAGS) -o $@ -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) $<)))
 endef
 
 $(filter-out $(MLI:.mli=.cmi),$(PAIRED_MLCMI)): $(BUILDDIR)/%.cmi \
@@ -26,7 +26,7 @@ $(filter $(MLI:.mli=.cmi),$(PAIRED_MLCMI)): $(BUILDDIR)/%.cmi \
 
 define COMPILE_ML_TO_CMO
 $(OCAMLC) $(strip \
-	-c $(OCAMLCFLAGS) $1 -o $@ $(OCAML_INCLUDE_FLAGS) -I $(BUILDDIR) $<)
+	-c $(OCAMLCFLAGS) $1 -o $@ -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) $<)
 endef
 
 $(filter-out $(MLSRC:.ml=.cmo),$(PAIRED_MLCMI:.cmi=.cmo)): $(BUILDDIR)/%.cmo \
@@ -45,7 +45,7 @@ $(MLONLY_MLCMI:.cmi=.cmo) $(MLCMOB): $(BUILDDIR)/%.cmo: %.ml | $(BUILDDIR)
 
 define COMPILE_ML_TO_CMX
 $(OCAMLOPT) $(strip \
-	-c $(OCAMLOPTFLAGS) $1 -o $@ $(OCAML_INCLUDE_FLAGS) -I $(BUILDDIR) $<)
+	-c $(OCAMLOPTFLAGS) $1 -o $@ -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) $<)
 endef
 
 $(filter-out $(MLSRC:.ml=.cmx),$(PAIRED_MLCMI:.cmi=.cmx)): $(BUILDDIR)/%.cmx \
