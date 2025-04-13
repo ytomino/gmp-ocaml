@@ -19,21 +19,26 @@ OCAMLOPT=$(or $(filter-out $(OCAMLC),$(OCAMLC:c=opt)),$(PROGRAMPREFIX)ocamlopt)
 OCAMLLIBDIR:=$(shell $(or $(OCAMLC),$(OCAMLOPT)) -where)
 include $(OCAMLLIBDIR)/Makefile.config
 
+OCAML_VERSION_MAJOR?=4
+# OCAML_VERSION_MAJOR is defined in Makefile.config of OCaml 5.x
+
 PREFIX=$(exec_prefix)
 LIBDIR=$(or \
          $(and $(filter-out $(exec_prefix),$(PREFIX)),$(PREFIX)/lib), \
          $(abspath $(OCAMLLIBDIR)/..))
-DESTDIR=
 INSTALLDIR=$(LIBDIR)/ocaml
-DEST_INSTALLDIR=$(abspath $(addsuffix /,$(DESTDIR))$(INSTALLDIR))
+
+PACKAGING=$(and $(filter 5,$(OCAML_VERSION_MAJOR)), \
+            $(filter $(OCAMLLIBDIR),$(INSTALLDIR)))
+PKGDIR=$(INSTALLDIR)$(and $(PACKAGING),/$(LIBNAME))
+DLLDIR=$(and $(OCAMLC),$(STUBLIBNAME),$(INSTALLDIR)/stublibs)
 
 _CDLL=$(patsubst %,dll%$(EXT_DLL),$(STUBLIBNAME))
 _CSLL=$(patsubst %,lib%.a,$(STUBLIBNAME))
 
-DLLPREFIX=$(INSTALLDIR)/stublibs
 DLLIB=$(addprefix -dllib , \
-        $(if $(filter-out $(OCAMLLIBDIR)/stublibs,$(DLLPREFIX)), \
-          $(addprefix $(DLLPREFIX)/,$(_CDLL)), \
+        $(if $(filter-out $(OCAMLLIBDIR)/stublibs,$(DLLDIR)), \
+          $(addprefix $(DLLDIR)/,$(_CDLL)), \
           $(addprefix -l,$(STUBLIBNAME))))
 SLLIB=$(addprefix -cclib -l,$(STUBLIBNAME))
 
@@ -68,15 +73,11 @@ MKDLL_ALL=$(MKDLL) \
           $(and $(filter-out $(MKDLL),$(OC_DLL_LDFLAGS)),$(OC_DLL_LDFLAGS)) \
           $(and $(filter-out $(MKDLL),$(LDFLAGS)),$(LDFLAGS))
 
+DESTDIR=
+DEST_PKGDIR=$(abspath $(addsuffix /,$(DESTDIR))$(PKGDIR))
+DEST_DLLDIR=$(abspath $(addsuffix /,$(DESTDIR))$(DLLDIR))
+
 _INSTALLED_FILES=$(notdir $(MLCMI)) \
                  $(and $(OCAMLC),$(notdir $(MLCMIB)) $(LIBNAME).cma) \
                  $(and $(OCAMLOPT), \
                    $(notdir $(MLCMX)) $(LIBNAME).cmxa $(LIBNAME).a $(_CSLL))
-
-_BUILDDIR_FROM_INSTALLDIR=$(patsubst $(DEST_INSTALLDIR)/%, %, \
-                            $(abspath $(BUILDDIR)))
-_BUILDDIR_FROM_INSTALLDIRSTUBLIBS=$(or \
-                                    $(addprefix ../, \
-                                      $(filter-out /%, \
-                                        $(_BUILDDIR_FROM_INSTALLDIR))), \
-                                    $(_BUILDDIR_FROM_INSTALLDIR))

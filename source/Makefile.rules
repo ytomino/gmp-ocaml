@@ -104,20 +104,23 @@ clean:
 		$(MLCMO) $(MLCMOB) $(MLOBJ) $(COBJ))
 	-rmdir $(BUILDDIR)
 
-install: all | $(DEST_INSTALLDIR)$(and $(OCAMLC),$(STUBLIBNAME),/stublibs)
-	cd $(DEST_INSTALLDIR) && $(INSTALL_DATA) $(strip \
-		$(addprefix $(_BUILDDIR_FROM_INSTALLDIR)/,$(_INSTALLED_FILES)) .)
+install \
+: all \
+| $(filter-out $(patsubst %/,%,$(dir $(DEST_DLLDIR))),$(DEST_PKGDIR)) \
+  $(DEST_DLLDIR)
+	cd $(DEST_PKGDIR) && $(INSTALL_DATA) $(strip \
+		$(addprefix $(patsubst $(DEST_PKGDIR)/%,%,$(abspath $(BUILDDIR)))/, \
+			$(_INSTALLED_FILES)) .)
 	$(and $(OCAMLC),$(STUBLIBNAME), \
-		cd $(DEST_INSTALLDIR)/stublibs && $(INSTALL_PROGRAM) $(strip \
-			$(_BUILDDIR_FROM_INSTALLDIRSTUBLIBS)/$(_CDLL) .))
+		cd $(DEST_DLLDIR) && $(INSTALL_PROGRAM) $(strip \
+			$(addprefix $(patsubst $(dir $(DEST_DLLDIR))%,../%,$(abspath $(BUILDDIR)))/, \
+				$(_CDLL)) \
+			.))
 
-$(DEST_INSTALLDIR)/stublibs:
-	mkdir -p $@
-
-$(DEST_INSTALLDIR):
+$(DEST_PKGDIR) $(DEST_DLLDIR):
 	mkdir -p $@
 
 uninstall:
 	-rm $(strip \
-		$(addprefix $(DEST_INSTALLDIR)/,$(_INSTALLED_FILES)) \
-		$(addprefix $(DEST_INSTALLDIR)/stublibs/,$(_CDLL)))
+		$(addprefix $(DEST_PKGDIR)/,$(_INSTALLED_FILES)) \
+		$(addprefix $(DEST_DLLDIR)/,$(_CDLL)))
