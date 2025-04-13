@@ -20,7 +20,19 @@ LDFLAGS?=
 
 BUILDSUFFIX=.noindex
 BUILDDIR=$(TARGET)$(BUILDSUFFIX)
+INSTALLDIR=$(BUILDDIR)
+
+OCAML_BUILDDIR_FLAGS=$(addprefix -I , \
+                       $(BUILDDIR) \
+                       $(filter-out $(BUILDDIR),$(INSTALLDIR)))
+
 GMP_BUILDDIR=$(BUILDDIR)/gmp$(BUILDSUFFIX)
+GMP_WORLD=$(and $(OCAMLC),$(INSTALLDIR)/gmp.cma) \
+          $(and $(OCAMLOPT),$(INSTALLDIR)/gmp.cmxa)
+MPFR_WORLD=$(and $(OCAMLC),$(INSTALLDIR)/mpfr.cma) \
+           $(and $(OCAMLOPT),$(INSTALLDIR)/mpfr.cmxa)
+MPC_WORLD=$(and $(OCAMLC),$(INSTALLDIR)/mpc.cma) \
+          $(and $(OCAMLOPT),$(INSTALLDIR)/mpc.cmxa)
 
 BINLN=$(and $(filter $(BUILD),$(TARGET)), \
         $(if $(findstring mingw,$(BUILD))$(findstring msys,$(BUILD)),,bin))
@@ -29,114 +41,121 @@ EXAMPLES1=$(basename $(wildcard *.ml))
 EXAMPLES=$(EXAMPLES1) essai test_creal test_mlgmp test_suite
 TESTS=$(filter test_%,$(EXAMPLES1))
 
-.PHONY: all check interactive clean $(TESTS)
+.PHONY: all world check interactive clean $(TESTS)
 
 all \
 : $(and $(OCAMLC),$(patsubst %,$(BUILDDIR)/%.byte.exe,$(EXAMPLES))) \
   $(and $(OCAMLOPT),$(patsubst %,$(BUILDDIR)/%.opt.exe,$(EXAMPLES))) $(BINLN)
 
 $(BUILDDIR)/%.byte.exe \
-: %.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
+: %.ml $(INSTALLDIR)/gmp.cma $(INSTALLDIR)/mpfr.cma $(INSTALLDIR)/mpc.cma \
+| $(BUILDDIR)
 	$(OCAMLC) $(strip \
-		-c $(OCAMLCFLAGS) -o $(BUILDDIR)/$*.cmo -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) \
+		-c $(OCAMLCFLAGS) \
+		-o $(BUILDDIR)/$*.cmo $(OCAML_BUILDDIR_FLAGS) $(OCAML_INCLUDE_FLAGS) \
 		$<)
 	$(OCAMLC) $(strip \
-		$(OCAMLCFLAGS_EXE) -o $@ -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) \
-		gmp.cma mpfr.cma mpc.cma $(BUILDDIR)/$*.cmo)
+		$(OCAMLCFLAGS_EXE) -o $@ $(OCAML_BUILDDIR_FLAGS) $(OCAML_INCLUDE_FLAGS) \
+		$(notdir $(filter-out $<,$^)) $*.cmo)
 
 $(BUILDDIR)/%.opt.exe \
-: %.ml $(BUILDDIR)/gmp.cmxa $(BUILDDIR)/mpfr.cmxa $(BUILDDIR)/mpc.cmxa
+: %.ml $(INSTALLDIR)/gmp.cmxa $(INSTALLDIR)/mpfr.cmxa $(INSTALLDIR)/mpc.cmxa \
+| $(BUILDDIR)
 	$(OCAMLOPT) $(strip \
 		-c $(OCAMLOPTFLAGS) \
-		-o $(BUILDDIR)/$*.cmx -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) \
+		-o $(BUILDDIR)/$*.cmx $(OCAML_BUILDDIR_FLAGS) $(OCAML_INCLUDE_FLAGS) \
 		$<)
 	$(OCAMLOPT) $(strip \
-		$(OCAMLOPTFLAGS_EXE) -o $@ -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) \
-		gmp.cmxa mpfr.cmxa mpc.cmxa $(BUILDDIR)/$*.cmx)
+		$(OCAMLOPTFLAGS_EXE) -o $@ $(OCAML_BUILDDIR_FLAGS) $(OCAML_INCLUDE_FLAGS) \
+		$(notdir $(filter-out $<,$^)) $*.cmx)
 
-$(BUILDDIR)/%.byte.exe: mlgmp/%.ml $(BUILDDIR)/gmp2mlgmp.cmo
+$(BUILDDIR)/%.byte.exe \
+: mlgmp/%.ml $(INSTALLDIR)/gmp.cma $(INSTALLDIR)/mpfr.cma \
+  $(BUILDDIR)/gmp2mlgmp.cmo
 	$(OCAMLC) $(strip \
-		-c $(OCAMLCFLAGS) -o $(BUILDDIR)/$*.cmo -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) \
+		-c $(OCAMLCFLAGS) \
+		-o $(BUILDDIR)/$*.cmo $(OCAML_BUILDDIR_FLAGS) $(OCAML_INCLUDE_FLAGS) \
 		$<)
 	$(OCAMLC) $(strip \
-		$(OCAMLCFLAGS_EXE) -o $@ -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) \
-		gmp.cma mpfr.cma $(filter-out $<,$^) $(BUILDDIR)/$*.cmo)
+		$(OCAMLCFLAGS_EXE) -o $@ $(OCAML_BUILDDIR_FLAGS) $(OCAML_INCLUDE_FLAGS) \
+		$(notdir $(filter-out $<,$^)) $*.cmo)
 
-$(BUILDDIR)/%.opt.exe: mlgmp/%.ml $(BUILDDIR)/gmp2mlgmp.cmx
+$(BUILDDIR)/%.opt.exe \
+: mlgmp/%.ml $(INSTALLDIR)/gmp.cmxa $(INSTALLDIR)/mpfr.cmxa \
+  $(BUILDDIR)/gmp2mlgmp.cmx
 	$(OCAMLOPT) $(strip \
 		-c $(OCAMLOPTFLAGS) \
-		-o $(BUILDDIR)/$*.cmx -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) \
+		-o $(BUILDDIR)/$*.cmx $(OCAML_BUILDDIR_FLAGS) $(OCAML_INCLUDE_FLAGS) \
 		$<)
 	$(OCAMLOPT) $(strip \
-		$(OCAMLOPTFLAGS_EXE) -o $@ -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) \
-		gmp.cmxa mpfr.cmxa $(filter-out $<,$^) $(BUILDDIR)/$*.cmx)
+		$(OCAMLOPTFLAGS_EXE) -o $@ $(OCAML_BUILDDIR_FLAGS) $(OCAML_INCLUDE_FLAGS) \
+		$(notdir $(filter-out $<,$^)) $*.cmx)
 
 $(BUILDDIR)/test_creal.byte.exe: $(BUILDDIR)/creal.cmo
 $(BUILDDIR)/test_creal.opt.exe: $(BUILDDIR)/creal.cmx
 
 $(BUILDDIR)/gmp2mlgmp.cmo \
-: mlgmp/gmp2mlgmp.ml $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma
+: mlgmp/gmp2mlgmp.ml $(INSTALLDIR)/mpfr.cma | $(BUILDDIR)
 	$(OCAMLC) $(strip \
-		-c $(OCAMLCFLAGS) -o $@ -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) $<)
+		-c $(OCAMLCFLAGS) -o $@ $(OCAML_BUILDDIR_FLAGS) $(OCAML_INCLUDE_FLAGS) $<)
 
 $(BUILDDIR)/gmp2mlgmp.cmx \
-: mlgmp/gmp2mlgmp.ml $(BUILDDIR)/gmp.cmxa $(BUILDDIR)/mpfr.cmxa
+: mlgmp/gmp2mlgmp.ml $(INSTALLDIR)/mpfr.cmxa | $(BUILDDIR)
 	$(OCAMLOPT) $(strip \
-		-c $(OCAMLOPTFLAGS) -o $@ -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) $<)
+		-c $(OCAMLOPTFLAGS) -o $@ $(OCAML_BUILDDIR_FLAGS) $(OCAML_INCLUDE_FLAGS) $<)
 
 $(BUILDDIR)/creal.cmi \
 : mlgmp/creal.mli \
   $(or \
-    $(and $(OCAMLC),$(BUILDDIR)/gmp.cma), \
-    $(and $(OCAMLOPT),$(BUILDDIR)/gmp.cmxa))
+    $(and $(OCAMLC),$(INSTALLDIR)/gmp.cma), \
+    $(and $(OCAMLOPT),$(INSTALLDIR)/gmp.cmxa)) \
+| $(BUILDDIR)
 	$(or \
 		$(and $(OCAMLC), \
 			$(OCAMLC) $(strip \
-				-c $(OCAMLCFLAGS) -o $@ -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) $<)), \
-		$(and $(OCAMLOPT),\
+				-c $(OCAMLCFLAGS) -o $@ $(OCAML_BUILDDIR_FLAGS) $(OCAML_INCLUDE_FLAGS) $<)), \
+		$(and $(OCAMLOPT), \
 			$(OCAMLOPT) $(strip \
-				-c $(OCAMLOPTFLAGS) -o $@ -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) $<)))
+				-c $(OCAMLOPTFLAGS) -o $@ $(OCAML_BUILDDIR_FLAGS) $(OCAML_INCLUDE_FLAGS) $<)))
 
 $(BUILDDIR)/creal.cmo \
 : mlgmp/creal.ml $(BUILDDIR)/creal.cmi $(BUILDDIR)/gmp2mlgmp.cmo
 	$(OCAMLC) $(strip \
-		-c $(OCAMLCFLAGS) -o $@ -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) $<)
+		-c $(OCAMLCFLAGS) -o $@ $(OCAML_BUILDDIR_FLAGS) $(OCAML_INCLUDE_FLAGS) $<)
 
 $(BUILDDIR)/creal.cmx \
 : mlgmp/creal.ml $(BUILDDIR)/creal.cmi $(BUILDDIR)/gmp2mlgmp.cmx
 	$(OCAMLOPT) $(strip \
-		-c $(OCAMLOPTFLAGS) -o $@ -I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) $<)
+		-c $(OCAMLOPTFLAGS) -o $@ $(OCAML_BUILDDIR_FLAGS) $(OCAML_INCLUDE_FLAGS) $<)
 
-$(and $(OCAMLC),$(BUILDDIR)/gmp.cma) $(and $(OCAMLOPT),$(BUILDDIR)/gmp.cmxa) \
-&: ../source/gmp*
+$(GMP_WORLD)&: ../source/gmp*
 	$(MAKE) $(strip \
 		-C ../source -f Makefile.gmp install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
-		INSTALLDIR=$(abspath $(BUILDDIR)) \
+		INSTALLDIR=$(abspath $(INSTALLDIR)) \
 		ASSERT=$(ASSERT))
 
-$(and $(OCAMLC),$(BUILDDIR)/mpfr.cma) \
-$(and $(OCAMLOPT),$(BUILDDIR)/mpfr.cmxa) \
-&: ../source/mpfr* \
-   $(and $(OCAMLC),$(BUILDDIR)/gmp.cma) $(and $(OCAMLOPT),$(BUILDDIR)/gmp.cmxa)
+$(MPFR_WORLD)&: ../source/mpfr* $(GMP_WORLD)
 	$(MAKE) $(strip \
 		-C ../source -f Makefile.mpfr install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
-		INSTALLDIR=$(abspath $(BUILDDIR)) \
+		INSTALLDIR=$(abspath $(INSTALLDIR)) \
 		ASSERT=$(ASSERT))
 
-$(and $(OCAMLC),$(BUILDDIR)/mpc.cma) $(and $(OCAMLOPT),$(BUILDDIR)/mpc.cmxa) \
-&: ../source/mpc* \
-   $(and $(OCAMLC),$(BUILDDIR)/mpfr.cma) \
-   $(and $(OCAMLOPT),$(BUILDDIR)/mpfr.cmxa)
+$(MPC_WORLD)&: ../source/mpc* $(MPFR_WORLD)
 	$(MAKE) $(strip \
 		-C ../source -f Makefile.mpc install \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
-		INSTALLDIR=$(abspath $(BUILDDIR)) \
+		INSTALLDIR=$(abspath $(INSTALLDIR)) \
 		ASSERT=$(ASSERT))
+
+$(BUILDDIR):
+	mkdir -p $@
 
 $(BINLN):
 	ln -s $(BUILDDIR) $@
+
+world: $(GMP_WORLD) $(MPFR_WORLD) $(MPC_WORLD)
 
 check: all $(TESTS)
 
@@ -146,16 +165,16 @@ $(TESTS): % \
 	$(and $(OCAMLC),$<)
 	$(and $(OCAMLOPT),$(BUILDDIR)/$*.opt.exe)
 
-interactive: $(BUILDDIR)/gmp.cma $(BUILDDIR)/mpfr.cma $(BUILDDIR)/mpc.cma
+interactive: $(INSTALLDIR)/gmp.cma $(INSTALLDIR)/mpfr.cma $(INSTALLDIR)/mpc.cma
 	$(RLWRAP) ocaml $(strip \
-		-I $(BUILDDIR) $(OCAML_INCLUDE_FLAGS) gmp.cma mpfr.cma mpc.cma)
+		$(OCAML_BUILDDIR_FLAGS) $(OCAML_INCLUDE_FLAGS) $(notdir $^))
 
 clean:
 	-$(and $(BINLN),[ -h "$(BINLN)" ] && rm "$(BINLN)")
 	-$(MAKE) $(strip \
-		-C ../source clean uninstall \
+		-C ../source clean $(and $(filter $(BUILDDIR),$(INSTALLDIR)),uninstall) \
 		BUILDDIR=$(abspath $(GMP_BUILDDIR)) \
-		INSTALLDIR=$(abspath $(BUILDDIR)))
+		$(addprefix INSTALLDIR=,$(abspath $(filter $(BUILDDIR),$(INSTALLDIR)))))
 	-rm $(BUILDDIR)/*.exe $(BUILDDIR)/*.cm? $(BUILDDIR)/*.o
-	-rmdir $(BUILDDIR)/stublibs
+	-$(patsubst %,rmdir %/stublibs,$(filter $(BUILDDIR),$(INSTALLDIR)))
 	-rmdir $(BUILDDIR)
