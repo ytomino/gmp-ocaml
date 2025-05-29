@@ -3,6 +3,10 @@ open Mpfr;;
 
 let log = false;;
 
+let expect_invalid_arg (type t u) (f: t -> u) (x: t) =
+	try let _: u = f x in false with
+	| Invalid_argument _ -> true;;
+
 (* Z *)
 
 assert (Z.export_length (Z.of_int (-32769)) = 3);;
@@ -17,18 +21,11 @@ assert (Z.export_length (Z.of_int 128) = 2);;
 assert (Z.export_length (Z.of_int 32767) = 2);;
 assert (Z.export_length (Z.of_int 32768) = 3);;
 
-let expect_export_failure x buf pos len = (
-	try
-		Z.export ~order:`N x buf pos len;
-		assert false
-	with
-	| Invalid_argument _ -> ()
-);;
-
-expect_export_failure Z.zero Bytes.empty 0 1;; (* overrun *)
-expect_export_failure Z.zero Bytes.empty 1 0;; (* overrun *)
-expect_export_failure Z.zero Bytes.empty (-1) 0;; (* negative pos *)
-expect_export_failure Z.zero Bytes.empty (-1) 1;; (* negative pos *)
+let export = Z.export ~order:`N Z.zero in
+assert (expect_invalid_arg (export Bytes.empty 0) 1); (* overrun *)
+assert (expect_invalid_arg (export Bytes.empty 1) 0); (* overrun *)
+assert (expect_invalid_arg (export Bytes.empty (-1)) 0); (* negative pos *)
+assert (expect_invalid_arg (export Bytes.empty (-1)) 1);; (* negative pos *)
 
 let expect_export order x buf pos len expect = (
 	Z.export ~order:order x buf pos len;
@@ -106,18 +103,11 @@ expect_export `L (Z.of_int 32768) (Bytes.make 2 'x') 0 2
 expect_export `L (Z.of_int 32768) (Bytes.make 3 'x') 0 3
 	(Bytes.of_string "\x00\x80\x00");;
 
-let expect_import_failure buf pos len = (
-	try
-		let _: z = Z.import ~order:`N ~signed:false buf pos len in
-		assert false
-	with
-	| Invalid_argument _ -> ()
-);;
-
-expect_import_failure Bytes.empty 0 1;; (* overrun *)
-expect_import_failure Bytes.empty 1 0;; (* overrun *)
-expect_import_failure Bytes.empty (-1) 0;; (* negative pos *)
-expect_import_failure Bytes.empty (-1) 1;; (* negative pos *)
+let import = Z.import ~order:`N ~signed:false in
+assert (expect_invalid_arg (import Bytes.empty 0) 1); (* overrun *)
+assert (expect_invalid_arg (import Bytes.empty 1) 0); (* overrun *)
+assert (expect_invalid_arg (import Bytes.empty (-1)) 0); (* negative pos *)
+assert (expect_invalid_arg (import Bytes.empty (-1)) 1);; (* negative pos *)
 
 let expect_import order signed buf pos len expect = (
 	let x = Z.import ~order ~signed buf pos len in

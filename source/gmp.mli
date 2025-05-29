@@ -19,7 +19,7 @@ external z_of_int64: int64 -> z = "mlgmp_z_of_int64"
 external int64_of_z: z -> int64 = "mlgmp_int64_of_z"
 external z_of_nativeint: nativeint -> z = "mlgmp_z_of_nativeint"
 external nativeint_of_z: z -> nativeint = "mlgmp_nativeint_of_z"
-external z_of_truncated_float: float -> z = "mlgmp_z_of_truncated_float"
+val z_of_truncated_float: float -> z
 external float_of_z: z -> float = "mlgmp_float_of_z"
 
 module Z: sig
@@ -121,7 +121,7 @@ val q_of_string: string -> q
 external based_string_of_q: base:int -> q -> string = "mlgmp_based_string_of_q"
 val string_of_q: q -> string
 external q_of_int: int -> q = "mlgmp_q_of_int"
-external q_of_float: float -> q = "mlgmp_q_of_float"
+val q_of_float: float -> q
 external float_of_q: q -> float = "mlgmp_float_of_q"
 external q_of_z: z -> q = "mlgmp_q_of_z"
 external z_of_truncated_q: q -> z = "mlgmp_z_of_truncated_q"
@@ -157,7 +157,7 @@ module Q: sig
 	external to_based_string: base:int -> t -> string = "mlgmp_based_string_of_q"
 	val to_string: t -> string
 	external of_int: int -> t = "mlgmp_q_of_int"
-	external of_float: float -> t = "mlgmp_q_of_float"
+	val of_float: float -> t
 	external to_float: t -> float = "mlgmp_float_of_q"
 	external of_z: z -> t = "mlgmp_q_of_z"
 	external make_int: int -> int -> t = "mlgmp_q_make_int"
@@ -173,7 +173,7 @@ external based_string_of_f: base:int -> f -> string = "mlgmp_based_string_of_f"
 val string_of_f: f -> string
 external f_get_str: base:int -> int -> f -> string * int = "mlgmp_f_get_str"
 external f_of_int: prec:int -> int -> f = "mlgmp_f_of_int"
-external f_of_float: prec:int -> float -> f = "mlgmp_f_of_float"
+val f_of_float: prec:int -> float -> f
 external float_of_f: f -> float = "mlgmp_float_of_f"
 external f_of_z: prec:int -> z -> f = "mlgmp_f_of_z"
 external z_of_truncated_f: f -> z = "mlgmp_z_of_truncated_f"
@@ -220,7 +220,7 @@ module F: sig
 	external to_based_string: base:int -> t -> string = "mlgmp_based_string_of_f"
 	val to_string: t -> string
 	external of_int: prec:int -> int -> t = "mlgmp_f_of_int"
-	external of_float: prec:int -> float -> t = "mlgmp_f_of_float"
+	val of_float: prec:int -> float -> t
 	external to_float: t -> float = "mlgmp_float_of_f"
 	external of_z: prec:int -> z -> t = "mlgmp_f_of_z"
 	(* make the signature like Float *)

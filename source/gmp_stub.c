@@ -933,7 +933,7 @@ CAMLprim value mlgmp_nativeint_of_z(value x)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlgmp_z_of_truncated_float(value x)
+CAMLprim value mlgmp_unsafe_z_of_truncated_float(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
@@ -1446,14 +1446,11 @@ CAMLprim value mlgmp_q_of_int(value x)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlgmp_q_of_float(value x)
+CAMLprim value mlgmp_unsafe_q_of_float(value x)
 {
 	CAMLparam1(x);
 	CAMLlocal1(result);
 	double x_value = Double_val(x);
-	if(! isfinite(x_value)){
-		caml_failwith(__FUNCTION__);
-	}
 	result = mlgmp_alloc_q_init();
 	mpq_ptr result_value = Q_val(result);
 	mpq_set_d(result_value, x_value);
@@ -2063,14 +2060,11 @@ CAMLprim value mlgmp_f_of_int(value prec, value x)
 	CAMLreturn(result);
 }
 
-CAMLprim value mlgmp_f_of_float(value prec, value x)
+CAMLprim value mlgmp_unsafe_f_of_float(value prec, value x)
 {
 	CAMLparam2(prec, x);
 	CAMLlocal1(result);
 	double x_value = Double_val(x);
-	if(! isfinite(x_value)){
-		caml_failwith(__FUNCTION__);
-	}
 	result = mlgmp_alloc_f_init2(Long_val(prec));
 	mpf_set_d(F_val(result), x_value);
 	CAMLreturn(result);

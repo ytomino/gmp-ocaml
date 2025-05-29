@@ -21,7 +21,11 @@ external int_of_z: z -> int = "mlgmp_int_of_z";;
 external z_of_int32: int32 -> z = "mlgmp_z_of_int32";;
 external int32_of_z: z -> int32 = "mlgmp_int32_of_z";;
 external z_of_int64: int64 -> z = "mlgmp_z_of_int64";;
-external z_of_truncated_float: float -> z = "mlgmp_z_of_truncated_float";;
+external unsafe_z_of_truncated_float: float -> z =
+	"mlgmp_unsafe_z_of_truncated_float";;
+let z_of_truncated_float x =
+	if x -. x = 0. then unsafe_z_of_truncated_float x (* like Float.is_finite *)
+	else invalid_arg "Gmp.z_of_truncated_float";;
 external z_of_nativeint: nativeint -> z = "mlgmp_z_of_nativeint";;
 external nativeint_of_z: z -> nativeint = "mlgmp_nativeint_of_z";;
 external int64_of_z: z -> int64 = "mlgmp_int64_of_z";;
@@ -132,7 +136,10 @@ external based_string_of_q: base:int -> q -> string =
 	"mlgmp_based_string_of_q";;
 let string_of_q = based_string_of_q ~base:10;;
 external q_of_int: int -> q = "mlgmp_q_of_int";;
-external q_of_float: float -> q = "mlgmp_q_of_float";;
+external unsafe_q_of_float: float -> q = "mlgmp_unsafe_q_of_float";;
+let q_of_float x =
+	if x -. x = 0. then unsafe_q_of_float x
+	else invalid_arg "Gmp.q_of_float";;
 external float_of_q: q -> float = "mlgmp_float_of_q";;
 external q_of_z: z -> q = "mlgmp_q_of_z";;
 external z_of_truncated_q: q -> z = "mlgmp_z_of_truncated_q";;
@@ -166,7 +173,7 @@ module Q = struct
 	external to_based_string: base:int -> t -> string = "mlgmp_based_string_of_q";;
 	let to_string = string_of_q;;
 	external of_int: int -> t = "mlgmp_q_of_int";;
-	external of_float: float -> t = "mlgmp_q_of_float";;
+	let of_float = q_of_float;;
 	external to_float: t -> float = "mlgmp_float_of_q";;
 	external of_z: z -> t = "mlgmp_q_of_z";;
 	external make_int: int -> int -> t = "mlgmp_q_make_int";;
@@ -183,7 +190,11 @@ external based_string_of_f: base:int -> f -> string =
 let string_of_f = based_string_of_f ~base:10;;
 external f_get_str: base:int -> int -> f -> string * int = "mlgmp_f_get_str";;
 external f_of_int: prec:int -> int -> f = "mlgmp_f_of_int";;
-external f_of_float: prec:int -> float -> f = "mlgmp_f_of_float";;
+external unsafe_f_of_float: prec:int -> float -> f =
+	"mlgmp_unsafe_f_of_float";;
+let f_of_float ~prec x =
+	if x -. x = 0. then unsafe_f_of_float ~prec x
+	else invalid_arg "Gmp.f_of_float";;
 external float_of_f: f -> float = "mlgmp_float_of_f";;
 external f_of_z: prec:int -> z -> f = "mlgmp_f_of_z";;
 external z_of_truncated_f: f -> z = "mlgmp_z_of_truncated_f";;
@@ -227,7 +238,7 @@ module F = struct
 	external to_based_string: base:int -> t -> string = "mlgmp_based_string_of_f";;
 	let to_string = string_of_f;;
 	external of_int: prec:int -> int -> t = "mlgmp_f_of_int";;
-	external of_float: prec:int -> float -> t = "mlgmp_f_of_float";;
+	let of_float = f_of_float;;
 	external to_float: t -> float = "mlgmp_float_of_f";;
 	external of_z: prec:int -> z -> t = "mlgmp_f_of_z";;
 	module type Param = sig

@@ -4,36 +4,63 @@ open Mpc;;
 
 let log = false;;
 
-assert (123 = int_of_z (z_of_int 123));;
-assert (123l = int32_of_z (z_of_int32 123l));;
-assert (123n = nativeint_of_z (z_of_nativeint 123n));;
-assert (123L = int64_of_z (z_of_int64 123L));;
-assert (123. = float_of_z (z_of_string "123"));;
+let expect_invalid_arg (type t u) (f: t -> u) (x: t) =
+	try let _: u = f x in false with
+	| Invalid_argument _ -> true;;
 
-assert (-123 = int_of_z (z_of_int (-123)));;
-assert (-123l = int32_of_z (z_of_int32 (-123l)));;
-assert (-123n = nativeint_of_z (z_of_nativeint (-123n)));;
-assert (-123L = int64_of_z (z_of_int64 (-123L)));;
-assert (-123. = float_of_z (z_of_string "-123"));;
+assert (let x = 123 in int_of_z (z_of_int x) = x);;
+assert (let x = -123 in int_of_z (z_of_int x) = x);;
+assert (let x = 123l in int32_of_z (z_of_int32 x) = x);;
+assert (let x = -123l in int32_of_z (z_of_int32 x) = x);;
+assert (let x = 123n in nativeint_of_z (z_of_nativeint x) = x);;
+assert (let x = -123n in nativeint_of_z (z_of_nativeint x) = x);;
+assert (let x = 123L in int64_of_z (z_of_int64 x) = x);;
+assert (let x = -123L in int64_of_z (z_of_int64 x) = x);;
+assert (let x = 123. in float_of_z (z_of_truncated_float x) = x);;
+assert (let x = -123. in float_of_z (z_of_truncated_float x) = x);;
+assert (let x = "123" in string_of_z (z_of_string x) = x);;
+assert (let x = "-123" in string_of_z (z_of_string x) = x);;
 
-assert (123. = float_of_q (q_of_int 123));;
-assert (-123. = float_of_q (q_of_int (-123)));;
-assert (q_of_int 10 = q_of_z (z_of_int 10));;
+assert (expect_invalid_arg z_of_truncated_float Float.infinity);;
+assert (expect_invalid_arg z_of_truncated_float Float.neg_infinity);;
+assert (expect_invalid_arg z_of_truncated_float Float.nan);;
+
+assert (let x = 123 in int_of_float (float_of_q (q_of_int x)) = x);;
+assert (let x = -123 in int_of_float (float_of_q (q_of_int x)) = x);;
+assert (let x = 1.5 in float_of_q (q_of_float x) = x);;
+assert (let x = -1.5 in float_of_q (q_of_float x) = x);;
+assert (let x = z_of_int 10 in z_of_truncated_q (q_of_z x) = x);;
+assert (let x = z_of_int (-10) in z_of_truncated_q (q_of_z x) = x);;
+assert (let x = "2/3" in string_of_q (q_of_string x) = x);;
+assert (let x = "-2/3" in string_of_q (q_of_string x) = x);;
 assert (Q.make_int 6 2 = q_of_int 3);;
 assert (Q.make_int (-6) (-2) = q_of_int 3);;
+assert (Q.make_z (z_of_int 6) (z_of_int 2) = q_of_int 3);;
+assert (Q.make_z (z_of_int (-6)) (z_of_int (-2)) = q_of_int 3);;
 
-assert (123. = float_of_f (f_of_int ~prec:8 123));;
-assert (-123. = float_of_f (f_of_int ~prec:8 (-123)));;
-assert (f_of_int ~prec:8 10 = f_of_z ~prec:4 (z_of_int 10));;
-assert (string_of_f (f_of_float ~prec:10 0.) = "0.");;
-assert (string_of_f (f_of_float ~prec:10 12.) = "12.");;
-assert (string_of_f (f_of_float ~prec:10 100.) = "100.");;
-assert (string_of_f (f_of_float ~prec:10 34.25) = "34.25");;
-assert (string_of_f (f_of_float ~prec:10 0.0625) = "0.0625");;
-assert (string_of_f (f_of_float ~prec:10 (-12.)) = "-12.");;
-assert (string_of_f (f_of_float ~prec:10 (-100.)) = "-100.");;
-assert (string_of_f (f_of_float ~prec:10 (-34.25)) = "-34.25");;
-assert (string_of_f (f_of_float ~prec:10 (-0.0625)) = "-0.0625");;
+assert (expect_invalid_arg q_of_float Float.infinity);;
+assert (expect_invalid_arg q_of_float Float.neg_infinity);;
+assert (expect_invalid_arg q_of_float Float.nan);;
+
+assert (let x = 123 in int_of_float (float_of_f (f_of_int ~prec:8 x)) = x);;
+assert (let x = -123 in int_of_float (float_of_f (f_of_int ~prec:8 x)) = x);;
+assert (let x = 1.5 in float_of_f (f_of_float ~prec:2 x) = x);;
+assert (let x = -1.5 in float_of_f (f_of_float ~prec:2 x) = x);;
+assert (let x = z_of_int 10 in z_of_truncated_f (f_of_z ~prec:4 x) = x);;
+assert (let x = z_of_int (-10) in z_of_truncated_f (f_of_z ~prec:4 x) = x);;
+assert (let x = "0." in string_of_f (f_of_string ~prec:10 x) = x);;
+assert (let x = "12." in string_of_f (f_of_string ~prec:10 x) = x);;
+assert (let x = "100." in string_of_f (f_of_string ~prec:10 x) = x);;
+assert (let x = "34.25" in string_of_f (f_of_string ~prec:10 x) = x);;
+assert (let x = "0.0625" in string_of_f (f_of_string ~prec:10 x) = x);;
+assert (let x = "-12." in string_of_f (f_of_string ~prec:10 x) = x);;
+assert (let x = "-100." in string_of_f (f_of_string ~prec:10 x) = x);;
+assert (let x = "-34.25" in string_of_f (f_of_string ~prec:10 x) = x);;
+assert (let x = "-0.0625" in string_of_f (f_of_string ~prec:10 x) = x);;
+
+assert (expect_invalid_arg (f_of_float ~prec:53) Float.infinity);;
+assert (expect_invalid_arg (f_of_float ~prec:53) Float.neg_infinity);;
+assert (expect_invalid_arg (f_of_float ~prec:53) Float.nan);;
 
 assert (123. = float_of_fr ~mode:`N (fr_of_int ~prec:8 ~mode:`N 123));;
 assert (-123. = float_of_fr ~mode:`N (fr_of_int ~prec:8 ~mode:`N (-123)));;
