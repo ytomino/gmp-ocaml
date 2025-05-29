@@ -292,7 +292,7 @@ CAMLprim value mlgmp_z_pow_int(value base, value exponent)
 	if(e >= 0){
 		mpz_pow_ui(result_value, Z_val(base), e);
 	}else{
-		mpz_set_si(result_value, 0);
+		mpz_set_ui(result_value, 0);
 	}
 	CAMLreturn(result);
 }
@@ -305,7 +305,7 @@ CAMLprim value mlgmp_z_int_pow_int(value base, value exponent)
 	mpz_ptr result_value = Z_val(result);
 	long e = Long_val(exponent);
 	if(e < 0){
-		mpz_set_si(result_value, 0);
+		mpz_set_ui(result_value, 0);
 	}else{
 		long b = Long_val(base);
 		if(b < 0){
