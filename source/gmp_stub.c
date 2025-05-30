@@ -308,13 +308,9 @@ CAMLprim value mlgmp_z_int_pow_int(value base, value exponent)
 		mpz_set_ui(result_value, 0);
 	}else{
 		long b = Long_val(base);
-		if(b < 0){
-			mpz_ui_pow_ui(result_value, -b, e);
-			if(e % 2 != 0){
-				mpz_neg(result_value, result_value);
-			}
-		}else{
-			mpz_ui_pow_ui(result_value, b, e);
+		mpz_ui_pow_ui(result_value, labs(b), e);
+		if(b < 0 && e % 2 != 0){
+			mpz_neg(result_value, result_value);
 		}
 	}
 	CAMLreturn(result);
@@ -336,11 +332,10 @@ CAMLprim value mlgmp_z_scale(value fraction, value base, value exponent)
 			mpz_fdiv_q_2exp(result_value, f, -e); /* arithmetic right shift */
 		}
 	}else{
+		mpz_ui_pow_ui(result_value, b, labs(e));
 		if(e >= 0){
-			mpz_ui_pow_ui(result_value, b, e);
 			mpz_mul(result_value, f, result_value);
 		}else{
-			mpz_ui_pow_ui(result_value, b, -e);
 			mpz_fdiv_q(result_value, f, result_value);
 		}
 	}
@@ -1278,26 +1273,13 @@ CAMLprim value mlgmp_q_int_pow_int(value base, value exponent)
 	long b = Long_val(base);
 	long e = Long_val(exponent);
 	if(e < 0){
-		if(b < 0){
-			if(e % 2 != 0){
-				mpz_set_si(mpq_numref(result_value), -1);
-			}else{
-				mpz_set_ui(mpq_numref(result_value), 1);
-			}
-			mpz_ui_pow_ui(mpq_denref(result_value), -b, -e);
-		}else{
-			mpz_set_ui(mpq_numref(result_value), 1);
-			mpz_ui_pow_ui(mpq_denref(result_value), b, -e);
-		}
+		mpz_set_si(mpq_numref(result_value), (b < 0 && e % 2 != 0) ? -1 : 1);
+		mpz_ui_pow_ui(mpq_denref(result_value), labs(b), -e);
 	}else{
-		if(b < 0){
-			mpz_ptr result_num = mpq_numref(result_value);
-			mpz_ui_pow_ui(result_num, -b, e);
-			if(e % 2 != 0){
-				mpz_neg(result_num, result_num);
-			}
-		}else{
-			mpz_ui_pow_ui(mpq_numref(result_value), b, e);
+		mpz_ptr result_num = mpq_numref(result_value);
+		mpz_ui_pow_ui(result_num, labs(b), e);
+		if(b < 0 && e % 2 != 0){
+			mpz_neg(result_num, result_num);
 		}
 		mpz_set_ui(mpq_denref(result_value), 1);
 	}
@@ -1720,10 +1702,8 @@ CAMLprim value mlgmp_f_mul_int(value prec, value left, value right)
 	mpf_ptr result_value = F_val(result);
 	mpf_ptr l = F_val(left);
 	long r = Long_val(right);
-	if(r >= 0){
-		mpf_mul_ui(result_value, l, r);
-	}else{
-		mpf_mul_ui(result_value, l, -r);
+	mpf_mul_ui(result_value, l, labs(r));
+	if(r < 0){
 		mpf_neg(result_value, result_value);
 	}
 	CAMLreturn(result);
@@ -1761,10 +1741,8 @@ CAMLprim value mlgmp_f_pow_int(value prec, value base, value exponent)
 	mpf_ptr result_value = F_val(result);
 	mpf_ptr b = F_val(base);
 	long e = Long_val(exponent);
-	if(e >= 0){
-		mpf_pow_ui(result_value, b, e);
-	}else{
-		mpf_pow_ui(result_value, b, -e);
+	mpf_pow_ui(result_value, b, labs(e));
+	if(e < 0){
 		mpf_ui_div(result_value, 1, result_value);
 	}
 	CAMLreturn(result);
@@ -1781,27 +1759,14 @@ CAMLprim value mlgmp_f_int_pow_int(value prec, value base, value exponent)
 	if(b == 2){
 		mpf_set_ui(result_value, 1);
 		mlgmp_mpf_ldexp(result_value, result_value, e);
-	}else if(b < 0){
-		mpf_set_ui(result_value, -b);
-		if(e < 0){
-			mpf_pow_ui(result_value, result_value, -e);
-			if(e % 2 != 0){
-				mpf_neg(result_value, result_value);
-			}
-			mpf_ui_div(result_value, 1, result_value);
-		}else{
-			mpf_pow_ui(result_value, result_value, e);
-			if(e % 2 != 0){
-				mpf_neg(result_value, result_value);
-			}
-		}
 	}else{
-		mpf_set_ui(result_value, b);
+		mpf_set_ui(result_value, labs(b));
+		mpf_pow_ui(result_value, result_value, labs(e));
+		if(b < 0 && e % 2 != 0){
+			mpf_neg(result_value, result_value);
+		}
 		if(e < 0){
-			mpf_pow_ui(result_value, result_value, -e);
 			mpf_ui_div(result_value, 1, result_value);
-		}else{
-			mpf_pow_ui(result_value, result_value, e);
 		}
 	}
 	CAMLreturn(result);
@@ -1824,11 +1789,10 @@ CAMLprim value mlgmp_f_scale(
 		mlgmp_mpf_ldexp(result_value, f, e);
 	}else{
 		mpf_set_ui(result_value, b);
+		mpf_pow_ui(result_value, result_value, labs(e));
 		if(e >= 0){
-			mpf_pow_ui(result_value, result_value, e);
 			mpf_mul(result_value, f, result_value);
 		}else{
-			mpf_pow_ui(result_value, result_value, -e);
 			mpf_div(result_value, f, result_value);
 		}
 	}

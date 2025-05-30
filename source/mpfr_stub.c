@@ -39,22 +39,16 @@ CAMLexport void mlmpfr_mpfr_si_pow_si(
 {
 	if(op1 == 2){
 		mpfr_set_ui_2exp(rop, 1, op2, rnd);
-	}else if(op1 < 0){
-		if(op2 < 0){
-			mpfr_ui_pow_ui(rop, -op1, -op2, rnd);
-			mpfr_si_div(rop, (op2 % 2 != 0) ? -1 : 1, rop, rnd);
-		}else{
-			mpfr_ui_pow_ui(rop, -op1, op2, rnd);
-			if(op2 % 2 != 0){
+	}else{
+		mpfr_ui_pow_ui(rop, labs(op1), labs(op2), rnd);
+		if(op1 < 0 && op2 % 2 != 0){
+			if(op2 < 0){
+				mpfr_si_div(rop, -1, rop, rnd);
+			}else{
 				mpfr_neg(rop, rop, rnd);
 			}
-		}
-	}else{
-		if(op2 < 0){
-			mpfr_ui_pow_ui(rop, op1, -op2, rnd);
+		}else if(op2 < 0){
 			mpfr_ui_div(rop, 1, rop, rnd);
-		}else{
-			mpfr_ui_pow_ui(rop, op1, op2, rnd);
 		}
 	}
 }
@@ -393,11 +387,10 @@ CAMLprim value mlmpfr_fr_scale(
 	}else{
 		mpz_t a;
 		mpz_init(a);
+		mpz_ui_pow_ui(a, b, labs(e));
 		if(e >= 0){
-			mpz_ui_pow_ui(a, b, e);
 			mpfr_mul_z(result_value, f, a, m);
 		}else{
-			mpz_ui_pow_ui(a, b, -e);
 			mpfr_div_z(result_value, f, a, m);
 		}
 		mpz_clear(a);

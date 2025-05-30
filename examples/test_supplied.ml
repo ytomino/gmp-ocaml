@@ -31,6 +31,11 @@ assert (Z.int_pow_int ~base:0 ~exponent:0 = Z.one);;
 assert (Z.int_pow_int ~base:(-3) ~exponent:2 = Z.of_int 9);;
 assert (Z.int_pow_int ~base:(-3) ~exponent:3 = Z.of_int (-27));;
 
+(* mpz_mul_Nexp and mpz_fdiv_q_Nexp is missing if N <> 2 *)
+assert (Z.scale (Z.of_int 5) ~base:4 ~exponent:2 = Z.of_int 80);;
+assert (Z.scale (Z.of_int 32) ~base:4 ~exponent:(-2) = Z.of_int 2);;
+assert (Z.scale (Z.of_int 47) ~base:4 ~exponent:(-2) = Z.of_int 2);;
+
 (* mpz_tdiv_q_si, mpz_cdiv_q_si, and mpz_fdiv_q_si are missing *)
 let table = [
 	(Z.tdiv, Z.tdiv_int, 't');
@@ -102,6 +107,10 @@ assert (Q.int_pow_int ~base:(-3) ~exponent:3 = Q.make_int (-27) 1);;
 assert (Q.int_pow_int ~base:(-3) ~exponent:(-2) = Q.make_int 1 9);;
 assert (Q.int_pow_int ~base:(-3) ~exponent:(-3) = Q.make_int (-1) 27);;
 
+(* mpq_mul_2exp and mpq_div_2exp is missing if N <> 2 *)
+assert (Q.scale (Q.of_int 5) ~base:4 ~exponent:2 = Q.of_int 80);;
+assert (Q.scale (Q.of_int 5) ~base:4 ~exponent:(-2) = Q.make_int 5 16);;
+
 (* mpq_root is missing *)
 assert (Q.root ~nth:1 (Q.make_int 2 3) = Q.make_int 2 3);;
 assert (Q.root ~nth:2 (Q.make_int 4 9) = Q.make_int 2 3);;
@@ -155,6 +164,10 @@ assert (
 	F.int_pow_int ~base:(-3) ~exponent:(-3) = F.div F.minus_one (F.of_int 27)
 );;
 
+(* mpf_mul_2exp and mpf_div_2exp is missing if N <> 2 *)
+assert (F.scale (F.of_int 5) ~base:4 ~exponent:2 = F.of_int 80);;
+assert (F.scale (F.of_int 5) ~base:4 ~exponent:(-2) = F.of_float (5. /. 16.));;
+
 (* mpf_root is missing *)
 assert (F.root ~nth:1 (F.of_int 2) = F.of_int 2);;
 assert (F.root ~nth:2 (F.of_int 4) = F.of_int 2);;
@@ -199,6 +212,12 @@ assert (
 	FR.int_pow_int ~base:(-3) ~exponent:(-3) = FR.div FR.minus_one (FR.of_int 27)
 );;
 
+(* mpfr_mul_Nexp and mpfr_div_Nexp is missing if N <> 2 *)
+assert (FR.scale (FR.of_int 5) ~base:4 ~exponent:2 = FR.of_int 80);;
+assert (
+	FR.scale (FR.of_int 5) ~base:4 ~exponent:(-2) = FR.of_float (5. /. 16.)
+);;
+
 (* mpfr_ldexp is missing *)
 assert (FR.ldexp (FR.of_float 1.5) (-2) = FR.of_float 0.375);;
 assert (FR.ldexp (FR.of_float 1.5) 2 = FR.of_float 6.);;
@@ -225,6 +244,10 @@ assert (C.int_pow_int ~base:(-3) ~exponent:(-2) = C.div C.one (C.of_int 9));;
 assert (
 	C.int_pow_int ~base:(-3) ~exponent:(-3) = C.div C.minus_one (C.of_int 27)
 );;
+
+(* mpc_mul_Nui and mpc_div_Nui is missing if N <> 2 *)
+assert (C.scale (C.of_int 5) ~base:4 ~exponent:2 = C.of_int 80);;
+assert (C.scale (C.of_int 5) ~base:4 ~exponent:(-2) = C.of_float (5. /. 16.));;
 
 (* mpc_root is missing *)
 assert (C.root ~nth:1 (C.of_int 2) = C.of_int 2);;

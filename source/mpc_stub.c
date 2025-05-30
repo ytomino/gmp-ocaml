@@ -334,11 +334,10 @@ CAMLprim value mlmpc_c_scale(
 		mpfr_rnd_t real_rnd = MPC_RND_RE(m);
 		mpfr_t a;
 		mpfr_init2(a, real_prec);
+		mpfr_ui_pow_ui(a, b, labs(e), real_rnd);
 		if(e >= 0){
-			mpfr_ui_pow_ui(a, b, e, real_rnd);
 			mpc_mul_fr(result_value, f, a, m);
 		}else{
-			mpfr_ui_pow_ui(a, b, -e, real_rnd);
 			mpc_div_fr(result_value, f, a, m);
 		}
 		mpfr_clear(a);
