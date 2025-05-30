@@ -38,7 +38,7 @@ CAMLexport void mlmpfr_mpfr_si_pow_si(
 	mpfr_ptr rop, long op1, long op2, mpfr_rnd_t rnd)
 {
 	if(op1 == 2){
-		mpfr_set_si_2exp(rop, 1, op2, rnd);
+		mpfr_set_ui_2exp(rop, 1, op2, rnd);
 	}else if(op1 < 0){
 		if(op2 < 0){
 			mpfr_ui_pow_ui(rop, -op1, -op2, rnd);
