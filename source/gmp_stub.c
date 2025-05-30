@@ -1823,18 +1823,14 @@ CAMLprim value mlgmp_f_scale(
 	if(b == 2){
 		mlgmp_mpf_ldexp(result_value, f, e);
 	}else{
-		mpz_t a;
-		mpz_init(a);
+		mpf_set_ui(result_value, b);
 		if(e >= 0){
-			mpz_ui_pow_ui(a, b, e);
-			mpf_set_z(result_value, a);
+			mpf_pow_ui(result_value, result_value, e);
 			mpf_mul(result_value, f, result_value);
 		}else{
-			mpz_ui_pow_ui(a, b, -e);
-			mpf_set_z(result_value, a);
+			mpf_pow_ui(result_value, result_value, -e);
 			mpf_div(result_value, f, result_value);
 		}
-		mpz_clear(a);
 	}
 	CAMLreturn(result);
 }
